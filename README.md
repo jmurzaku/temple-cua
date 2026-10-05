@@ -7,7 +7,7 @@ screenshots, usage, and grades. The Python package and CLI remain `temple-cua`.
 [Tasks](docs/TASKS.md) · [Recorded results](docs/CUA_RERUN.md) ·
 [Harness reference](docs/CUA_AGENT.md) · [Website source](site/)
 
-GitHub Pages target: https://jmurzaku.github.io/temple-cua/
+[TempleOSBench website](https://jmurzaku.github.io/temple-cua/)
 
 ## Install
 
