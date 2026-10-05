@@ -33,7 +33,10 @@ snapshot; results, screenshots, and actions go into `runs/`.
 
 ## Tasks
 
-Six basics cover arithmetic, loops, functions, strings, directories, and files.
+The site features three tasks: arithmetic, a live cursor callback, and a
+[live counter panel](tasks/08_interactive_counter_panel.yaml). The panel requires
+building clickable controls, then using them
+to increment, decrement, and reset shared state while its draw callback runs.
 [Cursor callback](tasks/07_cursor_callback.yaml) asks the agent to compile a draw
 function, install `Fs->draw_it=&Cross`, and follow a document link while its cross
 keeps tracking the pointer. The hook runs on the guest's refresh path.[²](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Graphics/WinZBuf.HC)
@@ -52,13 +55,15 @@ uv run temple-cua new-task multiply \
 ```
 
 Tasks are YAML files; no registry or Python edits. Text checks score visible
-output. Callback and other GUI tasks require trajectory review. Extra GUI tasks
-are in `tasks/extra/` and can be selected with `--tasks tasks/extra`.
+output. Callback and other GUI tasks require trajectory review. Edit
+`site/tasks.yaml` to choose the featured tasks. Additional basics remain in
+`tasks/`; extra GUI tasks can be selected with `--tasks tasks/extra`.
 
 ## Results
 
 One GPT-6.1 Sol/Cua 0.9.0 run passed all six basic visual checks in 17 model calls.
-The callback's scripted QEMU reference works; no model result is recorded for it.
+The site shows the arithmetic recording. No model result is recorded for either
+of the two interactive tasks.
 Each result is one attempt scored from visible output.
 
 ```sh

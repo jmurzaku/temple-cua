@@ -37,7 +37,7 @@ dd { margin: 0; }
 table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
 th { border-bottom: 1px solid var(--ink); padding: 0 18px 13px 0; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; font-weight: 500; white-space: nowrap; }
 td { border-bottom: 1px solid var(--line); padding: 14px 18px 14px 0; vertical-align: middle; }
-th:first-child, td:first-child { width: 42%; padding-left: 12px; }
+th:first-child, td:first-child { width: 56%; padding-left: 12px; }
 th:last-child, td:last-child { padding-right: 12px; text-align: right; }
 tbody tr.selected { background: var(--selected); }
 .task-selector { display: flex; align-items: center; gap: 22px; border: 0; background: transparent; color: var(--ink); text-align: left; padding: 0; font-size: 15px; line-height: 1.6; }
@@ -109,8 +109,8 @@ footer a { text-decoration: none; }
   h2 { font-size: 23px; }
   .section-heading { gap: 12px; }
   th, td { padding-right: 12px; }
-  th:nth-child(2), td:nth-child(2) { display: none; }
   th:first-child, td:first-child { width: auto; padding-left: 8px; }
+  .task-difficulty { font-size: 11px; white-space: nowrap; }
   .task-selector { gap: 12px; font-size: 13px; }
   table { font-size: 12px; }
   th { font-size: 9px; }

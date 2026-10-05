@@ -22,14 +22,14 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <a class="wordmark" href="#main">TempleOSBench</a>
-    <nav aria-label="Main navigation"><a href="#tasks">Tasks</a><a href="#run">Recorded run</a><a href="https://github.com/jmurzaku/temple-cua">GitHub</a></nav>
+    <nav aria-label="Main navigation"><a href="#tasks">Tasks</a><a href="#run">Recorded result</a><a href="https://github.com/jmurzaku/temple-cua">GitHub</a></nav>
   </header>
   <main id="main">
     <section class="intro" aria-labelledby="intro-title">
       <div>
         <h1 id="intro-title">TempleOSBench</h1>
         <p class="lead">Computer use in a ring 0 operating system.</p>
-        <p>Six starter tasks cover HolyC and files. A draw-callback task opens a document while the callback follows the pointer. The agent works through screenshots, keyboard input, and mouse input.</p>
+        <p id="catalog-description">Three tasks in TempleOS. An agent sees screenshots, writes HolyC, and controls the mouse in a QEMU virtual machine.</p>
       </div>
       <dl class="environment-facts">
         <div><dt>Guest</dt><dd>TempleOS 5.03</dd></div><div><dt>Display</dt><dd>640 × 480</dd></div><div><dt>Agent interface</dt><dd>Screenshots, keyboard, mouse</dd></div><div><dt>Execution</dt><dd>QEMU · no guest network</dd></div>
@@ -37,11 +37,11 @@
     </section>
     <section id="tasks" class="tasks-section" aria-labelledby="tasks-title">
       <div class="section-heading"><h2 id="tasks-title">Tasks</h2><span id="task-count">—</span></div>
-      <p class="section-description">Select a task for its prompt. Recorded runs include screenshots and executed inputs.</p>
+      <p class="section-description">Select a task for its prompt and completion criteria.</p>
       <div class="table-scroll"><table class="task-table">
         <caption class="sr-only">TempleOS tasks and available recorded results</caption>
-        <thead><tr><th scope="col">Task</th><th scope="col">Operation</th><th scope="col">Turns</th><th scope="col">Time</th><th scope="col">Visual check</th></tr></thead>
-        <tbody id="task-rows"><tr><td colspan="5">Loading recorded tasks…</td></tr></tbody>
+        <thead><tr><th scope="col">Task</th><th scope="col">Difficulty</th><th scope="col">Recorded run</th></tr></thead>
+        <tbody id="task-rows"><tr><td colspan="3">Loading tasks…</td></tr></tbody>
       </table></div>
       <p id="data-error" class="load-error" role="status" hidden></p>
     </section>
@@ -66,10 +66,10 @@
       </div>
     </section>
     <section id="run" class="run-section" aria-labelledby="run-title">
-      <div class="section-heading"><h2 id="run-title">Recorded run</h2><a href="assets/starter-results.json" download>Results JSON</a></div>
-      <dl class="run-facts"><div><dt>Model</dt><dd id="run-model">—</dd></div><div><dt>Agent</dt><dd id="run-agent">—</dd></div><div><dt>Visual checks</dt><dd id="run-score">—</dd></div><div><dt>Attempts</dt><dd>One per task</dd></div></dl>
-      <p id="run-protocol">Each task starts from the same VM snapshot. Cua’s ComputerAgent drives a TempleOS computer adapter; the harness enforces the recorded time and turn limits.</p>
-      <p class="muted">One recorded attempt per starter task. The callback is awaiting a model run.</p>
+      <div class="section-heading"><h2 id="run-title">Recorded result</h2><a href="assets/starter-results.json" download>Results JSON</a></div>
+      <dl class="run-facts"><div><dt>Model</dt><dd id="run-model">—</dd></div><div><dt>Agent</dt><dd id="run-agent">—</dd></div><div><dt>Recorded tasks</dt><dd id="run-task">—</dd></div><div><dt>Recorded visual checks</dt><dd id="run-score">—</dd></div></dl>
+      <p id="run-protocol">Cua’s ComputerAgent drives a TempleOS computer adapter; the harness enforces the recorded time and turn limits.</p>
+      <p id="run-note" class="muted">Only arithmetic has a recorded model attempt. The other two tasks have not been run by a model.</p>
       <div class="text-links"><a href="assets/starter-run.zip" download>Download recorded run</a></div>
     </section>
     <section id="environment" class="setup-section" aria-labelledby="setup-title">
