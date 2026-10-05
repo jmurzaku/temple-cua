@@ -189,11 +189,11 @@
       }
     },
     {
-      "id": "04-cua-sprite",
+      "id": "04-cua-sprite-rerun",
       "provider": "cua",
       "model": "openai/gpt-6.1-sol",
       "cua_version": "0.9.0",
-      "created_at": "2026-10-05T02:30:09.418924+00:00",
+      "created_at": "2026-10-05T11:35:22.021796+00:00",
       "config": {
         "iso": "assets/TempleOS.ISO",
         "baseline": "assets/cli-baseline.qcow2",
@@ -219,7 +219,7 @@
       "provenance": {
         "agent_package": "cua-agent",
         "agent_version": "0.9.0",
-        "inference": "upstream ComputerAgent and LiteLLM",
+        "inference": "upstream ComputerAgent with TempleOS input recovery; LiteLLM",
         "agent_loop": "TempleOpenAIComputerUseConfig",
         "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
         "backend": "TempleVM/QMP legacy PC devices",
@@ -231,6 +231,10 @@
         "execution_mode": "live_model",
         "telemetry_enabled": false,
         "max_actions_per_response": 4,
+        "computer_protocol_version": 2,
+        "instructions_sha256": "93eb09050a39e0ba82288bf0ebe8c2277fd94264486024d8a6fb11824c6ff205",
+        "scroll_pixels_per_notch": 8,
+        "input_error_handling": "recoverable tool output with screenshot",
         "step_definition": "actual model API attempts; Cua automatic retries disabled",
         "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
       }
@@ -301,7 +305,9 @@
           "step": 0,
           "src": "assets/starter-frames/arithmetic/0000.png",
           "note": "Before the first action.",
-          "actions": []
+          "actions": [],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 1,
@@ -312,7 +318,9 @@
               "kind": "type",
               "text": "Print(\"BENCH_ARITH=%d\\n\", (37 * 19) - (24 * 13));"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 2,
@@ -325,13 +333,17 @@
                 "enter"
               ]
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 3,
           "src": "assets/starter-frames/arithmetic/0003.png",
           "note": "Executed in HolyC and verified the visible output:\n```text\nBENCH_ARITH=391\n```",
-          "actions": []
+          "actions": [],
+          "requested_calls": [],
+          "input_errors": []
         }
       ],
       "run": {
@@ -432,7 +444,9 @@
           "step": 0,
           "src": "assets/starter-frames/cursor_callback/0000.png",
           "note": "Before the first action.",
-          "actions": []
+          "actions": [],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 1,
@@ -443,7 +457,9 @@
               "kind": "type",
               "text": "U0 Cross(CTask *, CDC *dc) {\n  dc->color=YELLOW;\n  GrLine(dc,ms.pos.x-16,ms.pos.y,ms.pos.x+16,ms.pos.y);\n  GrLine(dc,ms.pos.x,ms.pos.y-16,ms.pos.x,ms.pos.y+16);\n}\nFs->draw_it=&Cross;\n"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 2,
@@ -455,7 +471,9 @@
               "x": 210,
               "y": 190
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 3,
@@ -467,7 +485,9 @@
               "x": 460,
               "y": 330
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 4,
@@ -481,7 +501,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 5,
@@ -495,7 +517,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 6,
@@ -507,7 +531,9 @@
               "x": 500,
               "y": 3
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 7,
@@ -521,7 +547,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 8,
@@ -533,7 +561,9 @@
               "x": 240,
               "y": 190
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 9,
@@ -545,7 +575,9 @@
               "x": 415,
               "y": 315
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 10,
@@ -559,7 +591,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 11,
@@ -571,7 +605,9 @@
               "x": 288,
               "y": 202
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 12,
@@ -583,7 +619,9 @@
               "x": 431,
               "y": 320
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 13,
@@ -597,7 +635,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 14,
@@ -609,7 +649,9 @@
               "x": 240,
               "y": 180
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 15,
@@ -621,7 +663,9 @@
               "x": 400,
               "y": 290
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 16,
@@ -635,7 +679,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 17,
@@ -649,7 +695,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 18,
@@ -662,7 +710,9 @@
                 "esc"
               ]
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 19,
@@ -676,7 +726,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 20,
@@ -688,7 +740,9 @@
               "x": 270,
               "y": 260
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 21,
@@ -702,7 +756,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 22,
@@ -716,7 +772,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 23,
@@ -729,7 +787,9 @@
                 "esc"
               ]
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 24,
@@ -743,7 +803,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 25,
@@ -755,7 +817,9 @@
               "x": 420,
               "y": 310
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 26,
@@ -769,7 +833,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 27,
@@ -781,7 +847,9 @@
               "x": 180,
               "y": 210
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 28,
@@ -793,7 +861,9 @@
               "x": 410,
               "y": 310
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 29,
@@ -807,7 +877,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 30,
@@ -819,7 +891,9 @@
               "x": 505,
               "y": 4
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 31,
@@ -833,7 +907,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 32,
@@ -845,7 +921,9 @@
               "x": 280,
               "y": 230
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 33,
@@ -857,7 +935,9 @@
               "x": 420,
               "y": 340
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 34,
@@ -871,7 +951,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 35,
@@ -883,7 +965,9 @@
               "x": 501,
               "y": 4
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 36,
@@ -897,7 +981,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 37,
@@ -909,7 +995,9 @@
               "x": 280,
               "y": 210
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 38,
@@ -921,7 +1009,9 @@
               "x": 410,
               "y": 310
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 39,
@@ -935,7 +1025,9 @@
               "button": "right",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 40,
@@ -947,7 +1039,9 @@
               "x": 503,
               "y": 4
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         }
       ],
       "run": {
@@ -1067,7 +1161,9 @@
           "step": 0,
           "src": "assets/starter-frames/interactive_counter_panel/0000.png",
           "note": "Before the first action.",
-          "actions": []
+          "actions": [],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 1,
@@ -1078,7 +1174,9 @@
               "kind": "type",
               "text": "Dir(\"/Demo/Graphics\");\n"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 2,
@@ -1089,7 +1187,9 @@
               "kind": "type",
               "text": "Type(\"/Demo/Graphics/Callbacks.HC\");\n"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 3,
@@ -1100,7 +1200,9 @@
               "kind": "type",
               "text": "Type(\"/Demo/Graphics/Bounce.HC.Z\");\n"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 4,
@@ -1111,7 +1213,9 @@
               "kind": "type",
               "text": "Type(\"/Demo/Graphics/MouseDemo.HC.Z\");\n"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 5,
@@ -1122,7 +1226,9 @@
               "kind": "type",
               "text": "Find(\"draw_it\",\"/Demo/Graphics/*\");\n"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 6,
@@ -1133,7 +1239,9 @@
               "kind": "type",
               "text": "Type(\"/Demo/Graphics/Box.HC.Z\");\n"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 7,
@@ -1144,7 +1252,9 @@
               "kind": "type",
               "text": "I64 CPCount=0; Bool CPDown=FALSE;\nU0 CPDraw(CTask *t,CDC *dc) { I64 x=ms.pos.x-t->pix_left,y=ms.pos.y-t->pix_top; Bool down=ms.lb; if (down && !CPDown) { if (y>=160 && y<210) { if (x>=80 && x<200) CPCount++; else if (x>=250 && x<370) CPCount--; else if (x>=420 && x<540) CPCount=0; } } CPDown=down; dc->color=LTGRAY; GrRect(dc,50,65,520,195); dc->color=BLACK; GrPrint(dc,80,85,\"LIVE COUNTER - LEFT CLICK A BUTTON\"); GrPrint(dc,80,120,\"COUNT=%d\",CPCount); GrRect(dc,80,160,120,50); GrRect(dc,250,160,120,50); GrRect(dc,420,160,120,50); dc->color=WHITE; GrRect(dc,82,162,116,46); GrRect(dc,252,162,116,46); GrRect(dc,422,162,116,46); dc->color=BLACK; GrPrint(dc,132,181,\"+1\"); GrPrint(dc,302,181,\"-1\"); GrPrint(dc,460,181,\"RESET\"); GrPrint(dc,80,235,\"One change per press. Outside clicks do nothing.\"); }\nDocClear; Fs->draw_it=&CPDraw;\n"
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 8,
@@ -1158,7 +1268,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 9,
@@ -1172,7 +1284,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 10,
@@ -1186,7 +1300,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 11,
@@ -1200,7 +1316,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 12,
@@ -1214,7 +1332,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 13,
@@ -1228,7 +1348,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 14,
@@ -1242,7 +1364,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 15,
@@ -1256,7 +1380,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 16,
@@ -1270,7 +1396,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 17,
@@ -1284,7 +1412,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 18,
@@ -1298,7 +1428,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 19,
@@ -1312,7 +1444,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 20,
@@ -1326,7 +1460,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 21,
@@ -1340,7 +1476,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 22,
@@ -1354,7 +1492,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 23,
@@ -1368,7 +1508,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 24,
@@ -1382,7 +1524,9 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 25,
@@ -1396,13 +1540,17 @@
               "button": "left",
               "clicks": 1
             }
-          ]
+          ],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 26,
           "src": "assets/starter-frames/interactive_counter_panel/0026.png",
           "note": "The live interactive panel remains active and visible at **COUNT=2**. Verified +1, -1, RESET, and outside-click behavior through actual mouse clicks.",
-          "actions": []
+          "actions": [],
+          "requested_calls": [],
+          "input_errors": []
         }
       ],
       "run": {
@@ -1626,14 +1774,14 @@
       "result": {
         "task_id": "tictactoe_sprite",
         "title": "Add a sprite to Tic-Tac-Toe",
-        "status": "error",
-        "steps": 24,
-        "elapsed_seconds": 158.807,
+        "status": "budget_exhausted",
+        "steps": 100,
+        "elapsed_seconds": 769.231,
         "usage": {
-          "input_tokens": 48551,
-          "output_tokens": 2713,
-          "total_tokens": 51264,
-          "estimated_cost_usd": 0.12176580000000001
+          "input_tokens": 316463,
+          "output_tokens": 11046,
+          "total_tokens": 327509,
+          "estimated_cost_usd": 0.7408476000000004
         },
         "artifact_dir": "tictactoe_sprite",
         "final_screenshot": "tictactoe_sprite/final.png",
@@ -1652,17 +1800,19 @@
           "max_input_actions": 800
         },
         "task_fingerprint": "c0a1a60fa14155a76590d14d88ee35133fe4a00bf5638fce33d8574cc9400fe1",
-        "setup_seconds": 1.3671287809993373,
-        "input_actions": 27,
-        "observations": 24,
-        "error": "CuaProtocolError: Computer scroll amount must be an integer within -2400..2400 pixels"
+        "setup_seconds": 1.3668855690048076,
+        "input_actions": 142,
+        "observations": 101,
+        "budget_reason": "Cua model call budget exhausted"
       },
       "frames": [
         {
           "step": 0,
           "src": "assets/starter-frames/tictactoe_sprite/0000.png",
           "note": "Before the first action.",
-          "actions": []
+          "actions": [],
+          "requested_calls": [],
+          "input_errors": []
         },
         {
           "step": 1,
@@ -1673,7 +1823,15 @@
               "kind": "type",
               "text": "Type(\"::/Demo/Games/TicTacToe.HC\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_q9BYjqyCBhPSCufwF8kWhjl3",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Type(\\\"::/Demo/Games/TicTacToe.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 2,
@@ -1682,15 +1840,33 @@
           "actions": [
             {
               "kind": "move",
-              "x": 580,
-              "y": 155
+              "x": 574,
+              "y": 193
             },
             {
               "kind": "scroll",
               "direction": "up",
-              "amount": 4
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 8
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_Iv9sc1vfdXihZ95JZ3qFeDXd",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":574,\"y\":193,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-384,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 3,
@@ -1698,13 +1874,29 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "home"
-              ]
+              "kind": "move",
+              "x": 570,
+              "y": 182
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 15
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_oDv4NtljlZGMsVswsLcEoBbF",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":570,\"y\":182,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-280,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 4,
@@ -1714,10 +1906,20 @@
             {
               "kind": "key",
               "keys": [
-                "escape"
+                "ctrl",
+                "alt",
+                "c"
               ]
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_PuedEsxroy8mwWMTLusCNK3m",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"c\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 5,
@@ -1728,7 +1930,15 @@
               "kind": "type",
               "text": "Type(\"::/Demo/Games/TicTacToe.HC\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_2Tqpgs1QOzqxKMGTIn5Qw68u",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Type(\\\"::/Demo/Games/TicTacToe.HC\\\");\\n\",\"keys\": [],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 6,
@@ -1736,12 +1946,29 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
+              "kind": "move",
+              "x": 578,
+              "y": 188
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 15
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_zU0mezm2XwsTf5HRkLcE2KAO",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":578,\"y\":188,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-280,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 7,
@@ -1750,15 +1977,28 @@
           "actions": [
             {
               "kind": "move",
-              "x": 580,
-              "y": 151
+              "x": 578,
+              "y": 188
             },
             {
               "kind": "scroll",
               "direction": "up",
-              "amount": 6
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 13
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_N8uFxwyV2hoD72AZLIgEuP6i",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":578,\"y\":188,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-260,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 8,
@@ -1769,10 +2009,19 @@
               "kind": "key",
               "keys": [
                 "ctrl",
-                "home"
+                "alt",
+                "c"
               ]
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_FFxmBg2YlQVjb1YflTAu18GI",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"c\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 9,
@@ -1780,14 +2029,18 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "alt",
-                "c"
-              ]
+              "kind": "type",
+              "text": "Dir(\"B:/\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_R9wWfrv4LuU2KjaZPv0UZ6ty",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"B:/\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 10,
@@ -1795,12 +2048,18 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "esc"
-              ]
+              "kind": "type",
+              "text": "DirMk(\"B:/Home\"); Copy(\"::/Demo/Games/TicTacToe.HC\",\"B:/Home/RobotTicTacToe.HC\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_rMERVubXmR5ds8oBsADjGC2X",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"DirMk(\\\"B:/Home\\\"); Copy(\\\"::/Demo/Games/TicTacToe.HC\\\",\\\"B:/Home/RobotTicTacToe.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 11,
@@ -1809,9 +2068,17 @@
           "actions": [
             {
               "kind": "type",
-              "text": "DirMk(\"B:/Home\"); Copy(\"::/Demo/Games/TicTacToe.HC\",\"B:/Home/RobotTicTacToe.HC\"); Ed(\"B:/Home/RobotTicTacToe.HC\");\n"
+              "text": "Ed(\"B:/Home/RobotTicTacToe.HC\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_0RDXiwNnnOmNa7IUlLk6wnEv",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Home/RobotTicTacToe.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 12,
@@ -1821,11 +2088,19 @@
             {
               "kind": "key",
               "keys": [
-                "ctrl",
-                "q"
+                "shift",
+                "esc"
               ]
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_9uKThEm1tIx3lR0Mj49RfO19",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 13,
@@ -1833,12 +2108,18 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "escape"
-              ]
+              "kind": "type",
+              "text": "Dir(\"B:/\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_rF1AgoegKf7k1sFNrIc8jYNH",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"B:/\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 14,
@@ -1847,63 +2128,21 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Ed(\"B:/Home/RobotTicTacToe.HC\");\n"
+              "text": "Dir(\"B:/Home/*\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_mjTAjdvYAwtp5MT3pbgE6i0a",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"B:/Home/*\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 15,
           "src": "assets/starter-frames/tictactoe_sprite/0015.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "escape"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 16,
-          "src": "assets/starter-frames/tictactoe_sprite/0016.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 17,
-          "src": "assets/starter-frames/tictactoe_sprite/0017.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Ed(\"::/Demo/Games/TicTacToe.HC\");\n"
-            }
-          ]
-        },
-        {
-          "step": 18,
-          "src": "assets/starter-frames/tictactoe_sprite/0018.png",
-          "note": "I\u2019ll keep the bundled game untouched and work from a copy on B:. I\u2019m checking the game and native sprite drawing interfaces before making the change.\n",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "esc"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 19,
-          "src": "assets/starter-frames/tictactoe_sprite/0019.png",
           "note": "",
           "actions": [
             {
@@ -1914,39 +2153,95 @@
                 "c"
               ]
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_hoTTlvl4MXuCzSvVhKamROHY",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"c\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
-          "step": 20,
-          "src": "assets/starter-frames/tictactoe_sprite/0020.png",
+          "step": 16,
+          "src": "assets/starter-frames/tictactoe_sprite/0016.png",
           "note": "",
           "actions": [
             {
               "kind": "type",
-              "text": "DocClear; Type(\"::/Demo/Games/TicTacToe.HC\");\n"
+              "text": "Dir(\"::/Demo/Games/*Tic*\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_O7nOSQAdxRsWG4G8SSORb2Rk",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"::/Demo/Games/*Tic*\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
-          "step": 21,
-          "src": "assets/starter-frames/tictactoe_sprite/0021.png",
+          "step": 17,
+          "src": "assets/starter-frames/tictactoe_sprite/0017.png",
           "note": "",
           "actions": [
             {
-              "kind": "move",
-              "x": 594,
-              "y": 186
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 4
+              "kind": "type",
+              "text": "Copy(\"::/Demo/Games/TicTacToe.HC\",\"B:/Home/RobotTicTacToe.HC\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_ZlevnyFc07J1kq8gNzk8I5Vn",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Copy(\\\"::/Demo/Games/TicTacToe.HC\\\",\\\"B:/Home/RobotTicTacToe.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
-          "step": 22,
-          "src": "assets/starter-frames/tictactoe_sprite/0022.png",
+          "step": 18,
+          "src": "assets/starter-frames/tictactoe_sprite/0018.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Copy(\"::/Demo/Games/TicTacToe.HC.Z\",\"B:/Home/RobotTicTacToe.HC.Z\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_eR2Ff4EnlGBMIPiQgSuqQBtC",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Copy(\\\"::/Demo/Games/TicTacToe.HC.Z\\\",\\\"B:/Home/RobotTicTacToe.HC.Z\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 19,
+          "src": "assets/starter-frames/tictactoe_sprite/0019.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Ed(\"B:/Home/RobotTicTacToe.HC.Z\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_2AttEoJ32EmFyQz63PuW1f7V",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Home/RobotTicTacToe.HC.Z\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 20,
+          "src": "assets/starter-frames/tictactoe_sprite/0020.png",
           "note": "",
           "actions": [
             {
@@ -1956,7 +2251,55 @@
                 "home"
               ]
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_lptu1QiIGA9H8pqP4kUUNPCu",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"home\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 21,
+          "src": "assets/starter-frames/tictactoe_sprite/0021.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_VZnlpmJFjqWDUXWIhIT7P11S",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 22,
+          "src": "assets/starter-frames/tictactoe_sprite/0022.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "U8 *src=FileRead(\"::/Demo/Games/TicTacToe.HC.Z\"); FileWrite(\"B:/Home/RobotTicTacToe.HC\",src,StrLen(src)); Free(src);\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_vEzbXWa908qouQkdROV90QlR",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"U8 *src=FileRead(\\\"::/Demo/Games/TicTacToe.HC.Z\\\"); FileWrite(\\\"B:/Home/RobotTicTacToe.HC\\\",src,StrLen(src)); Free(src);\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 23,
@@ -1964,30 +2307,1786 @@
           "note": "",
           "actions": [
             {
-              "kind": "move",
-              "x": 570,
-              "y": 144
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 8
+              "kind": "type",
+              "text": "Ed(\"B:/Home/RobotTicTacToe.HC\");\n"
             }
-          ]
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_McLWW2wToBhCBSYL4xocM2uq",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Home/RobotTicTacToe.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         },
         {
           "step": 24,
           "src": "assets/starter-frames/tictactoe_sprite/0024.png",
           "note": "",
-          "actions": []
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "end"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_poVUuOHKHK7LsVXUrMQAhAiE",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"end\"] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 25,
+          "src": "assets/starter-frames/tictactoe_sprite/0025.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 583,
+              "y": 405
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 5
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_icbpSaPlg7KjpSTned6FtppD",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":583,\"y\":405,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":360,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 26,
+          "src": "assets/starter-frames/tictactoe_sprite/0026.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 580,
+              "y": 410
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 8
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_N2hAfmJYSroOJqqekIMovYQx",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":580,\"y\":410,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":224,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 27,
+          "src": "assets/starter-frames/tictactoe_sprite/0027.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 588,
+              "y": 94
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 10
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_Xl7rz1wu0QwmrkD5knWWknHT",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":588,\"y\":94,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-720,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 28,
+          "src": "assets/starter-frames/tictactoe_sprite/0028.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_WZiPT0GpRBGjG9xDntMq0oOA",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 29,
+          "src": "assets/starter-frames/tictactoe_sprite/0029.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Dir(\"::/Kernel/Gr\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_lM3mANYMYHfzNqtMGSoqVag1",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"::/Kernel/Gr\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 30,
+          "src": "assets/starter-frames/tictactoe_sprite/0030.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Find(\"SPT_BITMAP\",\"::/\",0);\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_Fg0fsv6syQvm7D8pehUzQWcM",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Find(\\\"SPT_BITMAP\\\",\\\"::/\\\",0);\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 31,
+          "src": "assets/starter-frames/tictactoe_sprite/0031.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Dir(\"::/Adam/Gr\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_wwaiLuEOMu2klZaCsiRfN14Y",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"::/Adam/Gr\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 32,
+          "src": "assets/starter-frames/tictactoe_sprite/0032.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Ed(\"::/Adam/Gr/Gr.HH\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_JaZ9G6xX4cM1R3DmaYuyYscX",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"::/Adam/Gr/Gr.HH\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 33,
+          "src": "assets/starter-frames/tictactoe_sprite/0033.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 598,
+              "y": 426
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 1
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_y8YPO8HOnvipOUYxVegyxZVf",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":598,\"y\":426,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":322,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 34,
+          "src": "assets/starter-frames/tictactoe_sprite/0034.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "shift",
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_kST5TQRjBO3U2TzLbsCXZw64",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 35,
+          "src": "assets/starter-frames/tictactoe_sprite/0035.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Find(\"SPT_RECT\",\"::/Adam/Gr/*\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_0cuhBVdEQoI0NMLae9iqsslO",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Find(\\\"SPT_RECT\\\",\\\"::/Adam/Gr/*\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 36,
+          "src": "assets/starter-frames/tictactoe_sprite/0036.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_NEpGv3bThAHX4JqiP7kStgq1",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 37,
+          "src": "assets/starter-frames/tictactoe_sprite/0037.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_c3nfDhYmyjMmsaAUAIfOuHxy",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 38,
+          "src": "assets/starter-frames/tictactoe_sprite/0038.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "alt",
+                "c"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_jrIphkZ56j592SXiCjBsv42m",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"c\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 39,
+          "src": "assets/starter-frames/tictactoe_sprite/0039.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "MkDir(\"B:/Home\");\nU8 *src=FileRead(\"::/Demo/Games/TicTacToe.HC\"); FileWrite(\"B:/Home/RobotTicTacToe.HC\",src,StrLen(src)); Free(src);\nEd(\"B:/Home/RobotTicTacToe.HC\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_PPoRataGty67mhXy78grvxdp",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"MkDir(\\\"B:/Home\\\");\\nU8 *src=FileRead(\\\"::/Demo/Games/TicTacToe.HC\\\"); FileWrite(\\\"B:/Home/RobotTicTacToe.HC\\\",src,StrLen(src)); Free(src);\\nEd(\\\"B:/Home/RobotTicTacToe.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 40,
+          "src": "assets/starter-frames/tictactoe_sprite/0040.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 592,
+              "y": 371
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 9
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_wxO1XGNT1iuzSJRBBhzP3eB9",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":592,\"y\":371,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":232,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 41,
+          "src": "assets/starter-frames/tictactoe_sprite/0041.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 592,
+              "y": 371
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 7
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_kCOetl01PcgR35FzmYYusB5E",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":592,\"y\":371,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":216,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 42,
+          "src": "assets/starter-frames/tictactoe_sprite/0042.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 592,
+              "y": 371
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 13
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_IEoudADR5GbabhRNrjpVRTid",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":592,\"y\":371,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":104,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 43,
+          "src": "assets/starter-frames/tictactoe_sprite/0043.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 590,
+              "y": 150
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 20
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 10
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_hHrQbIGk2saSBdBDh6aQI4dq",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":590,\"y\":150,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-2000,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 44,
+          "src": "assets/starter-frames/tictactoe_sprite/0044.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_DeVE5br7CTQ1YYyXOQbHxuvT",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 45,
+          "src": "assets/starter-frames/tictactoe_sprite/0045.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Type(\"::/Adam/Gr/GrSprite.HH\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_F8C8E8IT11PsXmQqEw9FiiL5",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Type(\\\"::/Adam/Gr/GrSprite.HH\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 46,
+          "src": "assets/starter-frames/tictactoe_sprite/0046.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Dir(\"::/Adam/Gr\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_JRryQHByUhfKeh1vQYhW2i3J",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"::/Adam/Gr\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 47,
+          "src": "assets/starter-frames/tictactoe_sprite/0047.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Ed(\"::/Adam/Gr/SpriteMain.HC\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_0lC4SZRl144LN3JCnsBcuSiJ",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"::/Adam/Gr/SpriteMain.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 48,
+          "src": "assets/starter-frames/tictactoe_sprite/0048.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_QbNUz0LzKjsmITMdtCGO6kuO",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 49,
+          "src": "assets/starter-frames/tictactoe_sprite/0049.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Ed(\"::/Adam/Gr/SpriteBitMap.HC\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_brV5Yprgzrgtfzh6XMw3HsKa",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"::/Adam/Gr/SpriteBitMap.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 50,
+          "src": "assets/starter-frames/tictactoe_sprite/0050.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_zqnE4fCGJoKaDv5n0MLpty5Z",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 51,
+          "src": "assets/starter-frames/tictactoe_sprite/0051.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Ed(\"::/Kernel/KernelA.HH\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_qmwGvlIF74Tm2jMWcXUhA6TU",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"::/Kernel/KernelA.HH\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 52,
+          "src": "assets/starter-frames/tictactoe_sprite/0052.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "f"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_3yBPEgnFTezAS4qk3HPrmGhJ",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"f\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 53,
+          "src": "assets/starter-frames/tictactoe_sprite/0053.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "SPT_RECT"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_N65buDfMguMSqoUMJXMkfb9N",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"SPT_RECT\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 54,
+          "src": "assets/starter-frames/tictactoe_sprite/0054.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_ZwtPDrnxab9IUfywQiUYDcoC",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 55,
+          "src": "assets/starter-frames/tictactoe_sprite/0055.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_DDOC758P5CkjAYgEMNRdeqtb",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 56,
+          "src": "assets/starter-frames/tictactoe_sprite/0056.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "f3"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_TCp14EYR5KVk95WjqemDM7Y9",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"f3\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 57,
+          "src": "assets/starter-frames/tictactoe_sprite/0057.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "alt",
+                "c"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_jWgtpysXVCkfPENGn0S6XQSG",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"c\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 58,
+          "src": "assets/starter-frames/tictactoe_sprite/0058.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_k18MZxs2ZeuWkkbqlJXIjINQ",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 59,
+          "src": "assets/starter-frames/tictactoe_sprite/0059.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "shift",
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_mhJuVNnlzMTw7X26GfFy7NOQ",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 60,
+          "src": "assets/starter-frames/tictactoe_sprite/0060.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 452,
+              "y": 11,
+              "button": "left",
+              "clicks": 2
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_NaWPh5Jq6w3KGyprSoSR0WPU",
+              "name": "computer",
+              "arguments": "{\"action\":\"double_click\",\"x\":452,\"y\":11,\"text\":\"\",\"keys\":[], \"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 61,
+          "src": "assets/starter-frames/tictactoe_sprite/0061.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "MkDir(\"B:/Home\");\nCopy(\"::/Demo/Games/TicTacToe.HC.Z\",\"B:/Home/RobotTicTacToe.HC.Z\");\nEd(\"B:/Home/RobotTicTacToe.HC.Z\");\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_oS8qjHtXkUODFljgsjCOP920",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"MkDir(\\\"B:/Home\\\");\\nCopy(\\\"::/Demo/Games/TicTacToe.HC.Z\\\",\\\"B:/Home/RobotTicTacToe.HC.Z\\\");\\nEd(\\\"B:/Home/RobotTicTacToe.HC.Z\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 62,
+          "src": "assets/starter-frames/tictactoe_sprite/0062.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "m"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_blvqOr2HJlqOwC82W5T7bpq2",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"m\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 63,
+          "src": "assets/starter-frames/tictactoe_sprite/0063.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "alt",
+                "c"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_4CaVdOXa1ZeIad91dOqLKRz0",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"c\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 64,
+          "src": "assets/starter-frames/tictactoe_sprite/0064.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 454,
+              "y": 12,
+              "button": "left",
+              "clicks": 2
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_2OLmDV8vtoOc5BpROQXCkVJV",
+              "name": "computer",
+              "arguments": "{\"action\":\"double_click\",\"x\":454,\"y\":12,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 65,
+          "src": "assets/starter-frames/tictactoe_sprite/0065.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_V0QCwuxs447iKcc0kgi7cnHV",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 66,
+          "src": "assets/starter-frames/tictactoe_sprite/0066.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 325,
+              "y": 260
+            },
+            {
+              "kind": "cua_mouse_button",
+              "button": "left",
+              "down": true
+            },
+            {
+              "kind": "move",
+              "x": 2,
+              "y": 260
+            },
+            {
+              "kind": "cua_mouse_button",
+              "button": "left",
+              "down": false
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_lcqisiSGoAKyLZj5uzONhoOJ",
+              "name": "computer",
+              "arguments": "{\"action\":\"drag\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":325,\"start_y\":260,\"end_x\":2,\"end_y\":260,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 67,
+          "src": "assets/starter-frames/tictactoe_sprite/0067.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 450,
+              "y": 278,
+              "button": "left",
+              "clicks": 1
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_XU3UlDCZ6xrBSaYTq49QzSDJ",
+              "name": "computer",
+              "arguments": "{\"action\":\"click\",\"x\":450,\"y\":278,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 68,
+          "src": "assets/starter-frames/tictactoe_sprite/0068.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "m"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_mPMeMwjHOVPSTCGjMtAMo71x",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"m\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 69,
+          "src": "assets/starter-frames/tictactoe_sprite/0069.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_LJkZu4RvQxFAxlTrbcNkBDkK",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 70,
+          "src": "assets/starter-frames/tictactoe_sprite/0070.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "alt",
+                "c"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_R0uo2joma3yoP5XCLlAV5QJf",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"c\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 71,
+          "src": "assets/starter-frames/tictactoe_sprite/0071.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "alt",
+                "m"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_b7tVYtwwffbq9gV66vqkGI98",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"m\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 72,
+          "src": "assets/starter-frames/tictactoe_sprite/0072.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "WinMax;\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_zSeNah1fGuPThegjuGw23tNO",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"WinMax;\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 73,
+          "src": "assets/starter-frames/tictactoe_sprite/0073.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 469,
+              "y": 12,
+              "button": "right",
+              "clicks": 1
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_fDwgZlRCYV6t5J7xhuYndR6l",
+              "name": "computer",
+              "arguments": "{\"action\":\"right_click\",\"x\":469,\"y\":12,\"text\":\"\",\"keys\":[], \"scroll_x\":0,\"scroll_y\":0,\"button\":\"right\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 74,
+          "src": "assets/starter-frames/tictactoe_sprite/0074.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 325,
+              "y": 220
+            },
+            {
+              "kind": "cua_mouse_button",
+              "button": "left",
+              "down": true
+            },
+            {
+              "kind": "move",
+              "x": 1,
+              "y": 220
+            },
+            {
+              "kind": "cua_mouse_button",
+              "button": "left",
+              "down": false
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_s0fRFZJ8g2n6lFwDpKWtQYlg",
+              "name": "computer",
+              "arguments": "{\"action\":\"drag\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":325,\"start_y\":220,\"end_x\":1,\"end_y\":220,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 75,
+          "src": "assets/starter-frames/tictactoe_sprite/0075.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 450,
+              "y": 344,
+              "button": "left",
+              "clicks": 1
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_WiRtrDIjCojbRATHhbbe2Wf5",
+              "name": "computer",
+              "arguments": "{\"action\":\"click\",\"x\":450,\"y\":344,\"text\":\"\" ,\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 76,
+          "src": "assets/starter-frames/tictactoe_sprite/0076.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "WinHorz(0,79); WinVert(1,58);\n"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_lbQ4oqmkDPuTwiCYupSKRkh2",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"WinHorz(0,79); WinVert(1,58);\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 77,
+          "src": "assets/starter-frames/tictactoe_sprite/0077.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_xP1JfZ319PqvyO60sM8JMKys",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 78,
+          "src": "assets/starter-frames/tictactoe_sprite/0078.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "WinHorz(0,79); WinVert(1,58);"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_ftIspnaBsPBHWp2nvbabfv4j",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"WinHorz(0,79); WinVert(1,58);\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 79,
+          "src": "assets/starter-frames/tictactoe_sprite/0079.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_pGlHThNdMgZkrqaFpgb22ipC",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 80,
+          "src": "assets/starter-frames/tictactoe_sprite/0080.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Find(\"SPT_RECT\",\"::/Kernel/KernelA.HH\");"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_NaXw7Vex9R9VRuCMGk9pGTk7",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Find(\\\"SPT_RECT\\\",\\\"::/Kernel/KernelA.HH\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 81,
+          "src": "assets/starter-frames/tictactoe_sprite/0081.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_YsxYlZaBrsyZIsJmSYzVeser",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 82,
+          "src": "assets/starter-frames/tictactoe_sprite/0082.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Find(\"SPT_RECT\",\"::/Kernel/*\");"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_p387JOVhpRItVGTKau0DUSg6",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Find(\\\"SPT_RECT\\\",\\\"::/Kernel/*\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 83,
+          "src": "assets/starter-frames/tictactoe_sprite/0083.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Ed(\"::/Kernel/KernelB.HH\");"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_OHS7wgiUkMEcl3HCYUGANcVC",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"::/Kernel/KernelB.HH\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 84,
+          "src": "assets/starter-frames/tictactoe_sprite/0084.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_NOyh3nqI5HZ6tZeknuOj5fkr",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 85,
+          "src": "assets/starter-frames/tictactoe_sprite/0085.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "shift",
+                "esc"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_sDfLsNnVgW2b6FUzUdyUYsF0",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 86,
+          "src": "assets/starter-frames/tictactoe_sprite/0086.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "U8 *s=FileRead(\"::/Kernel/KernelB.HH\"); U8 *p=StrFind(\"CSpritePtPt\",s); if(p) Print(\"%.800s\",p-100);"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_gekCcaBxoD4zAL9cPVbL7iyq",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"U8 *s=FileRead(\\\"::/Kernel/KernelB.HH\\\"); U8 *p=StrFind(\\\"CSpritePtPt\\\",s); if(p) Print(\\\"%.800s\\\",p-100);\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 87,
+          "src": "assets/starter-frames/tictactoe_sprite/0087.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_adKMt3cXRAIY8ENCWQVAG6lN",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 88,
+          "src": "assets/starter-frames/tictactoe_sprite/0088.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "s=FileRead(\"::/Kernel/KernelA.HH\"); p=StrFind(\"CSpritePtPt\",s); if(p) Print(\"%.1000s\",p-100);"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_SpaZHttGupLK86PEUjZFGXrU",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"s=FileRead(\\\"::/Kernel/KernelA.HH\\\"); p=StrFind(\\\"CSpritePtPt\\\",s); if(p) Print(\\\"%.1000s\\\",p-100);\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 89,
+          "src": "assets/starter-frames/tictactoe_sprite/0089.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Dir(\"::/Adam/Gr\");"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_eKfqvCySABKrygQpsLE9lYJP",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"::/Adam/Gr\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 90,
+          "src": "assets/starter-frames/tictactoe_sprite/0090.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_yc9zPpoa9XXNxFxbTdWGgzrO",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 91,
+          "src": "assets/starter-frames/tictactoe_sprite/0091.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "s=FileRead(\"::/Adam/Gr/SpriteMain.HC\"); p=StrFind(\"SPT_RECT\",s); if(p) Print(\"%.1200s\",p-300);"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_mkWk6Uh2EWMSSQljX726XGCK",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"s=FileRead(\\\"::/Adam/Gr/SpriteMain.HC\\\"); p=StrFind(\\\"SPT_RECT\\\",s); if(p) Print(\\\"%.1200s\\\",p-300);\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 92,
+          "src": "assets/starter-frames/tictactoe_sprite/0092.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_9rrzmsgdTPTNxDHj4CrZei3P",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 93,
+          "src": "assets/starter-frames/tictactoe_sprite/0093.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "{s=FileRead(\"::/Adam/Gr/SpriteCode.HC\"); p=StrFind(\"SPT_RECT\",s); if(p) Print(\"%s\",p-200); }"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_p6BLNXrpDSmUoFrj64ip9l6l",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"{s=FileRead(\\\"::/Adam/Gr/SpriteCode.HC\\\"); p=StrFind(\\\"SPT_RECT\\\",s); if(p) Print(\\\"%s\\\",p-200); }\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 94,
+          "src": "assets/starter-frames/tictactoe_sprite/0094.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_FBmFot0rKKZ1SxKVsKYa8Mae",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 95,
+          "src": "assets/starter-frames/tictactoe_sprite/0095.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Print(\"len=%d rect=%d\\n\",StrLen(s),SPT_RECT);"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_BeN2iprxXaTKDkqX22CAleiF",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Print(\\\"len=%d rect=%d\\\\n\\\",StrLen(s),SPT_RECT);\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 96,
+          "src": "assets/starter-frames/tictactoe_sprite/0096.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_gOWn1rqtntfsybbcDc0pHM1X",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 97,
+          "src": "assets/starter-frames/tictactoe_sprite/0097.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "{s=FileRead(\"::/Kernel/KernelA.HH\");for(p=s;*p;p++)if(!StrNCmp(p,\"SPT_RECT\",8)){Print(\"%.800s\",p-200);break;}}"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_CUaNUn7UCSnvUk3jxToScjyy",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"{s=FileRead(\\\"::/Kernel/KernelA.HH\\\");for(p=s;*p;p++)if(!StrNCmp(p,\\\"SPT_RECT\\\",8)){Print(\\\"%.800s\\\",p-200);break;}}\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 98,
+          "src": "assets/starter-frames/tictactoe_sprite/0098.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_6gKA5Xo2kmvWJOaul1gBgNb7",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 99,
+          "src": "assets/starter-frames/tictactoe_sprite/0099.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Dir(\"::/Kernel\");"
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_72G0qY7aIrFOqHpeDY6lqAXG",
+              "name": "computer",
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"::/Kernel\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 100,
+          "src": "assets/starter-frames/tictactoe_sprite/0100.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_tp27xSe7ZNp3Q3TRwU7FWnk6",
+              "name": "computer",
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
         }
       ],
       "run": {
-        "id": "04-cua-sprite",
+        "id": "04-cua-sprite-rerun",
         "provider": "cua",
         "model": "openai/gpt-6.1-sol",
         "cua_version": "0.9.0",
-        "created_at": "2026-10-05T02:30:09.418924+00:00",
+        "created_at": "2026-10-05T11:35:22.021796+00:00",
         "config": {
           "iso": "assets/TempleOS.ISO",
           "baseline": "assets/cli-baseline.qcow2",
@@ -2013,7 +4112,7 @@
         "provenance": {
           "agent_package": "cua-agent",
           "agent_version": "0.9.0",
-          "inference": "upstream ComputerAgent and LiteLLM",
+          "inference": "upstream ComputerAgent with TempleOS input recovery; LiteLLM",
           "agent_loop": "TempleOpenAIComputerUseConfig",
           "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
           "backend": "TempleVM/QMP legacy PC devices",
@@ -2025,6 +4124,10 @@
           "execution_mode": "live_model",
           "telemetry_enabled": false,
           "max_actions_per_response": 4,
+          "computer_protocol_version": 2,
+          "instructions_sha256": "93eb09050a39e0ba82288bf0ebe8c2277fd94264486024d8a6fb11824c6ff205",
+          "scroll_pixels_per_notch": 8,
+          "input_error_handling": "recoverable tool output with screenshot",
           "step_definition": "actual model API attempts; Cua automatic retries disabled",
           "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
         }
@@ -2032,59 +4135,103 @@
       "review": {
         "status": "incomplete",
         "reviewer": "Assistant trajectory review",
-        "review_type": "Independent review of saved actions and screenshots; not an automatic grade",
+        "review_type": "Passive saved-action and screenshot review; not an automatic grade",
         "task_id": "tictactoe_sprite",
-        "reason": "The actual model attempt ended with a CuaProtocolError after 24 calls and 158.807 seconds. It inspected the stock game and attempted a saved copy, but no native robot asset, sprite integration, gameplay demonstration, or saved-game relaunch is established. The final screenshot shows stock source text in TempleOS More view rather than a modified running game. The task requirements were not achieved in this episode.",
-        "episode_error": "CuaProtocolError: Computer scroll amount must be an integer within -2400..2400 pixels",
+        "reason": "The model exhausted all 100 calls after copying and inspecting the stock game. No native robot sprite, DrawX replacement, game launch, required mouse play, or exit-and-relaunch sequence is evidenced. The last calls inspect sprite-related kernel source and list the kernel directory; the final image is a directory listing, not the required game board. The rerun completed without an episode error or recorded input errors.",
         "evidence": [
-          "0001.png and trajectory step 1: Type(\"::/Demo/Games/TicTacToe.HC\") displays the bundled source. Steps 2\u201310 repeatedly navigate its output using scroll, Ctrl+Home, Escape, and Ctrl+Alt+C; no sprite code is typed.",
-          "Trajectory step 11: attempts DirMk(\"B:/Home\"); Copy(\"::/Demo/Games/TicTacToe.HC\",\"B:/Home/RobotTicTacToe.HC\"); Ed(\"B:/Home/RobotTicTacToe.HC\"). 0011.png shows an empty editor at line1/column1/EOF. 0014.png shows the saved-copy editor empty again. This does not establish a successful source copy or game integration.",
-          "0017.png: editing the original bundled game displays the unchanged DrawX line-based X, DrawO, DrawBoard, and TakeTurn source with Undo:000. No robot sprite definition or Sprite3 integration appears.",
-          "0018.png and 0019.png: exiting the original-file editor produces Except:BlkDev:&BlkWrite ... &FileWrite ... &DocWrite ... &DocFileEd. This is consistent with a failed save on the read-only boot drive; the model then returns to the shell.",
-          "Steps 20\u201323 print and navigate the stock source again. 0023.png remains in More view. The saved record for step 24 has actions=[] and executed_actions=[]; result.json reports CuaProtocolError: Computer scroll amount must be an integer within -2400..2400 pixels.",
-          "0024.png and final.png show source text including TakeTurn, CheckWinner, and DoGame rather than a game board or robot art. Across all executed actions there are zero clicks, no native sprite creation commands, no modified-game launch, and no game relaunch."
+          "Step 18 / 0018.png: Copy(\"::/Demo/Games/TicTacToe.HC.Z\",\"B:/Home/RobotTicTacToe.HC.Z\") visibly succeeds (Copying... and ans=1), after exact uncompressed Copy attempts failed.",
+          "Step 19 / 0019.png: the writable copy opens with populated stock game source, unlike the earlier empty target editor in 0011.png.",
+          "Step 22 / 0022.png: FileRead of the stock .HC.Z followed by FileWrite to B:/Home/RobotTicTacToe.HC executes; subsequent editor frames show stock source.",
+          "Steps 39 and 61 / 0039.png and 0061.png: DrawX remains the original two GrLine3 diagonals; DrawO, DrawBoard, and TakeTurn are stock source. No robot asset or sprite integration is visible.",
+          "Step 43 / trajectory.jsonl: a native scroll_y=-2000 pixel request executes as 13 bounded wheel chunks totaling 250 notches. There is no rejected-input record. This does not reproduce the original attempt's unknown rejected payload.",
+          "Step 48 / 0048.png: exiting the boot-drive SpriteMain.HC editor produces a guest BlkDev/BlkWrite exception. Earlier and later frames also contain guest compiler/navigation errors; these are separate from adapter input rejection.",
+          "Step 61 / 0061.png and step 68 / 0068.png: the interface is split between tasks and then a PersonalMenu. Its existing decorative game sprites are stock menu art, not a newly created robot.",
+          "Step 81 / 0081.png: the model has returned to a full-screen shell after the split-window/navigation detour.",
+          "Steps 97-98 / 0097.png and 0098.png: FileRead/StrNCmp/Print inspects sprite-related source; visible output includes Code2Sprite and rect=12. This is API exploration, not sprite construction.",
+          "Steps 99-100 / 0099.png, 0100.png, and final.png: Dir(\"::/Kernel\") produces the kernel directory listing. No game board, robot, or O placement appears.",
+          "All 100 saved executed-action records: there is no native sprite construction or asset write, DrawX replacement, game invocation, or real game click sequence. The five clicks and two drags concern window/menu navigation, not a rendered Tic-Tac-Toe board."
         ],
         "rubric_progress": {
-          "stock_game_inspection": "Observed",
-          "writable_directory_and_saved_copy": "Attempted; directory creation appears in shell output, but target editor is empty and a functioning saved game is not established",
-          "native_32x32_robot_asset": "Not observed",
-          "sprite_art_and_transparency": "Not observed",
-          "original_game_integration": "Not observed; original DrawX remains visible as two GrLine3 calls",
-          "rule_preservation_in_modified_game": "Not established because no modified game runs",
-          "moving_player1_preview": "Not observed",
-          "occupied_square_rejection_and_retained_turn": "Not tested; zero executed clicks",
-          "required_robot_O_robot_placements": "Not tested",
-          "shell_exit_and_saved_game_relaunch": "Not observed; the recorded exits concern source viewers/editors rather than gameplay",
-          "asset_and_source_persistence": "Not established",
-          "required_final_board": "Absent"
+          "saved_game_copy": {
+            "status": "observed",
+            "detail": "Successful writable stock copies are evidenced, including the requested uncompressed B:/Home/RobotTicTacToe.HC path."
+          },
+          "native_robot_asset": {
+            "status": "not_observed",
+            "detail": "No 32x32 robot asset is built, edited, saved, or rendered."
+          },
+          "stock_game_integration": {
+            "status": "not_observed",
+            "detail": "Visible DrawX remains stock; no native sprite API integration is evidenced."
+          },
+          "rule_preservation": {
+            "status": "unverified",
+            "detail": "Stock rules are visible in copied source, but no modified game runs, so preservation in a working submitted version cannot be assessed."
+          },
+          "preview_at_two_empty_squares": {
+            "status": "not_observed"
+          },
+          "required_clicks_and_occupied_rejection": {
+            "status": "not_observed"
+          },
+          "exit_relaunch_persistence": {
+            "status": "not_observed",
+            "detail": "Ctrl-Alt-C actions occur during source/menu exploration, with no prior game launch; they do not establish game exit or relaunch."
+          },
+          "required_final_board": {
+            "status": "not_observed",
+            "detail": "Final screenshot is a kernel directory listing."
+          },
+          "original_game_intact": {
+            "status": "unverified",
+            "detail": "No successful original-game edit is evidenced. The boot drive is read-only, and boot-source save attempts visibly error. The reviewer did not independently read or hash guest files."
+          }
         },
-        "limitations": [
-          "The failed step24 record does not retain cua_output or the raw rejected computer action. The rejected scroll magnitude, direction, and exact payload cannot be determined from these saved artifacts; none is inferred here.",
-          "This episode terminated before the 100-call/900-second budget. It supports an incomplete outcome for this attempt, not a conclusion that the task is impossible or that the model could not recover with further valid actions.",
-          "The empty target editors establish a failed visible copy/edit workflow, but no live guest filesystem probe was performed. The original-editor save failed on the boot drive; an independent before/after content comparison is unavailable for this model episode.",
-          "The harness grade is preserved as manual needs_review with score=null. This assistant annotation does not change the raw grade or assign a numeric score.",
-          "Review was passive: no VM interventions, source/task edits, hints to the model, or additional model calls were made. The separate successful scripted reference is not evidence of model success."
+        "recovery_evidence": [
+          "The compressed source filename is discovered and copied successfully after initial empty-editor/Copy failures.",
+          "The model recovers from the split task/menu layout to a full-screen shell.",
+          "The protocol-2 rerun reaches the unchanged 100-call limit without the prior abrupt adapter error. Zero recorded input errors means recoverable invalid-input handling was not exercised in this trajectory."
         ],
-        "executed_action_counts": {
-          "type": 6,
-          "move": 4,
-          "scroll": 4,
-          "key": 13
-        },
         "episode": {
-          "status": "error",
-          "steps": 24,
-          "elapsed_seconds": 158.807,
-          "input_actions": 27,
-          "observations": 24,
+          "status": "budget_exhausted",
+          "budget_reason": "Cua model call budget exhausted",
+          "model": "openai/gpt-6.1-sol",
+          "response_models": [
+            "gpt-6.1-sol"
+          ],
+          "steps": 100,
+          "elapsed_seconds": 769.231,
+          "input_actions": 142,
+          "observations": 101,
+          "episode_error": null,
+          "recorded_input_errors": 0,
           "budget": {
             "max_steps": 100,
             "timeout_seconds": 900,
             "max_input_actions": 800
-          }
+          },
+          "usage": {
+            "input_tokens": 316463,
+            "output_tokens": 11046,
+            "total_tokens": 327509,
+            "estimated_cost_usd": 0.7408476000000004
+          },
+          "estimated_cost_source": "LiteLLM estimate; not a billed invoice"
         },
+        "adapter_source_commit": "c35682b3b6cbb36e15ea3bee8d64785fd26fb388",
+        "computer_protocol_version": 2,
+        "scroll_pixels_per_notch": 8,
+        "task_fingerprint": "c0a1a60fa14155a76590d14d88ee35133fe4a00bf5638fce33d8574cc9400fe1",
+        "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39",
         "raw_grade_status_preserved": "needs_review",
-        "raw_score_preserved": null
+        "raw_score_preserved": null,
+        "limitations": [
+          "This is an assistant review of the full saved action trajectory and selected relevant screenshots, not an automatic score or independent human review.",
+          "Review was passive: no model calls, hints, guest inputs, task changes, source edits, or baseline modifications were made.",
+          "Guest files were not probed independently; copied-file presence is supported by visible commands/editor output, not a filesystem hash or post-run extraction.",
+          "No gameplay occurred, so preview, native rendering, occupied-square behavior, rule preservation, and persistence could not be validated.",
+          "The raw manual grade remains needs_review with score null. The first attempt and its published artifacts remain unchanged."
+        ]
       }
     }
   ]

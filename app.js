@@ -21,7 +21,7 @@ function stopPlayback() {
 }
 
 function actionText(actions) {
-  if (!actions || !actions.length) return "No input at this step.";
+  if (!actions || !actions.length) return "No executed input at this step.";
   return actions.map(action => {
     if (action.kind === "type") return `Type:\n${action.text}`;
     if (action.kind === "key") return `Press: ${action.keys.join(" + ")}`;
@@ -29,6 +29,39 @@ function actionText(actions) {
     if (action.kind === "click") return `Click: ${action.button || "left"} at (${action.x}, ${action.y})`;
     return JSON.stringify(action, null, 2);
   }).join("\n\n");
+}
+
+function rejectedInputText(frame) {
+  const errors = Array.isArray(frame.input_errors) ? frame.input_errors : [];
+  const requested = Array.isArray(frame.requested_calls) ? frame.requested_calls : [];
+  return errors.filter(error => error && typeof error === "object").map(error => {
+    const call = error.call_id == null ? undefined : requested.find(item => item?.call_id === error.call_id);
+    const argumentsValue = call?.arguments ?? error.arguments;
+    const argumentsText = typeof argumentsValue === "string" ? argumentsValue : argumentsValue == null ? "Not recorded." : JSON.stringify(argumentsValue, null, 2);
+    const message = typeof error.error?.message === "string" ? error.error.message : "Error message not recorded.";
+    return `Call ID: ${error.call_id ?? "Not recorded"}\nError: ${message}\nRequested arguments:\n${argumentsText}`;
+  }).join("\n\n");
+}
+
+function showRejectedInput(frame) {
+  let panel = byId("rejected-input");
+  if (!panel) {
+    const input = byId("step-actions");
+    if (!input) return;
+    panel = document.createElement("details");
+    panel.id = "rejected-input";
+    panel.className = "action-details";
+    const summary = document.createElement("summary");
+    summary.textContent = "Rejected computer input — not executed";
+    const text = document.createElement("pre");
+    text.id = "step-rejected";
+    panel.append(summary, text);
+    input.parentElement.after(panel);
+  }
+  const text = rejectedInputText(frame);
+  panel.hidden = !text;
+  panel.open = Boolean(text);
+  setText("step-rejected", text);
 }
 
 function showFrame(index) {
@@ -44,6 +77,7 @@ function showFrame(index) {
   const note = (frame.note || "").replace(/^```[a-z]*\s*$/gm, "").replace(/`([^`]+)`/g, "$1").trim();
   byId("step-note").textContent = note ? (current === 0 ? note : `Agent note: ${note}`) : "Screen after the input below.";
   byId("step-actions").textContent = actionText(frame.actions);
+  showRejectedInput(frame);
   byId("previous").disabled = current === 0;
   byId("next").disabled = current === frames.length - 1;
 }
@@ -245,7 +279,7 @@ async function loadTasks() {
   setText("run-reviews", Object.entries(reviewCounts).filter(([, number]) => number).map(([status, number]) => `${number} ${status}`).join(", ") || "—");
   const unrecordedCount = dataset.tasks.length - recordedTasks.length;
   const sourceCount = new Set(recordedTasks.map(task => runMetadata(task).id || runMetadata(task).created_at)).size;
-  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : `One recorded attempt per task across ${sourceCount} ${sourceCount === 1 ? "run" : "runs"}.${unrecordedCount ? ` ${unrecordedCount} tasks have no recorded model run.` : ""}${manual.length ? " Trajectory reviews are separate from automatic grading." : ""}`;
+  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : `One featured attempt per task across ${sourceCount} ${sourceCount === 1 ? "run" : "runs"}.${unrecordedCount ? ` ${unrecordedCount} tasks have no recorded model run.` : ""}${manual.length ? " Trajectory reviews are separate from automatic grading." : ""}`;
   const budgets = recordedTasks.map(task => task.result.budget);
   const sharedBudget = budgets.length && budgets.every(budget => budget.max_steps === budgets[0].max_steps && budget.timeout_seconds === budgets[0].timeout_seconds);
   const limits = !budgets.length ? "" : sharedBudget ? `The recorded limit is ${budgets[0].max_steps} model turns and ${budgets[0].timeout_seconds} seconds per task. ` : "The harness enforces the time and turn limits recorded for each task. ";
