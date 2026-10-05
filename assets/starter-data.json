@@ -187,6 +187,53 @@
         "step_definition": "actual model API attempts; Cua automatic retries disabled",
         "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
       }
+    },
+    {
+      "id": "04-cua-sprite",
+      "provider": "cua",
+      "model": "openai/gpt-6.1-sol",
+      "cua_version": "0.9.0",
+      "created_at": "2026-10-05T02:30:09.418924+00:00",
+      "config": {
+        "iso": "assets/TempleOS.ISO",
+        "baseline": "assets/cli-baseline.qcow2",
+        "memory_mb": 512,
+        "max_steps_override": null,
+        "timeout_override": null,
+        "boot_wait": 1.0,
+        "model_options": {
+          "cua_version": "0.9.0",
+          "max_output_tokens": 4096,
+          "api_timeout": 90,
+          "image_history": 2
+        },
+        "baseline_identity": {
+          "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+          "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+          "memory_mb": 512,
+          "extra_args": [],
+          "device_layout_version": 1
+        },
+        "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+      },
+      "provenance": {
+        "agent_package": "cua-agent",
+        "agent_version": "0.9.0",
+        "inference": "upstream ComputerAgent and LiteLLM",
+        "agent_loop": "TempleOpenAIComputerUseConfig",
+        "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+        "backend": "TempleVM/QMP legacy PC devices",
+        "framebuffer": [
+          640,
+          480
+        ],
+        "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+        "execution_mode": "live_model",
+        "telemetry_enabled": false,
+        "max_actions_per_response": 4,
+        "step_definition": "actual model API attempts; Cua automatic retries disabled",
+        "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+      }
     }
   ],
   "tasks": [
@@ -1568,15 +1615,477 @@
     {
       "id": "tictactoe_sprite",
       "title": "Add a sprite to Tic-Tac-Toe",
+      "description": "",
       "category": "Games",
       "difficulty": "hard",
-      "prompt": "Modify TempleOS's bundled game, ::/Demo/Games/TicTacToe.HC. Save your\nversion as B:/Home/RobotTicTacToe.HC on the writable RAM drive and\nleave the original intact. Create B:/Home if needed. Save any separate\nsprite assets on B: too; the boot drive is read-only.\n\nCreate a new 32x32 robot-face sprite: a yellow square face, two black\nsquare eyes, a black horizontal mouth, and transparent space around\nthe face. Use a native TempleOS sprite, created in the sprite editor\nor built in HolyC. Integrate it into the game as player 1's mark and\nmoving placement preview, replacing X. Keep player 2's O, the board,\nturn order, occupied-square checks, and win detection working.\n\nRun your saved game. Move the pointer to two empty squares and observe\nthe robot preview following it. Click the upper-left square to place\na robot. Click that occupied square again, then move the pointer off\nthe board to confirm that the placed mark has not changed. The turn\nmust also stay unchanged. Click the center square to place O, then\nthe upper-right square to place a second robot. Move the pointer off\nthe board and observe the two robots and one O.\n\nExit with Ctrl-Alt-C and launch B:/Home/RobotTicTacToe.HC again from the\nshell. Confirm the board starts empty, then repeat the three valid\nmoves. Stop with robots in the upper-left and upper-right squares and\nO in the center. Use real mouse clicks to play; do not set board values\nin the shell.\n",
       "grader": {
         "type": "manual",
         "rubric": "Review the full source-edit, action, and screenshot trajectory.\nThe saved file must modify the bundled TicTacToe.HC, retaining its\ngame logic. Verify a new native sprite is rendered through TempleOS's\nsprite API, rather than independent drawing over a board screenshot.\nAccept either an editor-created asset or a sprite built in HolyC.\n\nThe sprite must have a 32x32 canvas, a yellow face, two black square\neyes, a black horizontal mouth, and transparency outside the face.\nIt must replace player 1's X both in placed marks and the live pointer\npreview. Compare screenshots at two pointer positions before play\nto verify preview motion. During play, moving the pointer must leave\nplaced marks fixed at their board cells. Player 2 must still use O.\n\nActual clicks must place a robot in the upper-left square, reject a\nsecond click there without advancing the turn, place O in the center,\nand place another robot in the upper-right square. Check that the\noccupied click does not overwrite or add a mark and the next accepted\nmove is still player 2's. Game logic must preserve normal turn order,\noccupied-square rejection, and win detection; inspect the source edit\nfor changes to those rules.\n\nRequire a visible exit to the shell and relaunch of the saved file,\nan empty fresh board, and the repeated three valid moves. The final\nboard must show the two robots and center O. The original bundled\nfile must remain intact. Editing global board values, replacing the\ngame with a mockup, or showing art only in an editor does not satisfy\nthe task. Asset creation, source integration, live preview, placement,\nrejection, and persistence are separately reviewable progress.\n\nA final screenshot alone cannot prove source integration or persistence.\nThis task requires trajectory review and has no automatic pass score.\n"
       },
-      "result": null,
-      "frames": []
+      "prompt": "Modify TempleOS's bundled game, ::/Demo/Games/TicTacToe.HC. Save your\nversion as B:/Home/RobotTicTacToe.HC on the writable RAM drive and\nleave the original intact. Create B:/Home if needed. Save any separate\nsprite assets on B: too; the boot drive is read-only.\n\nCreate a new 32x32 robot-face sprite: a yellow square face, two black\nsquare eyes, a black horizontal mouth, and transparent space around\nthe face. Use a native TempleOS sprite, created in the sprite editor\nor built in HolyC. Integrate it into the game as player 1's mark and\nmoving placement preview, replacing X. Keep player 2's O, the board,\nturn order, occupied-square checks, and win detection working.\n\nRun your saved game. Move the pointer to two empty squares and observe\nthe robot preview following it. Click the upper-left square to place\na robot. Click that occupied square again, then move the pointer off\nthe board to confirm that the placed mark has not changed. The turn\nmust also stay unchanged. Click the center square to place O, then\nthe upper-right square to place a second robot. Move the pointer off\nthe board and observe the two robots and one O.\n\nExit with Ctrl-Alt-C and launch B:/Home/RobotTicTacToe.HC again from the\nshell. Confirm the board starts empty, then repeat the three valid\nmoves. Stop with robots in the upper-left and upper-right squares and\nO in the center. Use real mouse clicks to play; do not set board values\nin the shell.\n",
+      "result": {
+        "task_id": "tictactoe_sprite",
+        "title": "Add a sprite to Tic-Tac-Toe",
+        "status": "error",
+        "steps": 24,
+        "elapsed_seconds": 158.807,
+        "usage": {
+          "input_tokens": 48551,
+          "output_tokens": 2713,
+          "total_tokens": 51264,
+          "estimated_cost_usd": 0.12176580000000001
+        },
+        "artifact_dir": "tictactoe_sprite",
+        "final_screenshot": "tictactoe_sprite/final.png",
+        "grade": {
+          "type": "manual",
+          "status": "needs_review",
+          "score": null,
+          "reason": "Review the full source-edit, action, and screenshot trajectory.\nThe saved file must modify the bundled TicTacToe.HC, retaining its\ngame logic. Verify a new native sprite is rendered through TempleOS's\nsprite API, rather than independent drawing over a board screenshot.\nAccept either an editor-created asset or a sprite built in HolyC.\n\nThe sprite must have a 32x32 canvas, a yellow face, two black square\neyes, a black horizontal mouth, and transparency outside the face.\nIt must replace player 1's X both in placed marks and the live pointer\npreview. Compare screenshots at two pointer positions before play\nto verify preview motion. During play, moving the pointer must leave\nplaced marks fixed at their board cells. Player 2 must still use O.\n\nActual clicks must place a robot in the upper-left square, reject a\nsecond click there without advancing the turn, place O in the center,\nand place another robot in the upper-right square. Check that the\noccupied click does not overwrite or add a mark and the next accepted\nmove is still player 2's. Game logic must preserve normal turn order,\noccupied-square rejection, and win detection; inspect the source edit\nfor changes to those rules.\n\nRequire a visible exit to the shell and relaunch of the saved file,\nan empty fresh board, and the repeated three valid moves. The final\nboard must show the two robots and center O. The original bundled\nfile must remain intact. Editing global board values, replacing the\ngame with a mockup, or showing art only in an editor does not satisfy\nthe task. Asset creation, source integration, live preview, placement,\nrejection, and persistence are separately reviewable progress.\n\nA final screenshot alone cannot prove source integration or persistence.\nThis task requires trajectory review and has no automatic pass score.\n",
+          "evidence": [
+            "Manual review required; no automatic success claim was made."
+          ]
+        },
+        "budget": {
+          "max_steps": 100,
+          "timeout_seconds": 900,
+          "max_input_actions": 800
+        },
+        "task_fingerprint": "c0a1a60fa14155a76590d14d88ee35133fe4a00bf5638fce33d8574cc9400fe1",
+        "setup_seconds": 1.3671287809993373,
+        "input_actions": 27,
+        "observations": 24,
+        "error": "CuaProtocolError: Computer scroll amount must be an integer within -2400..2400 pixels"
+      },
+      "frames": [
+        {
+          "step": 0,
+          "src": "assets/starter-frames/tictactoe_sprite/0000.png",
+          "note": "Before the first action.",
+          "actions": []
+        },
+        {
+          "step": 1,
+          "src": "assets/starter-frames/tictactoe_sprite/0001.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Type(\"::/Demo/Games/TicTacToe.HC\");\n"
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "src": "assets/starter-frames/tictactoe_sprite/0002.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 580,
+              "y": 155
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 4
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "src": "assets/starter-frames/tictactoe_sprite/0003.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "home"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "src": "assets/starter-frames/tictactoe_sprite/0004.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "escape"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "src": "assets/starter-frames/tictactoe_sprite/0005.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Type(\"::/Demo/Games/TicTacToe.HC\");\n"
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "src": "assets/starter-frames/tictactoe_sprite/0006.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "src": "assets/starter-frames/tictactoe_sprite/0007.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 580,
+              "y": 151
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 6
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "src": "assets/starter-frames/tictactoe_sprite/0008.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "home"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "src": "assets/starter-frames/tictactoe_sprite/0009.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "alt",
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "src": "assets/starter-frames/tictactoe_sprite/0010.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "src": "assets/starter-frames/tictactoe_sprite/0011.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "DirMk(\"B:/Home\"); Copy(\"::/Demo/Games/TicTacToe.HC\",\"B:/Home/RobotTicTacToe.HC\"); Ed(\"B:/Home/RobotTicTacToe.HC\");\n"
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "src": "assets/starter-frames/tictactoe_sprite/0012.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "q"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "src": "assets/starter-frames/tictactoe_sprite/0013.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "escape"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "src": "assets/starter-frames/tictactoe_sprite/0014.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Ed(\"B:/Home/RobotTicTacToe.HC\");\n"
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "src": "assets/starter-frames/tictactoe_sprite/0015.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "escape"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "src": "assets/starter-frames/tictactoe_sprite/0016.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "enter"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "src": "assets/starter-frames/tictactoe_sprite/0017.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Ed(\"::/Demo/Games/TicTacToe.HC\");\n"
+            }
+          ]
+        },
+        {
+          "step": 18,
+          "src": "assets/starter-frames/tictactoe_sprite/0018.png",
+          "note": "I\u2019ll keep the bundled game untouched and work from a copy on B:. I\u2019m checking the game and native sprite drawing interfaces before making the change.\n",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 19,
+          "src": "assets/starter-frames/tictactoe_sprite/0019.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "alt",
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 20,
+          "src": "assets/starter-frames/tictactoe_sprite/0020.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "DocClear; Type(\"::/Demo/Games/TicTacToe.HC\");\n"
+            }
+          ]
+        },
+        {
+          "step": 21,
+          "src": "assets/starter-frames/tictactoe_sprite/0021.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 594,
+              "y": 186
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 4
+            }
+          ]
+        },
+        {
+          "step": 22,
+          "src": "assets/starter-frames/tictactoe_sprite/0022.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "ctrl",
+                "home"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 23,
+          "src": "assets/starter-frames/tictactoe_sprite/0023.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 570,
+              "y": 144
+            },
+            {
+              "kind": "scroll",
+              "direction": "up",
+              "amount": 8
+            }
+          ]
+        },
+        {
+          "step": 24,
+          "src": "assets/starter-frames/tictactoe_sprite/0024.png",
+          "note": "",
+          "actions": []
+        }
+      ],
+      "run": {
+        "id": "04-cua-sprite",
+        "provider": "cua",
+        "model": "openai/gpt-6.1-sol",
+        "cua_version": "0.9.0",
+        "created_at": "2026-10-05T02:30:09.418924+00:00",
+        "config": {
+          "iso": "assets/TempleOS.ISO",
+          "baseline": "assets/cli-baseline.qcow2",
+          "memory_mb": 512,
+          "max_steps_override": null,
+          "timeout_override": null,
+          "boot_wait": 1.0,
+          "model_options": {
+            "cua_version": "0.9.0",
+            "max_output_tokens": 4096,
+            "api_timeout": 90,
+            "image_history": 2
+          },
+          "baseline_identity": {
+            "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+            "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+            "memory_mb": 512,
+            "extra_args": [],
+            "device_layout_version": 1
+          },
+          "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+        },
+        "provenance": {
+          "agent_package": "cua-agent",
+          "agent_version": "0.9.0",
+          "inference": "upstream ComputerAgent and LiteLLM",
+          "agent_loop": "TempleOpenAIComputerUseConfig",
+          "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+          "backend": "TempleVM/QMP legacy PC devices",
+          "framebuffer": [
+            640,
+            480
+          ],
+          "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+          "execution_mode": "live_model",
+          "telemetry_enabled": false,
+          "max_actions_per_response": 4,
+          "step_definition": "actual model API attempts; Cua automatic retries disabled",
+          "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+        }
+      },
+      "review": {
+        "status": "incomplete",
+        "reviewer": "Assistant trajectory review",
+        "review_type": "Independent review of saved actions and screenshots; not an automatic grade",
+        "task_id": "tictactoe_sprite",
+        "reason": "The actual model attempt ended with a CuaProtocolError after 24 calls and 158.807 seconds. It inspected the stock game and attempted a saved copy, but no native robot asset, sprite integration, gameplay demonstration, or saved-game relaunch is established. The final screenshot shows stock source text in TempleOS More view rather than a modified running game. The task requirements were not achieved in this episode.",
+        "episode_error": "CuaProtocolError: Computer scroll amount must be an integer within -2400..2400 pixels",
+        "evidence": [
+          "0001.png and trajectory step 1: Type(\"::/Demo/Games/TicTacToe.HC\") displays the bundled source. Steps 2\u201310 repeatedly navigate its output using scroll, Ctrl+Home, Escape, and Ctrl+Alt+C; no sprite code is typed.",
+          "Trajectory step 11: attempts DirMk(\"B:/Home\"); Copy(\"::/Demo/Games/TicTacToe.HC\",\"B:/Home/RobotTicTacToe.HC\"); Ed(\"B:/Home/RobotTicTacToe.HC\"). 0011.png shows an empty editor at line1/column1/EOF. 0014.png shows the saved-copy editor empty again. This does not establish a successful source copy or game integration.",
+          "0017.png: editing the original bundled game displays the unchanged DrawX line-based X, DrawO, DrawBoard, and TakeTurn source with Undo:000. No robot sprite definition or Sprite3 integration appears.",
+          "0018.png and 0019.png: exiting the original-file editor produces Except:BlkDev:&BlkWrite ... &FileWrite ... &DocWrite ... &DocFileEd. This is consistent with a failed save on the read-only boot drive; the model then returns to the shell.",
+          "Steps 20\u201323 print and navigate the stock source again. 0023.png remains in More view. The saved record for step 24 has actions=[] and executed_actions=[]; result.json reports CuaProtocolError: Computer scroll amount must be an integer within -2400..2400 pixels.",
+          "0024.png and final.png show source text including TakeTurn, CheckWinner, and DoGame rather than a game board or robot art. Across all executed actions there are zero clicks, no native sprite creation commands, no modified-game launch, and no game relaunch."
+        ],
+        "rubric_progress": {
+          "stock_game_inspection": "Observed",
+          "writable_directory_and_saved_copy": "Attempted; directory creation appears in shell output, but target editor is empty and a functioning saved game is not established",
+          "native_32x32_robot_asset": "Not observed",
+          "sprite_art_and_transparency": "Not observed",
+          "original_game_integration": "Not observed; original DrawX remains visible as two GrLine3 calls",
+          "rule_preservation_in_modified_game": "Not established because no modified game runs",
+          "moving_player1_preview": "Not observed",
+          "occupied_square_rejection_and_retained_turn": "Not tested; zero executed clicks",
+          "required_robot_O_robot_placements": "Not tested",
+          "shell_exit_and_saved_game_relaunch": "Not observed; the recorded exits concern source viewers/editors rather than gameplay",
+          "asset_and_source_persistence": "Not established",
+          "required_final_board": "Absent"
+        },
+        "limitations": [
+          "The failed step24 record does not retain cua_output or the raw rejected computer action. The rejected scroll magnitude, direction, and exact payload cannot be determined from these saved artifacts; none is inferred here.",
+          "This episode terminated before the 100-call/900-second budget. It supports an incomplete outcome for this attempt, not a conclusion that the task is impossible or that the model could not recover with further valid actions.",
+          "The empty target editors establish a failed visible copy/edit workflow, but no live guest filesystem probe was performed. The original-editor save failed on the boot drive; an independent before/after content comparison is unavailable for this model episode.",
+          "The harness grade is preserved as manual needs_review with score=null. This assistant annotation does not change the raw grade or assign a numeric score.",
+          "Review was passive: no VM interventions, source/task edits, hints to the model, or additional model calls were made. The separate successful scripted reference is not evidence of model success."
+        ],
+        "executed_action_counts": {
+          "type": 6,
+          "move": 4,
+          "scroll": 4,
+          "key": 13
+        },
+        "episode": {
+          "status": "error",
+          "steps": 24,
+          "elapsed_seconds": 158.807,
+          "input_actions": 27,
+          "observations": 24,
+          "budget": {
+            "max_steps": 100,
+            "timeout_seconds": 900,
+            "max_input_actions": 800
+          }
+        },
+        "raw_grade_status_preserved": "needs_review",
+        "raw_score_preserved": null
+      }
     }
   ]
 }

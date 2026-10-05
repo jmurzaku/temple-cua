@@ -1,67 +1,117 @@
 version: 1
 id: tictactoe_sprite
 title: Add a sprite to Tic-Tac-Toe
-category: games
-difficulty: hard
-prompt: |
-  Modify TempleOS's bundled game, ::/Demo/Games/TicTacToe.HC. Save your
+prompt: 'Modify TempleOS''s bundled game, ::/Demo/Games/TicTacToe.HC. Save your
+
   version as B:/Home/RobotTicTacToe.HC on the writable RAM drive and
+
   leave the original intact. Create B:/Home if needed. Save any separate
+
   sprite assets on B: too; the boot drive is read-only.
 
+
   Create a new 32x32 robot-face sprite: a yellow square face, two black
+
   square eyes, a black horizontal mouth, and transparent space around
+
   the face. Use a native TempleOS sprite, created in the sprite editor
-  or built in HolyC. Integrate it into the game as player 1's mark and
-  moving placement preview, replacing X. Keep player 2's O, the board,
+
+  or built in HolyC. Integrate it into the game as player 1''s mark and
+
+  moving placement preview, replacing X. Keep player 2''s O, the board,
+
   turn order, occupied-square checks, and win detection working.
 
+
   Run your saved game. Move the pointer to two empty squares and observe
+
   the robot preview following it. Click the upper-left square to place
+
   a robot. Click that occupied square again, then move the pointer off
+
   the board to confirm that the placed mark has not changed. The turn
+
   must also stay unchanged. Click the center square to place O, then
+
   the upper-right square to place a second robot. Move the pointer off
+
   the board and observe the two robots and one O.
 
+
   Exit with Ctrl-Alt-C and launch B:/Home/RobotTicTacToe.HC again from the
+
   shell. Confirm the board starts empty, then repeat the three valid
+
   moves. Stop with robots in the upper-left and upper-right squares and
+
   O in the center. Use real mouse clicks to play; do not set board values
+
   in the shell.
-max_steps: 100
-timeout_seconds: 900
+
+  '
 grader:
   type: manual
-  rubric: |
-    Review the full source-edit, action, and screenshot trajectory.
+  rubric: 'Review the full source-edit, action, and screenshot trajectory.
+
     The saved file must modify the bundled TicTacToe.HC, retaining its
-    game logic. Verify a new native sprite is rendered through TempleOS's
+
+    game logic. Verify a new native sprite is rendered through TempleOS''s
+
     sprite API, rather than independent drawing over a board screenshot.
+
     Accept either an editor-created asset or a sprite built in HolyC.
 
+
     The sprite must have a 32x32 canvas, a yellow face, two black square
+
     eyes, a black horizontal mouth, and transparency outside the face.
-    It must replace player 1's X both in placed marks and the live pointer
+
+    It must replace player 1''s X both in placed marks and the live pointer
+
     preview. Compare screenshots at two pointer positions before play
+
     to verify preview motion. During play, moving the pointer must leave
+
     placed marks fixed at their board cells. Player 2 must still use O.
 
+
     Actual clicks must place a robot in the upper-left square, reject a
+
     second click there without advancing the turn, place O in the center,
+
     and place another robot in the upper-right square. Check that the
+
     occupied click does not overwrite or add a mark and the next accepted
-    move is still player 2's. Game logic must preserve normal turn order,
+
+    move is still player 2''s. Game logic must preserve normal turn order,
+
     occupied-square rejection, and win detection; inspect the source edit
+
     for changes to those rules.
 
+
     Require a visible exit to the shell and relaunch of the saved file,
+
     an empty fresh board, and the repeated three valid moves. The final
+
     board must show the two robots and center O. The original bundled
+
     file must remain intact. Editing global board values, replacing the
+
     game with a mockup, or showing art only in an editor does not satisfy
+
     the task. Asset creation, source integration, live preview, placement,
+
     rejection, and persistence are separately reviewable progress.
 
+
     A final screenshot alone cannot prove source integration or persistence.
+
     This task requires trajectory review and has no automatic pass score.
+
+    '
+category: games
+difficulty: hard
+max_steps: 100
+timeout_seconds: 900
+setup: []
