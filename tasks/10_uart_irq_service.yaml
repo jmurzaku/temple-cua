@@ -50,8 +50,8 @@ prompt: |
   masks and unmasks IRQ4 to check interrupt dependence, and calls
   BenchStop twice to check cleanup and state restoration. Leave the
   service running for those checks. Printed success markers earn no reward.
-max_steps: 80
-timeout_seconds: 900
+max_steps: 300
+timeout_seconds: 3600
 grader:
   type: uart
   rubric: |

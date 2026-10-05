@@ -31,12 +31,20 @@ Use an exact model ID available to your account. Anthropic uses
 `anthropic/<model-id>` and `ANTHROPIC_API_KEY`. `--baseline` restores a prepared
 snapshot; results, screenshots, and actions go into `runs/`.
 
-The UART task requires a fresh boot and configures COM1:
+The UART task requires a fresh boot and configures COM1. Its default budget
+is 300 model calls and one hour; override these with `--max-steps` and `--timeout`:
 
 ```sh
 uv run temple-cua run --provider cua --model openai/gpt-6.1-sol \
   --task uart_irq_service --output runs/uart
 ```
+
+Budgets count model API attempts, with up to four input actions per response;
+boot and host grading run outside the policy time limit. For context,
+[original OSWorld](https://arxiv.org/html/2404.07972v1#A3.SS1) used 15 interaction
+steps, [OSWorld-Verified evaluations](https://www.anthropic.com/news/claude-sonnet-4-5)
+use 100, and [OSWorld 2.0](https://arxiv.org/html/2606.29537v1#S3.SS1) uses 500.
+Their steps can batch actions; these are not equivalent budgets or scores.
 
 ## Tasks
 

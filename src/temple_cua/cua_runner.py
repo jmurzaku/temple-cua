@@ -30,7 +30,7 @@ from .tasks import Task
 from .vm import TempleVM, VMConfig, VMError, VMInputError
 
 CUA_VERSION = "0.9.0"
-COMPUTER_PROTOCOL_VERSION = 2
+COMPUTER_PROTOCOL_VERSION = 3
 SCROLL_PIXELS_PER_NOTCH = 8
 SCROLL_NOTCHES_PER_ACTION = 20
 UART_HARDWARE_PROFILE = {
@@ -276,28 +276,19 @@ class EpisodeCallback:
         self.started = 0.0
 
     async def on_llm_start(self, messages):
-        # Released Cua's retention callback only removes immediately adjacent
-        # call/output pairs. Parallel action batches separate those items, so
-        # remove whole pairs by call ID first, avoiding orphaned function calls.
+        # Bound image attachments without deleting the actions, results, or
+        # errors the model needs to remember. Cua's built-in image retention
+        # then sees only the retained images and leaves the text-only pairs.
         outputs = [item for item in messages if item.get("type") == "computer_call_output"
                    and isinstance(item.get("output"), dict) and "image_url" in item["output"]]
         keep = outputs[-self.image_history:]
-        removed = {item.get("call_id") for item in outputs[:-self.image_history]}
-        removed.update(item.get("call_id") for item in messages
-                       if item.get("type") == "computer_call_output" and item.get("validation_error")
-                       and isinstance(item.get("output"), dict) and "image_url" not in item["output"])
-        # Every error from the latest turn must reach its first repair inference,
-        # even when a parallel rejected batch exceeds the screenshot limit.
-        recent_errors = {item.get("call_id") for item in (self.current or {}).get("input_errors", [])}
+        omitted = {item.get("call_id") for item in outputs[:-self.image_history]}
         result = []
         initial_images_left = max(0, self.image_history - len(keep))
         for original in messages:
-            if original.get("type") in {"computer_call", "computer_call_output"} and original.get("call_id") in removed:
-                if original.get("call_id") not in recent_errors:
-                    continue
             item = deepcopy(original)
-            if item.get("type") == "computer_call_output" and item.get("call_id") in removed:
-                item["output"].pop("image_url", None)
+            if item.get("type") == "computer_call_output" and item.get("call_id") in omitted:
+                item["output"] = {"type": "text", "text": "Screenshot omitted by image history limit."}
             content = item.get("content")
             if item.get("role") == "user" and isinstance(content, list):
                 parts = []
@@ -694,6 +685,8 @@ def run_cua_suite(tasks: list[Task], config: VMConfig, output: Path, options: Cu
                                "execution_mode": "deterministic_fixture" if options.fixture else "live_model",
                                "telemetry_enabled": False, "max_actions_per_response": 4,
                                "computer_protocol_version": COMPUTER_PROTOCOL_VERSION,
+                               "history_retention": f"all computer call/output pairs; last {options.image_history} screenshots",
+                               "tool_environment": "TempleOS 5.03" if options.model.startswith("openai/") and "computer-use-preview" not in options.model.lower() else "provider-native computer tool; linux transport enum",
                                "instructions_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
                                "scroll_pixels_per_notch": SCROLL_PIXELS_PER_NOTCH,
                                "input_error_handling": "recoverable tool output with screenshot",

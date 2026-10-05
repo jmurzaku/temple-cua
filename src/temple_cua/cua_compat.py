@@ -132,19 +132,23 @@ def _wire_history(messages: list[dict]) -> list[dict]:
                            "call_id": _call_id(item), "arguments": arguments})
         elif kind == "computer_call_output":
             output = item.get("output")
-            if not isinstance(output, dict) or output.get("type") != "input_image":
-                raise CuaProtocolError("Computer output requires an input_image screenshot")
+            if not isinstance(output, dict) or output.get("type") not in {"input_image", "text"}:
+                raise CuaProtocolError("Computer output requires a screenshot or omitted-image text")
             error = item.get("validation_error")
             if error is not None and not isinstance(error, dict):
                 raise CuaProtocolError("Malformed computer validation error in history")
             image_url = output.get("image_url")
-            if image_url is None and error is not None:
+            if output.get("type") == "text":
+                if image_url is not None or not isinstance(output.get("text"), str):
+                    raise CuaProtocolError("Malformed omitted-image computer output")
+                screenshot = "omitted"
+            elif image_url is None and error is not None:
                 screenshot = "omitted"
             elif isinstance(image_url, str) and image_url.startswith("data:image/"):
                 screenshot = "attached"
             else:
                 raise CuaProtocolError("Computer screenshot requires an image data URL")
-            status = {"ok": True, "screenshot": "attached"} if error is None else {
+            status = {"ok": True, "screenshot": screenshot} if error is None else {
                 "ok": False, "error": error, "input_executed": False, "screenshot": screenshot}
             result.append({"type": "function_call_output", "call_id": _call_id(item),
                            "output": json.dumps(status)})
@@ -245,6 +249,20 @@ def register_openai_loop() -> None:
             if type(width) is not int or type(height) is not int or width <= 0 or height <= 0:
                 raise CuaProtocolError("Invalid computer display dimensions")
             usage_hook = kwargs.pop("_on_usage", None)
+            api_start_hook = kwargs.pop("_on_api_start", None)
+
+            async def report_api_start(api_kwargs):
+                # Cua's transport enum has no TempleOS value. Correct the
+                # generated function description before the request is sent.
+                if not native:
+                    for tool in api_kwargs.get("tools") or []:
+                        if tool.get("type") == "function" and tool.get("name") == "computer":
+                            tool["description"] = tool["description"].replace(
+                                "Environment: linux.",
+                                "Environment: TempleOS 5.03. The command line executes HolyC.",
+                            )
+                if api_start_hook is not None:
+                    await api_start_hook(api_kwargs)
 
             async def report_usage(usage):
                 _known_cost(usage)
@@ -253,7 +271,8 @@ def register_openai_loop() -> None:
 
             response = await super().predict_step(
                 messages=messages if native else _wire_history(messages), model=model,
-                tools=tools, computer_handler=computer_handler, _on_usage=report_usage, **kwargs,
+                tools=tools, computer_handler=computer_handler, _on_usage=report_usage,
+                _on_api_start=report_api_start, **kwargs,
             )
             if not native:
                 response["output"] = _cua_output(response.get("output", []), width, height)

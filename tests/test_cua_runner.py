@@ -112,6 +112,9 @@ def test_cua_suite_fixture_provenance_cannot_be_mistaken_for_model_results(upstr
     assert result["provenance"]["execution_mode"] == "deterministic_fixture"
     assert result["provenance"]["agent_version"] == "0.9.0"
     assert result["provenance"]["telemetry_enabled"] is False
+    assert result["provenance"]["computer_protocol_version"] == 3
+    assert result["provenance"]["history_retention"] == "all computer call/output pairs; last 2 screenshots"
+    assert result["provenance"]["tool_environment"] == "TempleOS 5.03"
     assert result["model"] == "deterministic-fixture (no model API)"
     assert (output / "report.html").is_file()
 
@@ -222,8 +225,11 @@ def test_image_history_keeps_matching_call_outputs_for_parallel_batches(tmp_path
         {"type": "computer_call_output", "call_id": "b", "output": {"type": "input_image", "image_url": "after-b"}},
     ]
     result = asyncio.run(callback.on_llm_start(messages))
-    assert [item["call_id"] for item in result if item.get("type") == "computer_call"] == ["b"]
-    assert [item["call_id"] for item in result if item.get("type") == "computer_call_output"] == ["b"]
+    assert [item["call_id"] for item in result if item.get("type") == "computer_call"] == ["a", "b"]
+    outputs = [item for item in result if item.get("type") == "computer_call_output"]
+    assert [item["call_id"] for item in outputs] == ["a", "b"]
+    assert outputs[0]["output"] == {"type": "text", "text": "Screenshot omitted by image history limit."}
+    assert outputs[1]["output"]["image_url"] == "after-b"
     assert result[0]["content"] == [{"type": "input_text", "text": "Task"}]
     assert len(messages[0]["content"]) == 2  # Do not mutate Cua's retained trace.
 
@@ -288,10 +294,12 @@ def test_real_upstream_episode_recovers_model_and_runtime_rejections_without_los
         messages = kwargs["input"]
         calls = {item["call_id"]: item for item in messages if item.get("type") == "function_call"}
         outputs = {item["call_id"]: item for item in messages if item.get("type") == "function_call_output"}
-        assert set(calls) == set(outputs), "History trimming must remove whole call/output pairs"
+        assert set(calls) == set(outputs), "Every retained action requires its matching output"
         assert not any(item.get("type") in {"computer_call", "computer_call_output"} for item in messages)
         for index, item in enumerate(messages):
             if item.get("type") != "function_call_output":
+                continue
+            if json.loads(item["output"])["screenshot"] == "omitted":
                 continue
             screenshot = messages[index + 1]
             assert screenshot["role"] == "user"
@@ -314,7 +322,8 @@ def test_real_upstream_episode_recovers_model_and_runtime_rejections_without_los
                 assert rejected["error"]["message"]
                 assert rejected["screenshot"] == "attached"
         if attempt == 3:
-            assert "malformed" not in calls  # The oldest rejection pair exceeds image_history=2.
+            assert "malformed" in calls
+            assert json.loads(outputs["malformed"]["output"])["screenshot"] == "omitted"
             assert "oversized-scroll" in calls
             rejected = json.loads(outputs["oversized-scroll"]["output"])
             assert rejected["ok"] is False and rejected["input_executed"] is False
@@ -322,8 +331,13 @@ def test_real_upstream_episode_recovers_model_and_runtime_rejections_without_los
             assert "shorter distance" in rejected["error"]["message"]
             assert json.loads(calls["oversized-scroll"]["arguments"])["scroll_y"] == 5000
         if attempt == 4:
-            assert set(calls) == {"small-scroll", "corrected-type"}
-            assert all(json.loads(item["output"])["ok"] is True for item in outputs.values())
+            assert set(calls) == {"malformed", "batch-sibling", "oversized-scroll", "small-scroll", "corrected-type"}
+            assert all(json.loads(outputs[call_id]["output"])["ok"] is True for call_id in {"small-scroll", "corrected-type"})
+            assert json.loads(outputs["oversized-scroll"]["output"])["error"]["code"] == "invalid_computer_input"
+            assert json.loads(outputs["oversized-scroll"]["output"])["screenshot"] == "omitted"
+        images = [part for item in messages if isinstance(item.get("content"), list)
+                  for part in item["content"] if part.get("type") == "input_image"]
+        assert len(images) <= 2
         return {"id": f"fixture-response-{attempt}", "model": "fixture-response-model",
                 "output": turns[attempt - 1],
                 "usage": {"input_tokens": attempt * 10, "output_tokens": attempt,
@@ -494,7 +508,7 @@ def test_drag_preflight_does_not_release_an_existing_held_button_or_move_pointer
         adapter.release()
 
 
-def test_latest_rejection_errors_survive_image_limit_once_without_orphaned_pairs(tmp_path):
+def test_rejection_errors_survive_image_limit_without_orphaned_pairs(tmp_path):
     from temple_cua.cua_compat import _cua_output, _wire_history
 
     calls = [{"type": "function_call", "name": "computer", "call_id": str(index),
@@ -523,8 +537,12 @@ def test_latest_rejection_errors_survive_image_limit_once_without_orphaned_pairs
                 {"type": "computer_call_output", "call_id": "repaired",
                  "output": {"type": "input_image", "image_url": "data:image/png;base64,repaired"}}]
     following = asyncio.run(callback.on_llm_start(retained + repaired))
-    assert [item["call_id"] for item in following if item.get("type") == "computer_call"] == ["3", "repaired"]
-    assert [item["call_id"] for item in following if item.get("type") == "computer_call_output"] == ["3", "repaired"]
+    assert [item["call_id"] for item in following if item.get("type") == "computer_call"] == ["0", "1", "2", "3", "repaired"]
+    assert [item["call_id"] for item in following if item.get("type") == "computer_call_output"] == ["0", "1", "2", "3", "repaired"]
+    errors = {item["call_id"]: json.loads(item["output"]) for item in _wire_history(following)
+              if item.get("type") == "function_call_output"}
+    assert errors["0"]["error"]["message"] == "Unknown computer action"
+    assert errors["0"]["screenshot"] == "omitted"
 
 
 def test_actual_upstream_four_call_rejection_delivers_first_error_with_bounded_images(upstream, fake_vm, tmp_path, monkeypatch):
@@ -558,7 +576,12 @@ def test_actual_upstream_four_call_rejection_delivers_first_error_with_bounded_i
                        "arguments": json.dumps({"action": "type", "text": "REPAIRED"})}]
         else:
             history = kwargs["input"]
-            assert not any(item.get("call_id") in {"batch-0", "batch-1"} for item in history)
+            assert {item["call_id"] for item in history if item.get("type") == "function_call"} == {
+                "batch-0", "batch-1", "batch-2", "batch-3", "repaired"}
+            errors = {item["call_id"]: json.loads(item["output"]) for item in history
+                      if item.get("type") == "function_call_output"}
+            assert "unsupported TempleOS key" in errors["batch-0"]["error"]["message"]
+            assert errors["batch-0"]["screenshot"] == "omitted"
             assert [action.text for action in fake_vm.instances[0].actions] == ["REPAIRED"]
             output = [{"type": "function_call", "name": "computer", "call_id": "done",
                        "arguments": json.dumps({"action": "terminate", "status": "success"})}]
@@ -573,6 +596,62 @@ def test_actual_upstream_four_call_rejection_delivers_first_error_with_bounded_i
     records = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines()]
     assert len(records[0]["input_errors"]) == 4
     assert records[0]["actions"] == records[0]["executed_actions"] == []
+
+
+def test_actual_upstream_longer_history_keeps_all_actions_results_and_errors_with_two_images(upstream, fake_vm, tmp_path, monkeypatch):
+    import litellm
+
+    task_spec = task()
+    task_spec.prompt = "Track every prior command and recover from invalid input."
+    requests = []
+    arguments = [
+        {"action": "type", "text": "FIRST"},
+        {"action": "type", "text": "SECOND"},
+        {"action": "keypress", "keys": ["invented_key"]},
+        {"action": "type", "text": "REPAIRED"},
+        {"action": "terminate", "status": "success"},
+    ]
+    raw = [json.dumps(action) for action in arguments]
+
+    async def fake_responses(**kwargs):
+        requests.append(kwargs)
+        attempt = len(requests)
+        assert attempt <= 5
+        history = kwargs["input"]
+        calls = {item["call_id"]: item for item in history if item.get("type") == "function_call"}
+        outputs = {item["call_id"]: json.loads(item["output"]) for item in history
+                   if item.get("type") == "function_call_output"}
+        expected_ids = {f"turn-{index}" for index in range(1, attempt)}
+        assert set(calls) == set(outputs) == expected_ids
+        assert not any(item.get("type") in {"computer_call", "computer_call_output"} for item in history)
+        parts = [part for item in history if isinstance(item.get("content"), list) for part in item["content"]]
+        assert len([part for part in parts if part.get("type") == "input_image"]) == min(attempt, 2)
+        assert any(part.get("type") == "input_text" and part.get("text") == task_spec.prompt for part in parts)
+        if attempt >= 4:
+            assert json.loads(calls["turn-1"]["arguments"]) == arguments[0]
+            assert outputs["turn-1"] == {"ok": True, "screenshot": "omitted"}
+            assert calls["turn-3"]["arguments"] == raw[2]
+            assert outputs["turn-3"]["ok"] is False
+            assert outputs["turn-3"]["input_executed"] is False
+            assert "unsupported TempleOS key" in outputs["turn-3"]["error"]["message"]
+            assert any(item.get("type") == "reasoning" and item.get("id") == "reason-1" for item in history)
+        if attempt == 5:
+            assert outputs["turn-2"] == {"ok": True, "screenshot": "omitted"}
+            assert outputs["turn-3"]["screenshot"] == outputs["turn-4"]["screenshot"] == "attached"
+            assert [action.text for action in fake_vm.instances[0].actions] == ["FIRST", "SECOND", "REPAIRED"]
+        output = [{"type": "function_call", "name": "computer", "call_id": f"turn-{attempt}",
+                   "arguments": raw[attempt - 1]}]
+        if attempt == 1:
+            output.insert(0, {"type": "reasoning", "id": "reason-1", "summary": [
+                {"type": "summary_text", "text": "Remember the commands already entered."}]})
+        return {"output": output, "usage": {"input_tokens": 5, "output_tokens": 2, "total_tokens": 7}}
+
+    monkeypatch.setattr(litellm, "aresponses", fake_responses)
+    result = cua_runner.run_cua_task(task_spec, config(), tmp_path / "episode",
+                                     CuaOptions("openai/fixture-long-history", image_history=2), max_steps=5)
+    assert result["status"] == "completed" and result["steps"] == len(requests) == 5
+    assert result["input_actions"] == 3 and result["usage"]["total_tokens"] == 35
+    assert fake_vm.instances[0].closed
 
 
 @pytest.mark.parametrize("keys", [["invented_key"], ["enter", "return"], ["ctrl", "control"], [], "ctrl++c"])

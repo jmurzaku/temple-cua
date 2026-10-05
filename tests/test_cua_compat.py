@@ -51,6 +51,29 @@ def test_history_bridge_keeps_function_result_and_visible_image_separate():
     assert history[0]["action"]["type"] == "type"
 
 
+def test_history_bridge_preserves_success_and_error_outputs_without_images():
+    history = [
+        {"type": "computer_call_output", "call_id": "success", "output": {
+            "type": "text", "text": "Screenshot omitted by image history limit."}},
+        {"type": "computer_call_output", "call_id": "error",
+         "validation_error": {"code": "invalid_computer_input", "message": "Invalid chord"},
+         "output": {"type": "text", "text": "Screenshot omitted by image history limit."}},
+    ]
+    wire = _wire_history(history)
+    assert [item["call_id"] for item in wire] == ["success", "error"]
+    assert json.loads(wire[0]["output"]) == {"ok": True, "screenshot": "omitted"}
+    assert json.loads(wire[1]["output"]) == {
+        "ok": False, "error": history[1]["validation_error"],
+        "input_executed": False, "screenshot": "omitted"}
+
+
+@pytest.mark.parametrize("output", [{"type": "text"}, {"type": "text", "text": 1},
+                                     {"type": "text", "text": "omitted", "image_url": "data:image/png;base64,x"}])
+def test_malformed_text_only_computer_outputs_remain_protocol_errors(output):
+    with pytest.raises(CuaProtocolError, match="omitted-image"):
+        _wire_history([{"type": "computer_call_output", "call_id": "c1", "output": output}])
+
+
 @pytest.mark.parametrize("arguments", [
     {"action": "launch_shell", "text": "anything"},
     {"action": "type", "text": "HELLO", "host_command": "anything"},
