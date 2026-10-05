@@ -61,7 +61,13 @@ summary { width: fit-content; cursor: pointer; color: var(--muted); }
 pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
 .action-details pre { font-size: 12px; padding: 8px 0; margin-bottom: 0; }
 .task-text { font-size: 13px; }
-.prompt { white-space: pre-line; line-height: 1.75; }
+.prompt { line-height: 1.75; }
+.prompt p { white-space: pre-line; }
+.prompt pre { border-left: 1px solid var(--line); padding-left: 18px; font-size: 12px; margin: 22px 0; }
+.unrecorded-task { font-size: 13px; max-width: 380px; padding-right: 30px; }
+.unrecorded-task p { white-space: normal; }
+.unrecorded-task pre { border-left: 1px solid var(--line); padding-left: 18px; font-size: 12px; margin: 12px 0 24px; }
+.replay-layout.unrecorded { grid-template-columns: 1fr 1.4fr; gap: 80px; }
 .task-result { border-top: 1px solid var(--line); padding-top: 21px; margin-top: 26px; }
 .task-result p { margin-bottom: 12px; }
 .small { font-size: 12px; line-height: 1.7; }
@@ -109,7 +115,8 @@ footer a { text-decoration: none; }
   table { font-size: 12px; }
   th { font-size: 9px; }
   .task-detail { padding: 40px 0 44px; }
-  .replay-layout { grid-template-columns: 1fr; gap: 30px; }
+  .replay-layout, .replay-layout.unrecorded { grid-template-columns: 1fr; gap: 30px; }
+  .unrecorded-task { max-width: none; padding-right: 0; }
   .task-text { font-size: 14px; }
   .prompt { line-height: 1.7; }
   .run-section { padding: 32px 0 40px; }
