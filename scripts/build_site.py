@@ -155,7 +155,8 @@ def build(run, output, selected=None, additional_runs=None):
         folder = source["path"] / task_id
         records = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines() if line.strip()]
         frames = [{"step": 0, "src": f"assets/starter-frames/{task_id}/0000.png",
-                   "note": "Before the first action.", "actions": []}]
+                   "note": "Before the first action.", "actions": [],
+                   "requested_calls": [], "input_errors": []}]
         copy(folder / "0000.png", output / frames[0]["src"])
         for record in records:
             filename = record.get("screenshot_after") or f"{record['step']:04d}.png"
@@ -166,7 +167,9 @@ def build(run, output, selected=None, additional_runs=None):
             src = f"assets/starter-frames/{task_id}/{filename}"
             copy(folder / filename, output / src)
             frames.append({"step": record["step"], "src": src, "note": record.get("note", ""),
-                           "actions": record.get("executed_actions", record.get("actions", []))})
+                           "actions": record.get("executed_actions", record.get("actions", [])),
+                           "requested_calls": record.get("requested_calls", []),
+                           "input_errors": record.get("input_errors", [])})
         task = json.loads(portable_content(folder / "task.json"))
         if task["id"] != task_id:
             raise ValueError(f"Task snapshot does not match {task_id}")

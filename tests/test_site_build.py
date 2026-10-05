@@ -599,3 +599,63 @@ process.stdout.write(JSON.stringify(calls));
     assert len(calls) == 1
     assert calls[0]["url"] == manifest
     assert calls[0]["options"]["cache"] == "no-store"
+
+
+def test_rejected_input_evidence_survives_manifest_and_portable_download_without_changing_grade(tmp_path, supplemental_run):
+    folder = supplemental_run / "cursor_callback"
+    raw = '{"action":"type","text":"<img src=x onerror=alert(1)>",\nBROKEN'
+    requested = {"call_id": "fixture-malformed", "name": "computer", "arguments": raw}
+    error = {"call_id": "fixture-malformed", "arguments": raw,
+             "error": {"code": "invalid_computer_action", "message": "Computer arguments must be valid JSON"},
+             "input_executed": False, "screenshot": "observations/0001.png"}
+    turn = {"step": 1, "note": "Input rejected; current screenshot returned.",
+            "actions": [], "executed_actions": [], "requested_calls": [requested], "input_errors": [error],
+            "screenshot_before": "0000.png", "screenshot_after": "0001.png",
+            "usage": {"input_tokens": 7, "output_tokens": 3, "total_tokens": 10},
+            "cua_output": [{"type": "reasoning", "encrypted_content": "fixture-private-provider-payload"}],
+            "response_id": "fixture-private-response-id"}
+    (folder / "trajectory.jsonl").write_text(json.dumps(turn) + "\n")
+    source = read_json(supplemental_run / "results.json")
+    result = source["results"][0]
+    result.update({"status": "budget_exhausted", "steps": 1,
+                   "usage": turn["usage"], "elapsed_seconds": 1.0})
+    result.pop("completion_text", None)
+    (folder / "result.json").write_text(json.dumps(result))
+    (supplemental_run / "results.json").write_text(json.dumps(source))
+    output = tmp_path / "site"
+    builder.build(supplemental_run, output, selected=["cursor_callback"])
+    task = read_json(output / "assets/starter-data.json")["tasks"][0]
+    initial, rejected = task["frames"]
+    assert initial["requested_calls"] == initial["input_errors"] == initial["actions"] == []
+    assert rejected["requested_calls"] == [requested]
+    assert rejected["input_errors"] == [error]
+    assert rejected["actions"] == []
+    assert task["result"] == result
+    assert task["result"]["grade"]["status"] == "needs_review"
+    assert task["result"]["grade"]["score"] is None
+    assert "cua_output" not in rejected and "response_id" not in rejected
+    assert (output / rejected["src"]).read_bytes() == (folder / "0001.png").read_bytes()
+    assert read_json(output / "assets/starter-results.json") == source
+    archive = archive_files(output)
+    downloaded_turns = [json.loads(line) for line in archive["starter-run/cursor_callback/trajectory.jsonl"].splitlines()]
+    assert len(downloaded_turns) == 1
+    downloaded = downloaded_turns[0]
+    assert downloaded["requested_calls"] == [requested] and downloaded["input_errors"] == [error]
+    assert downloaded["actions"] == downloaded["executed_actions"] == []
+    assert "cua_output" not in downloaded and "response_id" not in downloaded
+    assert json.loads(archive["starter-run/results.json"]) == source
+    assert json.loads(archive["starter-run/cursor_callback/result.json"]) == result
+    assert "Grade: needs review" in archive["starter-run/report.html"].decode()
+    assert archive["starter-run/cursor_callback/" + error["screenshot"]] == (folder / error["screenshot"]).read_bytes()
+    # Sanitization applies to the export; it never rewrites the recorded source.
+    assert json.loads((folder / "trajectory.jsonl").read_text()) == turn
+
+
+def test_older_recordings_receive_empty_recovery_fields_without_inventing_errors(tmp_path):
+    builder.build(RUN, tmp_path, selected=["arithmetic"])
+    task = read_json(tmp_path / "assets/starter-data.json")["tasks"][0]
+    source_turns = [json.loads(line) for line in (RUN / "arithmetic/trajectory.jsonl").read_text().splitlines()]
+    assert all("requested_calls" not in turn and "input_errors" not in turn for turn in source_turns)
+    assert all(frame["requested_calls"] == frame["input_errors"] == [] for frame in task["frames"])
+    for frame, turn in zip(task["frames"][1:], source_turns):
+        assert frame["actions"] == turn["executed_actions"]

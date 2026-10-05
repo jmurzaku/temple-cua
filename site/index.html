@@ -52,7 +52,8 @@
           <figure><img id="frame" alt="Recorded TempleOS screen" width="640" height="480"><figcaption><span>Recorded screen</span><span id="recording-step">Step 0</span></figcaption></figure>
           <div class="playback" aria-label="Recording controls"><button id="previous" type="button" aria-label="Previous recorded step" disabled>←</button><button id="play" type="button" disabled>Play</button><label class="sr-only" for="timeline">Recorded step</label><input id="timeline" type="range" min="0" max="1" value="0" disabled><button id="next" type="button" aria-label="Next recorded step" disabled>→</button></div>
           <p id="step-note" class="step-note">Loading recording…</p>
-          <details class="action-details"><summary>Agent input at this step</summary><pre id="step-actions">Loading recording…</pre></details>
+          <details class="action-details"><summary>Executed agent input at this step</summary><pre id="step-actions">Loading recording…</pre></details>
+          <details id="rejected-input" class="action-details" hidden><summary>Rejected computer input — not executed</summary><pre id="step-rejected"></pre></details>
         </div>
         <aside id="unrecorded-task" class="unrecorded-task" hidden>
           <h3>Completion criteria</h3>
@@ -83,7 +84,7 @@
       <div class="section-heading"><h2 id="run-title">Recorded attempts</h2><a href="assets/starter-results.json" download>Results JSON</a></div>
       <dl id="run-facts" class="run-facts"><div><dt>Model</dt><dd id="run-model">—</dd></div><div><dt>Agent</dt><dd id="run-agent">—</dd></div><div><dt>Recorded tasks</dt><dd id="run-task">—</dd></div><div><dt>Automatic checks</dt><dd id="run-score">—</dd></div><div id="review-summary-field" hidden><dt>Trajectory reviews</dt><dd id="run-reviews">—</dd></div></dl>
       <p id="run-protocol">Cua’s ComputerAgent drives a TempleOS computer adapter; the harness enforces the recorded time and turn limits.</p>
-      <p id="run-note" class="muted">Each recorded task has one model attempt. Trajectory reviews are separate from automatic grading.</p>
+      <p id="run-note" class="muted">The site shows one featured attempt per task. Trajectory reviews are separate from automatic grading.</p>
       <div class="text-links"><a href="assets/starter-run.zip" download>Download recorded run</a></div>
     </section>
     <section id="environment" class="setup-section" aria-labelledby="setup-title">
