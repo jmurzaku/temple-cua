@@ -34,7 +34,7 @@ function showFrame(index) {
   byId("frame").src = frame.src;
   byId("frame").alt = `TempleOS: ${selectedTask.title}, recorded step ${frame.step}`;
   const note = (frame.note || "").replace(/^```[a-z]*\s*$/gm, "").replace(/`([^`]+)`/g, "$1").trim();
-  byId("step-note").textContent = note || (current === 0 ? "Initial screen, before the agent acts." : "Screen after the input below.");
+  byId("step-note").textContent = note ? (current === 0 ? note : `Agent note: ${note}`) : "Screen after the input below.";
   byId("step-actions").textContent = actionText(frame.actions);
   byId("previous").disabled = current === 0;
   byId("next").disabled = current === frames.length - 1;
@@ -61,8 +61,8 @@ function showPrompt(prompt) {
   });
 }
 
-function showCriteria(grader = {}) {
-  const target = byId("completion-criteria");
+function showCriteria(grader = {}, targetId = "completion-criteria") {
+  const target = byId(targetId);
   target.replaceChildren();
   const paragraph = text => {
     const node = document.createElement("p");
@@ -89,6 +89,37 @@ function showCriteria(grader = {}) {
   }
 }
 
+function runMetadata(task) {
+  return task.run || dataset.run || {};
+}
+
+function isManualTask(task) {
+  return task.grader?.type === "manual" || task.result?.grade?.type === "manual";
+}
+
+function showReview(task) {
+  byId("task-review").hidden = !task.review;
+  if (!task.review) return;
+  byId("review-outcome").textContent = `${task.review.status[0].toUpperCase() + task.review.status.slice(1)} · ${task.review.reviewer}`;
+  byId("review-reason").textContent = task.review.reason;
+  const evidence = byId("review-evidence");
+  evidence.replaceChildren();
+  task.review.evidence.forEach(item => {
+    const node = document.createElement("li");
+    node.textContent = item;
+    evidence.append(node);
+  });
+  const limitations = Array.isArray(task.review.limitations) ? task.review.limitations.filter(item => typeof item === "string") : typeof task.review.limitations === "string" ? [task.review.limitations] : [];
+  byId("review-limitations").hidden = !limitations.length;
+  const limits = byId("review-limits");
+  limits.replaceChildren();
+  limitations.forEach(item => {
+    const node = document.createElement("li");
+    node.textContent = item;
+    limits.append(node);
+  });
+}
+
 function selectTask(id, moveFocus = false) {
   const task = dataset.tasks.find(candidate => candidate.id === id);
   if (!task) return;
@@ -103,10 +134,21 @@ function selectTask(id, moveFocus = false) {
   byId("unrecorded-task").hidden = Boolean(result);
   byId("replay-layout").classList.toggle("unrecorded", !result);
   byId("task-limitation").hidden = !result;
+  byId("task-provenance").hidden = !result;
+  byId("task-run-details").hidden = !result;
+  byId("task-criteria-details").hidden = !result || !isManualTask(task);
+  byId("task-review").hidden = true;
   if (result) {
-    const status = result.status === "error" ? "Execution error." : result.grade.status === "passed" ? "Passed the visual check." : `Visual check: ${result.grade.status.replaceAll("_", " ")}.`;
-    byId("task-outcome").textContent = `${status} ${result.steps} model turns, ${Number(result.elapsed_seconds).toFixed(1)} seconds including reset.`;
+    const grading = isManualTask(task) ? `Manual grade: ${result.grade.status.replaceAll("_", " ")}.` : `Automatic check: ${result.grade.status.replaceAll("_", " ")}.`;
+    byId("task-outcome").textContent = `Run status: ${result.status.replaceAll("_", " ")}. ${grading} ${result.steps} model turns, ${Number(result.elapsed_seconds).toFixed(1)} seconds including reset.`;
     byId("task-budget").textContent = `Limit: ${result.budget.max_steps} turns · ${result.budget.timeout_seconds} seconds.`;
+    const metadata = runMetadata(task);
+    const started = metadata.created_at ? new Date(metadata.created_at).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }) : "Start time not recorded";
+    byId("task-provenance").textContent = `${metadata.model || "Model not recorded"} · cua-agent ${metadata.cua_version || "—"} · ${started}`;
+    byId("task-run-config").textContent = JSON.stringify({ ...metadata, budget: result.budget }, null, 2);
+    byId("task-limitation").textContent = isManualTask(task) ? "A trajectory review does not change the raw grader result or assign an automatic score." : "The grader checks visible text. It does not verify the program’s implementation or hidden guest state.";
+    if (isManualTask(task)) showCriteria(task.grader, "recorded-criteria");
+    showReview(task);
     byId("timeline").max = String(task.frames.length - 1);
     byId("timeline").disabled = false;
     byId("play").disabled = task.frames.length < 2;
@@ -169,22 +211,32 @@ async function loadTasks() {
     button.addEventListener("click", () => selectTask(task.id, true));
     first.append(button);
     const result = task.result;
-    const status = !result ? "Not run" : "Recorded";
+    const status = !result ? "Not run" : result.status === "error" ? "Run error" : isManualTask(task) ? (task.review ? `Review: ${task.review.status}` : "Review pending") : `Automatic: ${result.grade.status.replaceAll("_", " ")}`;
     row.append(first, cell(difficultyLabel(task), "task-difficulty"), cell(status, "result-status"));
     rows.append(row);
   });
   const recordedTasks = dataset.tasks.filter(task => task.result);
-  byId("run-model").textContent = recordedTasks.length ? dataset.run.model : "—";
-  byId("run-agent").textContent = recordedTasks.length ? `cua-agent ${dataset.run.cua_version}` : "—";
+  const models = [...new Set(recordedTasks.map(task => runMetadata(task).model).filter(Boolean))];
+  const versions = [...new Set(recordedTasks.map(task => runMetadata(task).cua_version).filter(Boolean))];
+  byId("run-model").textContent = models.length === 1 ? models[0] : models.length ? "Multiple models" : "—";
+  byId("run-agent").textContent = versions.length === 1 ? `cua-agent ${versions[0]}` : versions.length ? "Multiple versions" : "—";
   byId("run-task").textContent = `${recordedTasks.length} / ${dataset.tasks.length}`;
-  const passed = recordedTasks.filter(task => task.result.status !== "error" && task.result.grade.status === "passed").length;
-  byId("run-score").textContent = recordedTasks.length ? `${passed} / ${recordedTasks.length} passed` : "Pending";
+  const automatic = recordedTasks.filter(task => !isManualTask(task));
+  const passed = automatic.filter(task => task.result.grade.status === "passed").length;
+  byId("run-score").textContent = automatic.length ? `${passed} / ${automatic.length} passed` : recordedTasks.length ? "None" : "Pending";
+  const manual = recordedTasks.filter(isManualTask);
+  const reviewCounts = { passed: 0, failed: 0, incomplete: 0, pending: 0 };
+  manual.forEach(task => { reviewCounts[task.review?.status || "pending"]++; });
+  byId("review-summary-field").hidden = !manual.length;
+  byId("run-facts").classList.toggle("has-reviews", Boolean(manual.length));
+  byId("run-reviews").textContent = Object.entries(reviewCounts).filter(([, number]) => number).map(([status, number]) => `${number} ${status}`).join(", ") || "—";
   const unrecordedCount = dataset.tasks.length - recordedTasks.length;
-  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : recordedTasks.length === 1 ? `One recorded attempt on ${recordedTasks[0].title.toLowerCase()}. ${unrecordedCount} other tasks have no recorded model run.` : `One recorded attempt per measured task. ${unrecordedCount} other tasks have no recorded model run.`;
+  const sourceCount = new Set(recordedTasks.map(task => runMetadata(task).id || runMetadata(task).created_at)).size;
+  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : `One recorded attempt per task across ${sourceCount} ${sourceCount === 1 ? "run" : "runs"}.${unrecordedCount ? ` ${unrecordedCount} tasks have no recorded model run.` : ""}${manual.length ? " Trajectory reviews are separate from automatic grading." : ""}`;
   const budgets = recordedTasks.map(task => task.result.budget);
   const sharedBudget = budgets.length && budgets.every(budget => budget.max_steps === budgets[0].max_steps && budget.timeout_seconds === budgets[0].timeout_seconds);
   const limits = !budgets.length ? "" : sharedBudget ? `The recorded limit is ${budgets[0].max_steps} model turns and ${budgets[0].timeout_seconds} seconds per task. ` : "The harness enforces the time and turn limits recorded for each task. ";
-  const bridge = recordedTasks.length && dataset.run.model.startsWith("openai/") ? " through an OpenAI Responses compatibility bridge" : "";
+  const bridge = models.length && models.every(model => model.startsWith("openai/")) ? " through an OpenAI Responses compatibility bridge" : "";
   byId("run-protocol").textContent = `${limits}Cua’s ComputerAgent drives a TempleOS computer adapter${bridge}.`;
   selectTask(dataset.tasks[0].id);
 }

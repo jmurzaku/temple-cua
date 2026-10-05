@@ -1,0 +1,14 @@
+{
+  "id": "cursor_callback",
+  "title": "Live cursor callback",
+  "prompt": "At the TempleOS shell, JIT-compile this exact callback:\n\nU0 Cross(CTask *, CDC *dc) {\n  dc->color=YELLOW;\n  GrLine(dc,ms.pos.x-16,ms.pos.y,ms.pos.x+16,ms.pos.y);\n  GrLine(dc,ms.pos.x,ms.pos.y-16,ms.pos.x,ms.pos.y+16);\n}\n\nInstall it with Fs->draw_it=&Cross;. Move the pointer to at least two\ndistinct positions and observe the live yellow cross following it.\nRight-click in the top menu bar, open the built-in help index, and click\nits Command Line documentation link. Keep the same callback installed\nthroughout; do not clear, replace, or reinstall it.\nMove the pointer to two distinct positions over the opened document.\nFinish with Command Line Overview open and the cross still following\nthe pointer over the document.\n",
+  "grader": {
+    "type": "manual",
+    "rubric": "Review the full trajectory. The exact anonymous-CTask callback must\ncompile in the live shell and be installed using Fs->draw_it=&Cross.\nA live yellow cross must appear at two pointer positions before and\nafter opening the document, moving by the same delta as the pointer.\nAllow the stock bordered fixture's measured +8,+16 rendering offset.\nThe trajectory must include a right-click over the top menu bar with\na visible pulldown, then the help index and an actual clicked link to\nCommand Line Overview. That document must remain open at completion.\nTempleOS exposes the top menu on hover; a desktop context menu is not\nrequired.\nThe callback must not be cleared, replaced, reinstalled after navigation,\nor reproduced as a static image. Menus may cover the cross where they\noverlap because they render later; this does not imply callback removal.\nA screenshot alone cannot prove the callback remains live. Review its\nmovement across the full trajectory; this task has no automatic pass score.\n"
+  },
+  "category": "graphics",
+  "difficulty": "medium",
+  "max_steps": 40,
+  "timeout_seconds": 240,
+  "setup": []
+}

@@ -1,0 +1,34 @@
+{
+  "task_id": "interactive_counter_panel",
+  "title": "Live counter panel",
+  "status": "completed",
+  "steps": 26,
+  "elapsed_seconds": 227.455,
+  "usage": {
+    "input_tokens": 60248,
+    "output_tokens": 3107,
+    "total_tokens": 63355,
+    "estimated_cost_usd": 0.14931450000000002
+  },
+  "artifact_dir": "interactive_counter_panel",
+  "final_screenshot": "interactive_counter_panel/final.png",
+  "grade": {
+    "type": "manual",
+    "status": "needs_review",
+    "score": null,
+    "reason": "Review the full action and screenshot trajectory. The agent must\ncompile its own HolyC implementation, install a live task drawing\ncallback, and render visible +1, -1, RESET buttons and an initial\nCOUNT=0 inside the shell window. No implementation is supplied.\n\nVerify that genuine left-clicks on the rendered buttons cause the\nobserved state sequence: three increments reach 3, one decrement\nreaches 2, reset reaches 0, an outside click leaves 0 unchanged, and\ntwo further increments reach 2. Each distinct press changes the count\nat most once. Intermediate increment states provide reviewable\nprogress even when the full sequence is incomplete.\n\nThe panel must remain live throughout, with the final COUNT=2 visible.\nCheck responsiveness and absence of callback faults or a frozen guest.\nAccept any clear layout within the shell interior; account for the\nwindow's drawing origin when assessing button hit-testing. Typed\ncount values, static screenshots, or recompiling state between the\ndemonstrated clicks do not establish interactive behavior.\n\nA final screenshot alone cannot prove the state transitions or live\ncallback. This task requires trajectory review and has no automatic\npass score.\n",
+    "evidence": [
+      "Manual review required; no automatic success claim was made."
+    ]
+  },
+  "budget": {
+    "max_steps": 80,
+    "timeout_seconds": 600,
+    "max_input_actions": 640
+  },
+  "task_fingerprint": "6a4b2308bed485657e0a59c78cd38f8865d5eea98d3bdc5e5ed6864e6f93a09d",
+  "setup_seconds": 1.4052948179996747,
+  "completion_text": "The live interactive panel remains active and visible at **COUNT=2**. Verified +1, -1, RESET, and outside-click behavior through actual mouse clicks.",
+  "input_actions": 25,
+  "observations": 26
+}

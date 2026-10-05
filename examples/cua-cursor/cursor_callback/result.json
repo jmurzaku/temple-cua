@@ -1,0 +1,34 @@
+{
+  "task_id": "cursor_callback",
+  "title": "Live cursor callback",
+  "status": "budget_exhausted",
+  "steps": 40,
+  "elapsed_seconds": 209.347,
+  "usage": {
+    "input_tokens": 69084,
+    "output_tokens": 3136,
+    "total_tokens": 72220,
+    "estimated_cost_usd": 0.16735820000000004
+  },
+  "artifact_dir": "cursor_callback",
+  "final_screenshot": "cursor_callback/final.png",
+  "grade": {
+    "type": "manual",
+    "status": "needs_review",
+    "score": null,
+    "reason": "Review the full trajectory. The exact anonymous-CTask callback must\ncompile in the live shell and be installed using Fs->draw_it=&Cross.\nA live yellow cross must appear at two pointer positions before and\nafter opening the document, moving by the same delta as the pointer.\nAllow the stock bordered fixture's measured +8,+16 rendering offset.\nThe trajectory must include a right-click over the top menu bar with\na visible pulldown, then the help index and an actual clicked link to\nCommand Line Overview. That document must remain open at completion.\nTempleOS exposes the top menu on hover; a desktop context menu is not\nrequired.\nThe callback must not be cleared, replaced, reinstalled after navigation,\nor reproduced as a static image. Menus may cover the cross where they\noverlap because they render later; this does not imply callback removal.\nA screenshot alone cannot prove the callback remains live. Review its\nmovement across the full trajectory; this task has no automatic pass score.\n",
+    "evidence": [
+      "Manual review required; no automatic success claim was made."
+    ]
+  },
+  "budget": {
+    "max_steps": 40,
+    "timeout_seconds": 240,
+    "max_input_actions": 320
+  },
+  "task_fingerprint": "fbb6efafbc015d598644e8ec85ec067706bc078d821b357989f25a8ceb0c0a69",
+  "setup_seconds": 1.3582893820002937,
+  "input_actions": 40,
+  "observations": 41,
+  "budget_reason": "Cua model call budget exhausted"
+}

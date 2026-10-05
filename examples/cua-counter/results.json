@@ -1,0 +1,81 @@
+{
+  "created_at": "2026-10-05T01:51:03.918680+00:00",
+  "provider": "cua",
+  "model": "openai/gpt-6.1-sol",
+  "config": {
+    "iso": "assets/TempleOS.ISO",
+    "baseline": "assets/cli-baseline.qcow2",
+    "memory_mb": 512,
+    "max_steps_override": null,
+    "timeout_override": null,
+    "boot_wait": 1.0,
+    "model_options": {
+      "cua_version": "0.9.0",
+      "max_output_tokens": 4096,
+      "api_timeout": 90,
+      "image_history": 2
+    },
+    "baseline_identity": {
+      "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+      "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+      "memory_mb": 512,
+      "extra_args": [],
+      "device_layout_version": 1
+    },
+    "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+  },
+  "provenance": {
+    "agent_package": "cua-agent",
+    "agent_version": "0.9.0",
+    "inference": "upstream ComputerAgent and LiteLLM",
+    "agent_loop": "TempleOpenAIComputerUseConfig",
+    "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+    "backend": "TempleVM/QMP legacy PC devices",
+    "framebuffer": [
+      640,
+      480
+    ],
+    "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+    "execution_mode": "live_model",
+    "telemetry_enabled": false,
+    "max_actions_per_response": 4,
+    "step_definition": "actual model API attempts; Cua automatic retries disabled",
+    "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+  },
+  "results": [
+    {
+      "task_id": "interactive_counter_panel",
+      "title": "Live counter panel",
+      "status": "completed",
+      "steps": 26,
+      "elapsed_seconds": 227.455,
+      "usage": {
+        "input_tokens": 60248,
+        "output_tokens": 3107,
+        "total_tokens": 63355,
+        "estimated_cost_usd": 0.14931450000000002
+      },
+      "artifact_dir": "interactive_counter_panel",
+      "final_screenshot": "interactive_counter_panel/final.png",
+      "grade": {
+        "type": "manual",
+        "status": "needs_review",
+        "score": null,
+        "reason": "Review the full action and screenshot trajectory. The agent must\ncompile its own HolyC implementation, install a live task drawing\ncallback, and render visible +1, -1, RESET buttons and an initial\nCOUNT=0 inside the shell window. No implementation is supplied.\n\nVerify that genuine left-clicks on the rendered buttons cause the\nobserved state sequence: three increments reach 3, one decrement\nreaches 2, reset reaches 0, an outside click leaves 0 unchanged, and\ntwo further increments reach 2. Each distinct press changes the count\nat most once. Intermediate increment states provide reviewable\nprogress even when the full sequence is incomplete.\n\nThe panel must remain live throughout, with the final COUNT=2 visible.\nCheck responsiveness and absence of callback faults or a frozen guest.\nAccept any clear layout within the shell interior; account for the\nwindow's drawing origin when assessing button hit-testing. Typed\ncount values, static screenshots, or recompiling state between the\ndemonstrated clicks do not establish interactive behavior.\n\nA final screenshot alone cannot prove the state transitions or live\ncallback. This task requires trajectory review and has no automatic\npass score.\n",
+        "evidence": [
+          "Manual review required; no automatic success claim was made."
+        ]
+      },
+      "budget": {
+        "max_steps": 80,
+        "timeout_seconds": 600,
+        "max_input_actions": 640
+      },
+      "task_fingerprint": "6a4b2308bed485657e0a59c78cd38f8865d5eea98d3bdc5e5ed6864e6f93a09d",
+      "setup_seconds": 1.4052948179996747,
+      "completion_text": "The live interactive panel remains active and visible at **COUNT=2**. Verified +1, -1, RESET, and outside-click behavior through actual mouse clicks.",
+      "input_actions": 25,
+      "observations": 26
+    }
+  ]
+}

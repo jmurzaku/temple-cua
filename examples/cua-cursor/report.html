@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; base-uri 'none'">
+<title>TempleOS CUA report</title><style>
+:root{color-scheme:light dark;font-family:system-ui,sans-serif}body{max-width:1100px;margin:2rem auto;padding:0 1rem;line-height:1.5}
+h1,h2{line-height:1.2}.muted{opacity:.7}.summary{display:flex;flex-wrap:wrap;gap:1rem;margin:1.5rem 0}
+.metric{border:1px solid #8886;border-radius:.5rem;padding:1rem;min-width:8rem}.metric strong{display:block;font-size:1.7rem}
+article{border-top:1px solid #8886;padding:1.5rem 0;overflow-wrap:anywhere}.badge{border:1px solid #8886;border-radius:.3rem;padding:.2rem .5rem}
+.passed{background:#228b2233}.failed,.error{background:#dc143c22}.needs_review{background:#e0a00022}
+img{max-width:100%;height:auto;border:1px solid #8886;image-rendering:pixelated}a{color:#6699ff}li{margin:.3rem 0}
+</style></head><body><h1>TempleOS CUA report</h1>
+<p><strong>cua / openai/gpt-6.1-sol</strong><br>
+Created 2026-10-05T01:51:04.018181+00:00</p>
+<div class="summary"><div class="metric"><strong>0</strong><span>Passed</span></div><div class="metric"><strong>0</strong><span>Failed</span></div><div class="metric"><strong>1</strong><span>Needs review</span></div><div class="metric"><strong>0</strong><span>Grader errors</span></div></div><p>Execution outcomes: 1 budget exhausted.</p>
+<p class="muted">OCR grades are heuristic visual evidence. Command echo or source text can satisfy a match; guest state is not verified.
+Manual tasks require a reviewer. An execution outcome and a grade describe separate facts.</p>
+<article><h2>Live cursor callback</h2><p class="muted">Task cursor_callback</p><p><span class="badge needs_review">Grade: needs review</span> Execution: budget_exhausted · Steps: 40 · Elapsed: 209.347 s · Score: —</p><p>Review the full trajectory. The exact anonymous-CTask callback must
+compile in the live shell and be installed using Fs-&gt;draw_it=&amp;Cross.
+A live yellow cross must appear at two pointer positions before and
+after opening the document, moving by the same delta as the pointer.
+Allow the stock bordered fixture&#x27;s measured +8,+16 rendering offset.
+The trajectory must include a right-click over the top menu bar with
+a visible pulldown, then the help index and an actual clicked link to
+Command Line Overview. That document must remain open at completion.
+TempleOS exposes the top menu on hover; a desktop context menu is not
+required.
+The callback must not be cleared, replaced, reinstalled after navigation,
+or reproduced as a static image. Menus may cover the cross where they
+overlap because they render later; this does not imply callback removal.
+A screenshot alone cannot prove the callback remains live. Review its
+movement across the full trajectory; this task has no automatic pass score.
+</p><p class="muted">input tokens: 69084, output tokens: 3136, total tokens: 72220</p><ul><li>Manual review required; no automatic success claim was made.</li></ul><p><a href="cursor_callback/trajectory.jsonl">Trajectory (JSONL)</a></p><a class="screenshot" href="cursor_callback/final.png"><img src="cursor_callback/final.png" alt="Final screenshot for cursor_callback" loading="lazy"></a></article></body></html>

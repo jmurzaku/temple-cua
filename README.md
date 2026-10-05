@@ -4,7 +4,7 @@ Computer-use tasks for [TempleOS](https://templeos.org/), created by Terry A. Da
 An agent sees screenshots, types HolyC, and controls the mouse in a QEMU VM.
 HolyC runs at ring 0 in a shared address space.[¹](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/Features.DD)
 
-[Website](https://jmurzaku.github.io/temple-cua/) · [Tasks](tasks/) · [Recorded run](examples/cua-starter/results.json)
+[Website](https://jmurzaku.github.io/temple-cua/) · [Tasks](tasks/) · [Recordings](examples/)
 
 ## Run
 
@@ -61,14 +61,16 @@ output. Callback and other GUI tasks require trajectory review. Edit
 
 ## Results
 
-One GPT-6.1 Sol/Cua 0.9.0 run passed all six basic visual checks in 17 model calls.
-The site shows the arithmetic recording. No model result is recorded for either
-of the two interactive tasks.
-Each result is one attempt scored from visible output.
+GPT-6.1 Sol through Cua 0.9.0 completed the live counter panel in 26 calls
+(227 seconds). It compiled the cursor callback but exhausted 40 calls
+(209 seconds) without opening the document. Both interactive results have
+separate assistant trajectory reviews; their raw manual grades remain unscored.
+The earlier starter run passed six basic visual checks in 17 calls. Each task
+has one recorded attempt.
 
 ```sh
 uv run pytest
-uv run python scripts/build_site.py
+uv run python scripts/build_site.py --run examples/cua-cursor --run examples/cua-counter
 ```
 
 TempleOS is public domain; this harness is [MIT licensed](LICENSE). The ISO is

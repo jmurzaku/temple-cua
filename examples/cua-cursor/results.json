@@ -1,0 +1,81 @@
+{
+  "created_at": "2026-10-05T01:51:04.018181+00:00",
+  "provider": "cua",
+  "model": "openai/gpt-6.1-sol",
+  "config": {
+    "iso": "assets/TempleOS.ISO",
+    "baseline": "assets/cli-baseline.qcow2",
+    "memory_mb": 512,
+    "max_steps_override": null,
+    "timeout_override": null,
+    "boot_wait": 1.0,
+    "model_options": {
+      "cua_version": "0.9.0",
+      "max_output_tokens": 4096,
+      "api_timeout": 90,
+      "image_history": 2
+    },
+    "baseline_identity": {
+      "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+      "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+      "memory_mb": 512,
+      "extra_args": [],
+      "device_layout_version": 1
+    },
+    "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+  },
+  "provenance": {
+    "agent_package": "cua-agent",
+    "agent_version": "0.9.0",
+    "inference": "upstream ComputerAgent and LiteLLM",
+    "agent_loop": "TempleOpenAIComputerUseConfig",
+    "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+    "backend": "TempleVM/QMP legacy PC devices",
+    "framebuffer": [
+      640,
+      480
+    ],
+    "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+    "execution_mode": "live_model",
+    "telemetry_enabled": false,
+    "max_actions_per_response": 4,
+    "step_definition": "actual model API attempts; Cua automatic retries disabled",
+    "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+  },
+  "results": [
+    {
+      "task_id": "cursor_callback",
+      "title": "Live cursor callback",
+      "status": "budget_exhausted",
+      "steps": 40,
+      "elapsed_seconds": 209.347,
+      "usage": {
+        "input_tokens": 69084,
+        "output_tokens": 3136,
+        "total_tokens": 72220,
+        "estimated_cost_usd": 0.16735820000000004
+      },
+      "artifact_dir": "cursor_callback",
+      "final_screenshot": "cursor_callback/final.png",
+      "grade": {
+        "type": "manual",
+        "status": "needs_review",
+        "score": null,
+        "reason": "Review the full trajectory. The exact anonymous-CTask callback must\ncompile in the live shell and be installed using Fs->draw_it=&Cross.\nA live yellow cross must appear at two pointer positions before and\nafter opening the document, moving by the same delta as the pointer.\nAllow the stock bordered fixture's measured +8,+16 rendering offset.\nThe trajectory must include a right-click over the top menu bar with\na visible pulldown, then the help index and an actual clicked link to\nCommand Line Overview. That document must remain open at completion.\nTempleOS exposes the top menu on hover; a desktop context menu is not\nrequired.\nThe callback must not be cleared, replaced, reinstalled after navigation,\nor reproduced as a static image. Menus may cover the cross where they\noverlap because they render later; this does not imply callback removal.\nA screenshot alone cannot prove the callback remains live. Review its\nmovement across the full trajectory; this task has no automatic pass score.\n",
+        "evidence": [
+          "Manual review required; no automatic success claim was made."
+        ]
+      },
+      "budget": {
+        "max_steps": 40,
+        "timeout_seconds": 240,
+        "max_input_actions": 320
+      },
+      "task_fingerprint": "fbb6efafbc015d598644e8ec85ec067706bc078d821b357989f25a8ceb0c0a69",
+      "setup_seconds": 1.3582893820002937,
+      "input_actions": 40,
+      "observations": 41,
+      "budget_reason": "Cua model call budget exhausted"
+    }
+  ]
+}

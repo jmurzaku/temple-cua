@@ -2,6 +2,7 @@ import importlib.util
 import json
 from html.parser import HTMLParser
 from pathlib import Path
+import shutil
 import sys
 import zipfile
 
@@ -45,6 +46,38 @@ def source_results():
     assert envelope["provenance"]["execution_mode"] == "live_model"
     assert len(envelope["results"]) == 6
     return {record["task_id"]: record for record in envelope["results"]}
+
+
+@pytest.fixture
+def supplemental_run(tmp_path):
+    run = tmp_path / "callback-recording-fixture"
+    folder = run / "cursor_callback"
+    # Reuse real image bytes to test packaging; this fixture is not callback evidence.
+    shutil.copytree(RUN / "arithmetic", folder)
+    task = yaml.safe_load((ROOT / "tasks/07_cursor_callback.yaml").read_text())
+    task.pop("version")
+    task["source"] = "/fixture-host/tasks/cursor_callback.yaml"
+    (folder / "task.json").write_text(json.dumps(task))
+    envelope = read_json(RUN / "results.json")
+    record = dict(envelope["results"][0])
+    record.update({
+        "task_id": "cursor_callback", "title": task["title"],
+        "artifact_dir": "cursor_callback", "final_screenshot": "cursor_callback/final.png",
+        "grade": {"type": "manual", "status": "needs_review", "score": None,
+                  "reason": "Review the full trajectory.", "evidence": []},
+        "budget": {"max_steps": 40, "timeout_seconds": 240},
+        "completion_text": "Packaging fixture only.",
+    })
+    record.pop("task_fingerprint", None)
+    envelope.update({"model": "openai/fixture-callback-model",
+                     "created_at": "2026-10-05T02:10:00+00:00", "results": [record]})
+    envelope["config"]["max_steps_override"] = 40
+    envelope["config"]["timeout_override"] = 240
+    envelope["config"]["model_options"]["max_output_tokens"] = 2048
+    envelope["provenance"]["test_fixture"] = "Derived artifact packaging fixture, not a model run."
+    (folder / "result.json").write_text(json.dumps(record))
+    (run / "results.json").write_text(json.dumps(envelope))
+    return run
 
 
 def test_default_catalog_uses_curated_tasks_and_preserves_real_task_snapshot(tmp_path, source_results):
@@ -233,3 +266,144 @@ def test_cli_output_cannot_overlap_source_directories(tmp_path, monkeypatch, sou
         builder.main()
     assert caught.value.code != 0
     assert sentinel.read_bytes() == b"do not destroy source files"
+
+
+def test_supplementary_runs_preserve_task_provenance_and_separate_download_envelopes(tmp_path, supplemental_run):
+    output = tmp_path / "site"
+    builder.build(RUN, output, additional_runs=[supplemental_run])
+    catalog = read_json(output / "assets/starter-data.json")
+    assert [task["id"] for task in catalog["tasks"]] == CURATED
+    assert catalog["run"] is None
+    assert len(catalog["runs"]) == 2
+    original, supplementary = read_json(RUN / "results.json"), read_json(supplemental_run / "results.json")
+    arithmetic, callback, panel = catalog["tasks"]
+    for task, source in ((arithmetic, original), (callback, supplementary)):
+        metadata = task["run"]
+        for key in ("provider", "model", "created_at", "config", "provenance"):
+            assert metadata[key] == source[key]
+        assert metadata["cua_version"] == source["config"]["model_options"]["cua_version"]
+        assert metadata in catalog["runs"]
+        assert task["result"] == source["results"][0]
+    assert arithmetic["run"]["model"] != callback["run"]["model"]
+    assert arithmetic["run"]["created_at"] != callback["run"]["created_at"]
+    assert arithmetic["run"]["config"] != callback["run"]["config"]
+    assert panel["result"] is None and panel["frames"] == []
+    assert callback["prompt"] == read_json(supplemental_run / "cursor_callback/task.json")["prompt"]
+    download = read_json(output / "assets/starter-results.json")
+    assert download["format"] == "templeosbench-recorded-runs" and download["version"] == 1
+    assert "model" not in download and "config" not in download
+    assert len(download["runs"]) == 2
+    archive = archive_files(output)
+    assert json.loads(archive["starter-run/results.json"]) == download
+    for exported, source, task in zip(download["runs"], (original, supplementary), (arithmetic, callback)):
+        expected = {**source, "results": [source["results"][0]]}
+        assert {key: value for key, value in exported.items() if key != "id"} == expected
+        assert exported["id"] == task["run"]["id"]
+        prefix = "starter-run/" + exported["id"] + "/"
+        assert json.loads(archive[prefix + "results.json"])["results"] == expected["results"]
+        assert json.loads(archive[prefix + "results.json"])["config"] == source["config"]
+        assert prefix + task["id"] + "/trajectory.jsonl" in archive
+        assert prefix + task["id"] + "/final.png" in archive
+        report = archive[prefix + "report.html"].decode()
+        assert "Task " + task["id"] in report
+        assert source["model"] in report
+        assert source["created_at"] in report
+        assert report.count("<article>") == 1
+        links = ArtifactLinks()
+        links.feed(report)
+        assert all(prefix + target in archive for target in links.targets)
+    excluded = {record["task_id"] for record in original["results"]} - {"arithmetic"}
+    assert not any(part in excluded for name in archive for part in Path(name).parts)
+    for frame in callback["frames"]:
+        assert (output / frame["src"]).read_bytes() == (supplemental_run / "cursor_callback" / Path(frame["src"]).name).read_bytes()
+
+
+@pytest.mark.parametrize("status", ["passed", "failed", "incomplete"])
+def test_assistant_review_remains_separate_from_raw_manual_grade(tmp_path, supplemental_run, status):
+    output = tmp_path / "site"
+    review = {"status": status, "reviewer": "assistant trajectory review",
+              "reason": "Fixture review for export separation.", "evidence": ["Step 2: fixture evidence."]}
+    (supplemental_run / "cursor_callback/review.json").write_text(json.dumps(review))
+    builder.build(RUN, output, selected=["cursor_callback"], additional_runs=[supplemental_run])
+    catalog = read_json(output / "assets/starter-data.json")
+    task = catalog["tasks"][0]
+    source = read_json(supplemental_run / "results.json")
+    assert task["review"] == review
+    assert task["result"] == source["results"][0]
+    assert task["result"]["grade"]["status"] == "needs_review"
+    assert task["result"]["grade"]["score"] is None
+    assert catalog["run"]["model"] == source["model"]
+    download = read_json(output / "assets/starter-results.json")
+    assert download == source
+    assert "review" not in download["results"][0]
+    archive = archive_files(output)
+    assert json.loads(archive["starter-run/cursor_callback/review.json"]) == review
+    report = archive["starter-run/report.html"].decode()
+    assert "Grade: needs review" in report
+    assert "Grade: passed" not in report
+    assert "Grade: failed" not in report
+    assert not any("arithmetic" == part for name in archive for part in Path(name).parts)
+
+
+def test_multiple_input_archives_are_deterministic_and_allow_no_recorded_selection(tmp_path, supplemental_run):
+    first, second = tmp_path / "first", tmp_path / "second"
+    for output in (first, second):
+        builder.build(RUN, output, additional_runs=[supplemental_run])
+    assert (first / "assets/starter-run.zip").read_bytes() == (second / "assets/starter-run.zip").read_bytes()
+    builder.build(RUN, first, selected=["interactive_counter_panel"], additional_runs=[supplemental_run])
+    catalog = read_json(first / "assets/starter-data.json")
+    assert catalog["tasks"][0]["result"] is None and catalog["tasks"][0]["frames"] == []
+    assert catalog["runs"] == []
+    download = read_json(first / "assets/starter-results.json")
+    assert download == {"format": "templeosbench-recorded-runs", "version": 1, "runs": []}
+    archive = archive_files(first)
+    assert json.loads(archive["starter-run/results.json"]) == download
+    assert not any(name.endswith(".png") or name.endswith("trajectory.jsonl") for name in archive)
+
+
+@pytest.mark.parametrize("duplicate_within_one_run", [False, True])
+def test_duplicate_recorded_task_ids_fail_before_existing_output_is_touched(tmp_path, duplicate_within_one_run):
+    duplicate_run = tmp_path / "duplicate-source"
+    duplicate_run.mkdir()
+    envelope = read_json(RUN / "results.json")
+    envelope["results"] = [envelope["results"][0]]
+    if duplicate_within_one_run:
+        envelope["results"].append(dict(envelope["results"][0]))
+    (duplicate_run / "results.json").write_text(json.dumps(envelope))
+    output = tmp_path / "site"
+    output.mkdir()
+    sentinel = output / "previous-build.txt"
+    sentinel.write_bytes(b"preserve before validation")
+    with pytest.raises(ValueError, match="[Dd]uplicate"):
+        if duplicate_within_one_run:
+            builder.build(duplicate_run, output)
+        else:
+            builder.build(RUN, output, additional_runs=[duplicate_run])
+    assert list(output.iterdir()) == [sentinel]
+    assert sentinel.read_bytes() == b"preserve before validation"
+
+
+def test_cli_repeated_run_argument_routes_supplementary_sources(tmp_path, supplemental_run, monkeypatch, capsys):
+    panel_run = tmp_path / "panel-recording-fixture"
+    panel_folder = panel_run / "interactive_counter_panel"
+    shutil.copytree(supplemental_run / "cursor_callback", panel_folder)
+    task = yaml.safe_load((ROOT / "tasks/08_interactive_counter_panel.yaml").read_text())
+    task.pop("version")
+    (panel_folder / "task.json").write_text(json.dumps(task))
+    panel_envelope = read_json(supplemental_run / "results.json")
+    panel_envelope["model"] = "openai/fixture-panel-model"
+    panel_result = panel_envelope["results"][0]
+    panel_result.update({"task_id": "interactive_counter_panel", "title": task["title"],
+                         "artifact_dir": "interactive_counter_panel",
+                         "final_screenshot": "interactive_counter_panel/final.png"})
+    (panel_folder / "result.json").write_text(json.dumps(panel_result))
+    (panel_run / "results.json").write_text(json.dumps(panel_envelope))
+    output = tmp_path / "site"
+    monkeypatch.setattr(sys, "argv", ["build_site", str(RUN), "--run", str(supplemental_run),
+                                     "--run", str(panel_run), "--output", str(output)])
+    builder.main()
+    assert json.loads(capsys.readouterr().out)["tasks"] == 3
+    catalog = read_json(output / "assets/starter-data.json")
+    assert catalog["tasks"][1]["run"]["model"] == read_json(supplemental_run / "results.json")["model"]
+    assert catalog["tasks"][2]["run"]["model"] == panel_envelope["model"]
+    assert len(read_json(output / "assets/starter-results.json")["runs"]) == 3

@@ -1,0 +1,14 @@
+{
+  "id": "interactive_counter_panel",
+  "title": "Live counter panel",
+  "prompt": "Build a small interactive counter panel in the TempleOS shell using\nJIT-compiled HolyC and a live Fs->draw_it callback. Place three clearly\nlabeled buttons, +1, -1, and RESET, inside the 640x480 shell interior.\nDisplay COUNT= followed by the current integer, initially COUNT=0.\n\nA real left-click on +1 increments the count once, -1 decrements it once,\nand RESET sets it to zero. Clicking outside the buttons does nothing.\nHandle each mouse press once rather than repeatedly while it is held.\nKeep the drawing callback brief so the desktop remains responsive.\n\nDemonstrate the working panel with actual mouse clicks: click +1 three\ntimes and show COUNT=3; click -1 once and show COUNT=2; click RESET and\nshow COUNT=0; click outside the buttons and show that it stays zero;\nthen click +1 twice and finish with COUNT=2. Keep the same live panel\nactive throughout the demonstration and leave it visible at completion.\nObserve the intermediate states. Do not type count updates into the\nshell or replace the panel with a static picture.\n",
+  "grader": {
+    "type": "manual",
+    "rubric": "Review the full action and screenshot trajectory. The agent must\ncompile its own HolyC implementation, install a live task drawing\ncallback, and render visible +1, -1, RESET buttons and an initial\nCOUNT=0 inside the shell window. No implementation is supplied.\n\nVerify that genuine left-clicks on the rendered buttons cause the\nobserved state sequence: three increments reach 3, one decrement\nreaches 2, reset reaches 0, an outside click leaves 0 unchanged, and\ntwo further increments reach 2. Each distinct press changes the count\nat most once. Intermediate increment states provide reviewable\nprogress even when the full sequence is incomplete.\n\nThe panel must remain live throughout, with the final COUNT=2 visible.\nCheck responsiveness and absence of callback faults or a frozen guest.\nAccept any clear layout within the shell interior; account for the\nwindow's drawing origin when assessing button hit-testing. Typed\ncount values, static screenshots, or recompiling state between the\ndemonstrated clicks do not establish interactive behavior.\n\nA final screenshot alone cannot prove the state transitions or live\ncallback. This task requires trajectory review and has no automatic\npass score.\n"
+  },
+  "category": "graphics",
+  "difficulty": "hard",
+  "max_steps": 80,
+  "timeout_seconds": 600,
+  "setup": []
+}

@@ -46,17 +46,18 @@ def copy(source, destination):
     destination.write_bytes(portable_content(source))
 
 
-def build(run, output, selected=None):
-    run, output = Path(run).resolve(), Path(output).resolve()
-    sources = (ROOT / "site", ROOT / "tasks", run)
-    if any(output == source or output in source.parents or source in output.parents for source in sources):
-        raise ValueError("Output must be separate from the source site, tasks, and run")
-    envelope = json.loads((run / "results.json").read_text())
-    results = {result["task_id"]: result for result in envelope["results"]}
-    if envelope["provider"] != "cua" or not results:
+def read_run(path, number):
+    envelope = json.loads(portable_content(path / "results.json"))
+    records = envelope.get("results")
+    if envelope.get("provider") != "cua" or not isinstance(records, list) or not records:
         raise ValueError("Expected a recorded Cua run")
-    if any(not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,79}", task_id) for task_id in results):
+    ids = [record.get("task_id") for record in records if isinstance(record, dict)]
+    if (len(ids) != len(records)
+            or any(not isinstance(task_id, str) or not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,79}", task_id)
+                   for task_id in ids)):
         raise ValueError("Invalid recorded task ID")
+    if len(ids) != len(set(ids)):
+        raise ValueError("Duplicate recorded task IDs")
     if envelope.get("provenance", {}).get("execution_mode") != "live_model":
         raise ValueError("The recorded-results site requires a live model run")
     version = (envelope.get("config", {}).get("model_options", {}).get("cua_version")
@@ -64,6 +65,59 @@ def build(run, output, selected=None):
                or envelope.get("provenance", {}).get("agent_version"))
     if not version:
         raise ValueError("Run does not record the installed Cua version")
+    name = re.sub(r"[^A-Za-z0-9_.-]", "_", path.name).strip("._-") or "run"
+    run_id = f"{number:02d}-{name}"
+    metadata = {"id": run_id, "provider": envelope["provider"], "model": envelope["model"],
+                "cua_version": version, "created_at": envelope["created_at"],
+                "config": envelope.get("config", {}), "provenance": envelope.get("provenance", {})}
+    return {"id": run_id, "path": path, "envelope": envelope, "metadata": metadata}
+
+
+def read_review(folder):
+    path = folder / "review.json"
+    if not path.is_file():
+        return None
+    review = json.loads(portable_content(path))
+    if (not isinstance(review, dict) or not isinstance(review.get("status"), str)
+            or review["status"] not in {"passed", "failed", "incomplete"}
+            or any(not isinstance(review.get(key), str) or not review[key].strip()
+                   for key in ("reviewer", "reason"))
+            or not isinstance(review.get("evidence"), list)
+            or any(not isinstance(item, str) or not item.strip() for item in review["evidence"])):
+        raise ValueError("Review must contain status, reviewer, reason, and an evidence string list")
+    return review
+
+
+def export_run(source, destination, selected):
+    envelope = source["envelope"]
+    indexed = {result["task_id"]: result for result in envelope["results"]}
+    filtered = {**envelope, "results": [indexed[task_id] for task_id in selected if task_id in indexed]}
+    destination.mkdir(parents=True, exist_ok=True)
+    (destination / "results.json").write_text(json.dumps(filtered, indent=2) + "\n")
+    for result in filtered["results"]:
+        for path in sorted((source["path"] / result["task_id"]).rglob("*")):
+            relative = path.relative_to(source["path"])
+            if (path.is_file() and "vm" not in relative.parts
+                    and path.suffix in {".png", ".json", ".jsonl", ".txt", ".html"}):
+                copy(path, destination / relative)
+    build_report(destination)
+    return filtered
+
+
+def build(run, output, selected=None, additional_runs=None):
+    run_paths = [Path(path).resolve() for path in (run, *(additional_runs or []))]
+    output = Path(output).resolve()
+    protected = (ROOT / "site", ROOT / "tasks", *run_paths)
+    if any(output == source or output in source.parents or source in output.parents for source in protected):
+        raise ValueError("Output must be separate from the source site, tasks, and run")
+    sources = [read_run(path, number) for number, path in enumerate(run_paths, start=1)]
+    results = {}
+    for source in sources:
+        for result in source["envelope"]["results"]:
+            task_id = result["task_id"]
+            if task_id in results:
+                raise ValueError(f"Duplicate recorded task ID across runs: {task_id}")
+            results[task_id] = (result, source)
     selected = selected if selected is not None else yaml.safe_load((ROOT / "site/tasks.yaml").read_text())
     if (not isinstance(selected, list) or not selected
             or any(not isinstance(task_id, str) or not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,79}", task_id)
@@ -91,8 +145,8 @@ def build(run, output, selected=None):
                           "difficulty": task.difficulty, "prompt": task.prompt, "grader": task.grader,
                           "result": None, "frames": []})
             continue
-        result = results[task_id]
-        folder = run / task_id
+        result, source = results[task_id]
+        folder = source["path"] / task_id
         records = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines() if line.strip()]
         frames = [{"step": 0, "src": f"assets/starter-frames/{task_id}/0000.png",
                    "note": "Before the first action.", "actions": []}]
@@ -117,24 +171,27 @@ def build(run, output, selected=None):
         definition.write_text(yaml.safe_dump({"version": 1, **task}, sort_keys=False))
         tasks.append({"id": task_id, "title": title, "description": description, "category": category,
                       "difficulty": task.get("difficulty", "medium"), "grader": task["grader"],
-                      "prompt": task["prompt"], "result": result, "frames": frames})
-    data = {"run": {"model": envelope["model"], "cua_version": version,
-                    "created_at": envelope["created_at"],
-                    "description": "One attempt per task, each from the same VM snapshot."}, "tasks": tasks}
+                      "prompt": task["prompt"], "result": result, "frames": frames,
+                      "run": source["metadata"]})
+        review = read_review(folder)
+        if review is not None:
+            tasks[-1]["review"] = review
+    used_ids = {task["run"]["id"] for task in tasks if task.get("run")}
+    used_sources = [source for source in sources if source["id"] in used_ids]
+    legacy_run = (used_sources[0]["metadata"] if len(used_sources) == 1 else
+                  sources[0]["metadata"] if len(sources) == 1 else None)
+    data = {"run": legacy_run, "runs": [source["metadata"] for source in used_sources], "tasks": tasks}
     (assets / "starter-data.json").write_text(json.dumps(data, indent=2) + "\n")
-    filtered = {**envelope, "results": [results[task_id] for task_id in selected if task_id in results]}
+    export_sources = used_sources or (sources if len(sources) == 1 else [])
     with tempfile.TemporaryDirectory(prefix="templeosbench-run-") as scratch:
         archive_root = Path(scratch)
-        (archive_root / "results.json").write_text(json.dumps(filtered, indent=2) + "\n")
-        for task_id in selected:
-            if task_id not in results:
-                continue
-            for path in sorted((run / task_id).rglob("*")):
-                relative = path.relative_to(run)
-                if (path.is_file() and "vm" not in relative.parts
-                        and path.suffix in {".png", ".json", ".jsonl", ".txt", ".html"}):
-                    copy(path, archive_root / relative)
-        build_report(archive_root)
+        if len(export_sources) == 1:
+            export_run(export_sources[0], archive_root, selected)
+        else:
+            exported = [{"id": source["id"], **export_run(source, archive_root / source["id"], selected)}
+                        for source in export_sources]
+            collection = {"format": "templeosbench-recorded-runs", "version": 1, "runs": exported}
+            (archive_root / "results.json").write_text(json.dumps(collection, indent=2) + "\n")
         copy(archive_root / "results.json", assets / "starter-results.json")
         with zipfile.ZipFile(assets / "starter-run.zip", "w", zipfile.ZIP_DEFLATED) as archive:
             for path in sorted(archive_root.rglob("*")):
@@ -151,11 +208,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run", type=Path, nargs="?", default=ROOT / "examples/cua-starter")
     parser.add_argument("--output", type=Path, default=ROOT / "build/site")
+    parser.add_argument("--run", dest="additional_runs", action="append", type=Path, default=[],
+                        help="Add a recorded run; repeat for each supplementary source")
     parser.add_argument("--task", action="append", help="Feature this task; repeat for each task in display order")
     args = parser.parse_args()
     run, output = args.run.resolve(), args.output.resolve()
     try:
-        result = build(run, output, args.task)
+        result = build(run, output, args.task, additional_runs=args.additional_runs)
     except ValueError as error:
         parser.error(str(error))
     print(json.dumps(result))

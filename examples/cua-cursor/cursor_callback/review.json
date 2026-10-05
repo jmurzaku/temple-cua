@@ -1,0 +1,19 @@
+{
+  "status": "incomplete",
+  "reviewer": "assistant trajectory review (nonhuman)",
+  "reviewed_at": "2026-10-05T01:55:41.087818+00:00",
+  "reason": "The exact cursor callback compiled, was installed once, and visibly followed pointer movement. The run exhausted its 40-call budget without opening Help Index or Command Line Overview, so the required document navigation, movement over the opened document, and final document state were not completed.",
+  "evidence": [
+    "Step 1 (0001.png; trajectory.jsonl): JIT-compiled the exact anonymous-CTask Cross callback and installed Fs->draw_it=&Cross. No visible compiler error; no later action cleared, replaced, or reinstalled the callback.",
+    "Steps 2 and 3 (0002.png, 0003.png): pointer (210,190) then (460,330); yellow cross centers (218,206) then (468,346). The cross moves by the same (+250,+140) delta, with the stock window's (+8,+16) offset.",
+    "Steps 5 and 6 (0005.png, 0006.png): right-click on the top bar reveals the Insert pulldown, then hovering Help reveals the Help pulldown. These show the menu step; they do not show document navigation.",
+    "Steps 7, 31, and 36 (0007.png, 0031.png, 0036.png): attempted Help-menu clicks return to the original shell without opening Help Index or Command Line Overview.",
+    "Steps 37 and 38 (0037.png, 0038.png): pointer (280,210) then (410,310); cross centers (288,226) then (418,326), matching the pointer's (+130,+100) delta. The callback remains visibly responsive near the end, but the shell is still the active view.",
+    "All numbered frames 0000.png through 0040.png were reviewed. No Help Index or Command Line Overview appears. Final.png shows the Help pulldown over the original shell, rather than the required document.",
+    "Recorded execution outcome: budget_exhausted, 40 API calls, 209.347 seconds. The recorded manual grade remains needs_review with score unset."
+  ],
+  "limitations": [
+    "This is an assistant review of the recorded action and screenshot trajectory, not a human review or an automatic pass score.",
+    "The evidence establishes visible callback movement and navigation outcomes; it does not inspect hidden guest state."
+  ]
+}
