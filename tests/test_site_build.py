@@ -1,9 +1,12 @@
 import importlib.util
+import hashlib
 import json
 from html.parser import HTMLParser
 from pathlib import Path
 import shutil
+import subprocess
 import sys
+from urllib.parse import parse_qs, urlsplit
 import zipfile
 
 import pytest
@@ -37,6 +40,35 @@ class ArtifactLinks(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         self.targets.extend(value for key, value in attrs if key in {"href", "src"})
+
+
+class BuildAssetLinks(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.urls = {}
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == "html":
+            self.urls["assets/starter-data.json"] = attrs.get("data-task-data")
+        elif tag == "script" and urlsplit(attrs.get("src", "")).path == "app.js":
+            self.urls["app.js"] = attrs["src"]
+        elif tag == "link" and attrs.get("rel") == "stylesheet":
+            self.urls["styles.css"] = attrs.get("href")
+
+
+def built_asset_urls(output):
+    parser = BuildAssetLinks()
+    parser.feed((output / "index.html").read_text())
+    assert set(parser.urls) == {"app.js", "styles.css", "assets/starter-data.json"}
+    for filename, url in parser.urls.items():
+        assert url is not None
+        parts = urlsplit(url)
+        assert parts.scheme == "" and parts.netloc == "" and parts.fragment == ""
+        assert parts.path == filename
+        fingerprint = hashlib.sha256((output / filename).read_bytes()).hexdigest()[:12]
+        assert parse_qs(parts.query) == {"v": [fingerprint]}
+    return parser.urls
 
 
 @pytest.fixture
@@ -273,7 +305,7 @@ def test_supplementary_runs_preserve_task_provenance_and_separate_download_envel
     builder.build(RUN, output, additional_runs=[supplemental_run])
     catalog = read_json(output / "assets/starter-data.json")
     assert [task["id"] for task in catalog["tasks"]] == CURATED
-    assert catalog["run"] is None
+    assert catalog["run"]["model"] == read_json(RUN / "results.json")["model"]
     assert len(catalog["runs"]) == 2
     original, supplementary = read_json(RUN / "results.json"), read_json(supplemental_run / "results.json")
     arithmetic, callback, panel = catalog["tasks"]
@@ -407,3 +439,74 @@ def test_cli_repeated_run_argument_routes_supplementary_sources(tmp_path, supple
     assert catalog["tasks"][1]["run"]["model"] == read_json(supplemental_run / "results.json")["model"]
     assert catalog["tasks"][2]["run"]["model"] == panel_envelope["model"]
     assert len(read_json(output / "assets/starter-results.json")["runs"]) == 3
+
+
+def test_versioned_asset_urls_match_built_contents_and_repeat_stably(tmp_path, supplemental_run):
+    first, second = tmp_path / "first", tmp_path / "second"
+    for output in (first, second):
+        builder.build(RUN, output, additional_runs=[supplemental_run])
+    assert built_asset_urls(first) == built_asset_urls(second)
+    legacy = read_json(first / "assets/starter-data.json")["run"]
+    # A previously cached viewer dereferences these fields even with several source runs.
+    assert isinstance(legacy["model"], str) and legacy["model"].startswith("openai/")
+    assert isinstance(legacy["cua_version"], str) and legacy["cua_version"]
+
+
+@pytest.mark.parametrize("filename", ["app.js", "styles.css"])
+def test_editing_source_asset_refreshes_only_its_content_version(tmp_path, monkeypatch, filename):
+    source = tmp_path / "source"
+    shutil.copytree(ROOT / "site", source / "site")
+    shutil.copytree(ROOT / "tasks", source / "tasks")
+    monkeypatch.setattr(builder, "ROOT", source)
+    first, second = tmp_path / "first", tmp_path / "second"
+    builder.build(RUN, first, selected=["arithmetic"])
+    asset = source / "site" / filename
+    asset.write_bytes(asset.read_bytes() + b"\n/* Changed content for cache regression. */\n")
+    builder.build(RUN, second, selected=["arithmetic"])
+    before, after = built_asset_urls(first), built_asset_urls(second)
+    assert before[filename] != after[filename]
+    for unchanged in before.keys() - {filename}:
+        assert before[unchanged] == after[unchanged]
+
+
+def test_catalog_change_refreshes_manifest_url_without_changing_static_asset_urls(tmp_path):
+    first, second = tmp_path / "first", tmp_path / "second"
+    builder.build(RUN, first, selected=["arithmetic"])
+    builder.build(RUN, second, selected=["arithmetic", "cursor_callback"])
+    before, after = built_asset_urls(first), built_asset_urls(second)
+    assert before["assets/starter-data.json"] != after["assets/starter-data.json"]
+    assert before["app.js"] == after["app.js"]
+    assert before["styles.css"] == after["styles.css"]
+
+
+def test_viewer_fetches_html_manifest_url_without_http_cache(tmp_path):
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node is required to execute the viewer's fetch contract")
+    builder.build(RUN, tmp_path)
+    manifest = built_asset_urls(tmp_path)["assets/starter-data.json"]
+    probe = r"""
+const fs = require('fs');
+const vm = require('vm');
+const calls = [];
+const element = {addEventListener() {}};
+const context = {
+  document: {
+    documentElement: {dataset: {taskData: process.argv[2]}},
+    getElementById() { return element; },
+    addEventListener() {}
+  },
+  fetch(url, options) {
+    calls.push({url, options});
+    return new Promise(() => {});
+  }
+};
+vm.runInNewContext(fs.readFileSync(process.argv[1], 'utf8'), context);
+process.stdout.write(JSON.stringify(calls));
+"""
+    completed = subprocess.run([node, "-e", probe, str(tmp_path / "app.js"), manifest],
+                               check=True, capture_output=True, text=True, timeout=10)
+    calls = json.loads(completed.stdout)
+    assert len(calls) == 1
+    assert calls[0]["url"] == manifest
+    assert calls[0]["options"]["cache"] == "no-store"

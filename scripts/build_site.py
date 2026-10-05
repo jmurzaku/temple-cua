@@ -1,6 +1,7 @@
 """Build the task catalog and recorded runs for TempleOSBench."""
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -44,6 +45,11 @@ def portable_content(path):
 def copy(source, destination):
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_bytes(portable_content(source))
+
+
+def asset_url(output, name):
+    digest = hashlib.sha256((output / name).read_bytes()).hexdigest()[:12]
+    return f"{name}?v={digest}"
 
 
 def read_run(path, number):
@@ -178,10 +184,18 @@ def build(run, output, selected=None, additional_runs=None):
             tasks[-1]["review"] = review
     used_ids = {task["run"]["id"] for task in tasks if task.get("run")}
     used_sources = [source for source in sources if source["id"] in used_ids]
-    legacy_run = (used_sources[0]["metadata"] if len(used_sources) == 1 else
-                  sources[0]["metadata"] if len(sources) == 1 else None)
+    # Keep the primary run alias for viewers cached before multi-run support.
+    # Current viewers use each task's run metadata and the complete runs list.
+    legacy_run = (used_sources or sources)[0]["metadata"]
     data = {"run": legacy_run, "runs": [source["metadata"] for source in used_sources], "tasks": tasks}
     (assets / "starter-data.json").write_text(json.dumps(data, indent=2) + "\n")
+    index = output / "index.html"
+    document = index.read_text()
+    document = document.replace('src="app.js"', f'src="{asset_url(output, "app.js")}"')
+    document = document.replace('href="styles.css"', f'href="{asset_url(output, "styles.css")}"')
+    document = document.replace('data-task-data="assets/starter-data.json"',
+                                f'data-task-data="{asset_url(output, "assets/starter-data.json")}"')
+    index.write_text(document)
     export_sources = used_sources or (sources if len(sources) == 1 else [])
     with tempfile.TemporaryDirectory(prefix="templeosbench-run-") as scratch:
         archive_root = Path(scratch)

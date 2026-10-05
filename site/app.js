@@ -1,6 +1,14 @@
 "use strict";
 
 const byId = id => document.getElementById(id);
+const setText = (id, text) => {
+  const element = byId(id);
+  if (element) element.textContent = text;
+};
+const setHidden = (id, hidden) => {
+  const element = byId(id);
+  if (element) element.hidden = hidden;
+};
 let dataset;
 let selectedTask;
 let playbackTimer = null;
@@ -63,6 +71,7 @@ function showPrompt(prompt) {
 
 function showCriteria(grader = {}, targetId = "completion-criteria") {
   const target = byId(targetId);
+  if (!target) return;
   target.replaceChildren();
   const paragraph = text => {
     const node = document.createElement("p");
@@ -98,7 +107,9 @@ function isManualTask(task) {
 }
 
 function showReview(task) {
-  byId("task-review").hidden = !task.review;
+  const card = byId("task-review");
+  if (!card) return;
+  card.hidden = !task.review;
   if (!task.review) return;
   byId("review-outcome").textContent = `${task.review.status[0].toUpperCase() + task.review.status.slice(1)} · ${task.review.reviewer}`;
   byId("review-reason").textContent = task.review.reason;
@@ -110,8 +121,9 @@ function showReview(task) {
     evidence.append(node);
   });
   const limitations = Array.isArray(task.review.limitations) ? task.review.limitations.filter(item => typeof item === "string") : typeof task.review.limitations === "string" ? [task.review.limitations] : [];
-  byId("review-limitations").hidden = !limitations.length;
+  setHidden("review-limitations", !limitations.length);
   const limits = byId("review-limits");
+  if (!limits) return;
   limits.replaceChildren();
   limitations.forEach(item => {
     const node = document.createElement("li");
@@ -134,18 +146,18 @@ function selectTask(id, moveFocus = false) {
   byId("unrecorded-task").hidden = Boolean(result);
   byId("replay-layout").classList.toggle("unrecorded", !result);
   byId("task-limitation").hidden = !result;
-  byId("task-provenance").hidden = !result;
-  byId("task-run-details").hidden = !result;
-  byId("task-criteria-details").hidden = !result || !isManualTask(task);
-  byId("task-review").hidden = true;
+  setHidden("task-provenance", !result);
+  setHidden("task-run-details", !result);
+  setHidden("task-criteria-details", !result || !isManualTask(task));
+  setHidden("task-review", true);
   if (result) {
     const grading = isManualTask(task) ? `Manual grade: ${result.grade.status.replaceAll("_", " ")}.` : `Automatic check: ${result.grade.status.replaceAll("_", " ")}.`;
     byId("task-outcome").textContent = `Run status: ${result.status.replaceAll("_", " ")}. ${grading} ${result.steps} model turns, ${Number(result.elapsed_seconds).toFixed(1)} seconds including reset.`;
     byId("task-budget").textContent = `Limit: ${result.budget.max_steps} turns · ${result.budget.timeout_seconds} seconds.`;
     const metadata = runMetadata(task);
     const started = metadata.created_at ? new Date(metadata.created_at).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }) : "Start time not recorded";
-    byId("task-provenance").textContent = `${metadata.model || "Model not recorded"} · cua-agent ${metadata.cua_version || "—"} · ${started}`;
-    byId("task-run-config").textContent = JSON.stringify({ ...metadata, budget: result.budget }, null, 2);
+    setText("task-provenance", `${metadata.model || "Model not recorded"} · cua-agent ${metadata.cua_version || "—"} · ${started}`);
+    setText("task-run-config", JSON.stringify({ ...metadata, budget: result.budget }, null, 2));
     byId("task-limitation").textContent = isManualTask(task) ? "A trajectory review does not change the raw grader result or assign an automatic score." : "The grader checks visible text. It does not verify the program’s implementation or hidden guest state.";
     if (isManualTask(task)) showCriteria(task.grader, "recorded-criteria");
     showReview(task);
@@ -187,7 +199,8 @@ function difficultyLabel(task) {
 }
 
 async function loadTasks() {
-  const response = await fetch("assets/starter-data.json");
+  const dataUrl = document.documentElement.dataset.taskData || "assets/starter-data.json";
+  const response = await fetch(dataUrl, { cache: "no-store" });
   if (!response.ok) throw new Error("Task data could not load.");
   dataset = await response.json();
   if (!Array.isArray(dataset.tasks) || !dataset.tasks.length) throw new Error("No tasks are available.");
@@ -227,9 +240,9 @@ async function loadTasks() {
   const manual = recordedTasks.filter(isManualTask);
   const reviewCounts = { passed: 0, failed: 0, incomplete: 0, pending: 0 };
   manual.forEach(task => { reviewCounts[task.review?.status || "pending"]++; });
-  byId("review-summary-field").hidden = !manual.length;
-  byId("run-facts").classList.toggle("has-reviews", Boolean(manual.length));
-  byId("run-reviews").textContent = Object.entries(reviewCounts).filter(([, number]) => number).map(([status, number]) => `${number} ${status}`).join(", ") || "—";
+  setHidden("review-summary-field", !manual.length);
+  byId("run-facts")?.classList.toggle("has-reviews", Boolean(manual.length));
+  setText("run-reviews", Object.entries(reviewCounts).filter(([, number]) => number).map(([status, number]) => `${number} ${status}`).join(", ") || "—");
   const unrecordedCount = dataset.tasks.length - recordedTasks.length;
   const sourceCount = new Set(recordedTasks.map(task => runMetadata(task).id || runMetadata(task).created_at)).size;
   byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : `One recorded attempt per task across ${sourceCount} ${sourceCount === 1 ? "run" : "runs"}.${unrecordedCount ? ` ${unrecordedCount} tasks have no recorded model run.` : ""}${manual.length ? " Trajectory reviews are separate from automatic grading." : ""}`;
@@ -241,7 +254,8 @@ async function loadTasks() {
   selectTask(dataset.tasks[0].id);
 }
 
-loadTasks().catch(() => {
+loadTasks().catch(error => {
+  console.error("TempleOSBench task viewer failed:", error);
   byId("task-rows").replaceChildren();
   const row = document.createElement("tr");
   const message = cell("Task data could not load.");
