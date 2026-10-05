@@ -157,6 +157,13 @@ function automaticGradeSummary(tasks) {
   return verified.length ? `${passed} / ${verified.length} passed${unverified ? ` · ${unverified} unverified` : ""}` : "Unverified";
 }
 
+function trajectoryReviewSummary(tasks) {
+  const reviewed = tasks.filter(task => task.result && (isManualTask(task) || task.review));
+  const counts = { passed: 0, failed: 0, incomplete: 0, pending: 0 };
+  reviewed.forEach(task => { counts[task.review?.status || "pending"]++; });
+  return { count: reviewed.length, text: Object.entries(counts).filter(([, number]) => number).map(([status, number]) => `${number} ${status}`).join(", ") || "—" };
+}
+
 function taskStatusText(task) {
   const result = task.result;
   if (!result) return "Not run";
@@ -351,15 +358,13 @@ async function loadTasks() {
   byId("run-agent").textContent = versions.length === 1 ? `cua-agent ${versions[0]}` : versions.length ? "Multiple versions" : "—";
   byId("run-task").textContent = `${recordedTasks.length} / ${dataset.tasks.length}`;
   byId("run-score").textContent = automaticGradeSummary(dataset.tasks);
-  const manual = recordedTasks.filter(isManualTask);
-  const reviewCounts = { passed: 0, failed: 0, incomplete: 0, pending: 0 };
-  manual.forEach(task => { reviewCounts[task.review?.status || "pending"]++; });
-  setHidden("review-summary-field", !manual.length);
-  byId("run-facts")?.classList.toggle("has-reviews", Boolean(manual.length));
-  setText("run-reviews", Object.entries(reviewCounts).filter(([, number]) => number).map(([status, number]) => `${number} ${status}`).join(", ") || "—");
+  const reviews = trajectoryReviewSummary(dataset.tasks);
+  setHidden("review-summary-field", !reviews.count);
+  byId("run-facts")?.classList.toggle("has-reviews", Boolean(reviews.count));
+  setText("run-reviews", reviews.text);
   const unrecordedCount = dataset.tasks.length - recordedTasks.length;
   const sourceCount = new Set(recordedTasks.map(task => runMetadata(task).id || runMetadata(task).created_at)).size;
-  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : `One featured attempt per task across ${sourceCount} ${sourceCount === 1 ? "run" : "runs"}.${unrecordedCount ? ` ${unrecordedCount} tasks have no recorded model run.` : ""}${manual.length ? " Trajectory reviews are separate from automatic grading." : ""}`;
+  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : `One featured attempt per task across ${sourceCount} ${sourceCount === 1 ? "run" : "runs"}.${unrecordedCount ? ` ${unrecordedCount} tasks have no recorded model run.` : ""}${reviews.count ? " Trajectory reviews are separate from automatic grading." : ""}`;
   const budgets = recordedTasks.map(task => task.result.budget);
   const sharedBudget = budgets.length && budgets.every(budget => budget.max_steps === budgets[0].max_steps && budget.timeout_seconds === budgets[0].timeout_seconds);
   const limits = !budgets.length ? "" : sharedBudget ? `The recorded limit is ${budgets[0].max_steps} model turns and ${budgets[0].timeout_seconds} seconds per task. ` : "The harness enforces the time and turn limits recorded for each task. ";

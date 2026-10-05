@@ -1,0 +1,27 @@
+{
+  "validation_kind": "scripted_host_reference_no_model",
+  "runtime_source_commit": "1dc502788a949b79b9d8c794b041bc7036978349",
+  "reference_source_sha256": "dbfcc3c8d5587adb8b7c85b2b10575631a231cf42d5837b90d63443733c18b46",
+  "validation_date": "2026-10-05",
+  "validated_at": "2026-10-05T12:48:54.601855+00:00",
+  "status": "passed",
+  "passed_cases": 10,
+  "total_cases": 10,
+  "elapsed_seconds": 16.812,
+  "errors": [],
+  "artifacts": [
+    "evaluation.json",
+    "evaluation-stop-1.png",
+    "evaluation-stop-2.png",
+    "evaluation-liveness.png"
+  ],
+  "process_cleanup": {
+    "qemu_pid": 73711,
+    "qemu_pid_exists": false,
+    "serial_socket_remaining": false
+  },
+  "limitations": [
+    "This validates the scripted reference and grader, not a model run or model score.",
+    "IRQ4 dependence under masking does not formally prove every receive path uses interrupts."
+  ]
+}

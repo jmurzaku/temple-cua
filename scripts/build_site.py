@@ -240,6 +240,10 @@ def build(run, output, selected=None, additional_runs=None):
                 entry.compress_type = zipfile.ZIP_DEFLATED
                 entry.external_attr = 0o100644 << 16
                 archive.writestr(entry, portable_content(path))
+    document = index.read_text()
+    for name in ("assets/starter-results.json", "assets/starter-run.zip"):
+        document = document.replace(f'href="{name}"', f'href="{asset_url(output, name)}"')
+    index.write_text(document)
     return {"tasks": len(tasks), "frames": sum(len(task["frames"]) for task in tasks), "output": str(output)}
 
 

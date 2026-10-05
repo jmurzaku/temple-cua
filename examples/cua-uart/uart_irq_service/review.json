@@ -1,0 +1,35 @@
+{
+  "status": "failed",
+  "reviewer": "Codex, passive saved-trajectory and host-evidence review",
+  "reason": "The model exhausted 80 calls on file browsing and editor navigation without entering or starting a UART implementation. The host received no serial replies and awarded 0/10. The final Find/Replace form received the host cleanup commands as field text rather than executing them in a shell.",
+  "source_commit": "1dc502788a949b79b9d8c794b041bc7036978349",
+  "model": "openai/gpt-6.1-sol",
+  "steps": 80,
+  "policy_status": "budget_exhausted",
+  "automatic_grade": {"type": "uart", "status": "failed", "score": 0.0, "passed_cases": 0, "total_cases": 10},
+  "errors": {
+    "provider_or_adapter_errors": 0,
+    "rejected_inputs": 0,
+    "partial_actions": 0,
+    "host_oracle_errors": 0,
+    "guest_observations": "Nonexistent C:/ paths caused ExceptDrv; attempted writes to read-only T:/Kernel files caused BlkWrite/DocWrite exceptions."
+  },
+  "mechanism_observations": [
+    "No model action defines BenchStart/BenchStop, configures the UART, installs an interrupt handler, or enters a worker/parser implementation. Telemetry.HC is visibly empty at turn 51.",
+    "IntEntrySet and IRET appear as bare editor-search text, not an installed handler or compiled interrupt code.",
+    "All eight protocol cases received zero replies. The IRQ4 dependence probe was skipped because no functional serial case passed.",
+    "Host cleanup text landed in the Find/Replace form; no BenchStop execution or fresh shell output was verified. Readable hardware remained in its initial state."
+  ],
+  "limitations": [
+    "This records failure to produce a working service in this screenshot-only episode; it does not measure the correctness of an implemented driver.",
+    "Unchanged hardware and silence do not earn cleanup or interrupt-dependence credit.",
+    "The shell challenge failed in the final editor form; this does not establish a kernel hang or global desktop failure."
+  ],
+  "evidence": [
+    "trajectory.jsonl",
+    "evaluation.json",
+    "0051.png",
+    "0080.png",
+    "evaluation-liveness.png"
+  ]
+}

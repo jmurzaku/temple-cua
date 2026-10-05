@@ -228,3 +228,16 @@ def test_uart_outcome_does_not_infer_missing_phase_times_from_total():
     text = probe_viewer(task, probe)
     assert "Score: Unverified" in text
     assert "Model episode: not recorded; host evaluation: not recorded; total: 12.5 seconds" in text
+
+
+def test_trajectory_summary_includes_uart_annotation_separately_from_host_grade():
+    tasks = [
+        {"grader": {"type": "manual"}, "result": {"grade": {"status": "needs_review"}},
+         "review": {"status": "passed"}},
+        {"grader": {"type": "manual"}, "result": {"grade": {"status": "needs_review"}},
+         "review": {"status": "incomplete"}},
+        {"grader": {"type": "uart"}, "result": {"grade": {"type": "uart", "status": "failed", "score": 0}},
+         "review": {"status": "incomplete"}},
+    ]
+    probe = "process.stdout.write(JSON.stringify(context.trajectoryReviewSummary(input)));"
+    assert probe_viewer(tasks, probe) == {"count": 3, "text": "1 passed, 2 incomplete"}

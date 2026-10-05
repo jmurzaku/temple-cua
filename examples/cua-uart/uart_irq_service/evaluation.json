@@ -1,0 +1,1122 @@
+{
+  "schema_version": 1,
+  "phase": "host_evaluation_after_policy",
+  "created_at": "2026-10-05T12:58:39.120731+00:00",
+  "elapsed_seconds": 45.924,
+  "command_deadline_seconds": 60.0,
+  "timeout_scope": "Cleanup commands use an absolute deadline; UART and QMP calls have individual timeouts.",
+  "grade": {
+    "type": "uart",
+    "status": "failed",
+    "score": 0.0,
+    "passed_cases": 0,
+    "total_cases": 10,
+    "reason": "0/10 host UART checks passed",
+    "cases": [
+      {
+        "name": "valid_short",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Replies differ from the expected ordered byte stream"
+      },
+      {
+        "name": "random_payload_64",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Replies differ from the expected ordered byte stream"
+      },
+      {
+        "name": "fragmented_request",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Replies differ from the expected ordered byte stream"
+      },
+      {
+        "name": "back_to_back_burst_8",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Replies differ from the expected ordered byte stream"
+      },
+      {
+        "name": "bad_checksum_then_valid",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Replies differ from the expected ordered byte stream"
+      },
+      {
+        "name": "valid_after_bad_checksum",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Replies differ from the expected ordered byte stream"
+      },
+      {
+        "name": "invalid_length_then_valid",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Replies differ from the expected ordered byte stream"
+      },
+      {
+        "name": "embedded_header_payload",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Replies differ from the expected ordered byte stream"
+      },
+      {
+        "name": "irq4_mask_dependency",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Requires at least one valid serial case and hardware inspection"
+      },
+      {
+        "name": "safe_stop_restore_liveness",
+        "status": "failed",
+        "score": 0.0,
+        "reason": "Credit requires at least one valid serial case"
+      }
+    ],
+    "evidence": [
+      "evaluation.json",
+      "evaluation-liveness.png",
+      "evaluation-stop-1.png",
+      "evaluation-stop-2.png"
+    ],
+    "limitations": [
+      "IRQ4 masking tests causal dependence for one challenge; it does not prove every RX path uses interrupts.",
+      "Behavioral checks do not prove bounded buffering, race freedom, or absence of privileged modifications.",
+      "Write-only UART FIFO details and pending device contents cannot all be restored or inspected.",
+      "Fresh shell output rejects ordinary echoes and constants; it is not a security boundary against malicious ring-0 code."
+    ]
+  },
+  "initial_hardware": {
+    "interrupt_vector": {
+      "number": 36,
+      "idt_base": 468200488,
+      "idt_limit": 4095,
+      "bytes_hex": "8afc4000008e00000000000000000000"
+    },
+    "pic": {
+      "master_mask": 248,
+      "irq4_masked": true
+    },
+    "uart": {
+      "lcr": 0,
+      "mcr": 8,
+      "fifo_enabled": false,
+      "scratch": 0,
+      "ier": 0,
+      "divisor_low": 12,
+      "divisor_high": 0
+    },
+    "host_commands": [
+      {
+        "command": "info registers",
+        "output": "\r\nCPU#0\r\nRAX=0000000000011692 RBX=000000000002578b RCX=0000000000011691 RDX=0000000000000001\r\nRSI=000000001be80cc8 RDI=0000000000000001 RBP=0000000015ffe938 RSP=0000000015ffe910\r\nR8 =000000000001170a R9 =000000000000bc78 R10=0000000000000000 R11=0000000000000001\r\nR12=0000000000000000 R13=0000000000000200 R14=0000000000000010 R15=0000000015e5c4e0\r\nRIP=0000000000027ebd RFL=00000246 [---Z-P-] CPL=0 II=0 A20=1 SMM=0 HLT=0\r\nES =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nCS =0040 0000000000000000 00000000 00209a00 DPL=0 CS64 [-R-]\r\nSS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nDS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nFS =0060 0000000015e6a428 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nGS =0060 000000001bf8c028 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nLDT=0000 0000000000000000 0000ffff 00008200 DPL=0 LDT\r\nTR =0080 000000001bf44a28 ffffffff 008f8900 DPL=0 TSS64-avl\r\nGDT=     0000000000008020 0000107f\r\nIDT=     000000001be82c28 00000fff\r\nCR0=80000031 CR2=0000000000000000 CR3=0000000000509000 CR4=000000b0\r\nDR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 \r\nDR6=00000000ffff0ff0 DR7=0000000000000400\r\nEFER=0000000000000500\r\nFCW=037f FSW=0020 [ST=0] FTW=00 MXCSR=00001f80\r\nFPR0=0000000000000000 0000 FPR1=0000000000000000 0000\r\nFPR2=0000000000000000 0000 FPR3=0000000000000000 0000\r\nFPR4=0000000000000000 0000 FPR5=0000000000000000 0000\r\nFPR6=fb5098c9b8000000 3ff4 FPR7=f5755889d9de0254 4003\r\nXMM00=0000000000000000 0000000000000000 XMM01=0000000000000000 0000000000000000\r\nXMM02=0000000000000000 0000000000000000 XMM03=0000000000000000 0000000000000000\r\nXMM04=0000000000000000 0000000000000000 XMM05=0000000000000000 0000000000000000\r\nXMM06=0000000000000000 0000000000000000 XMM07=0000000000000000 0000000000000000\r\nXMM08=0000000000000000 0000000000000000 XMM09=0000000000000000 0000000000000000\r\nXMM10=0000000000000000 0000000000000000 XMM11=0000000000000000 0000000000000000\r\nXMM12=0000000000000000 0000000000000000 XMM13=0000000000000000 0000000000000000\r\nXMM14=0000000000000000 0000000000000000 XMM15=0000000000000000 0000000000000000\r\n"
+      },
+      {
+        "command": "xp /16bx 0x1be82e68",
+        "output": "000000001be82e68: 0x8a 0xfc 0x40 0x00 0x00 0x8e 0x00 0x00\r\n000000001be82e70: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x3fb",
+        "output": "portb[0x03fb] = 0x00\r\n"
+      },
+      {
+        "command": "i /b 0x3fc",
+        "output": "portb[0x03fc] = 0x08\r\n"
+      },
+      {
+        "command": "i /b 0x3fa",
+        "output": "portb[0x03fa] = 0x01\r\n"
+      },
+      {
+        "command": "i /b 0x3ff",
+        "output": "portb[0x03ff] = 0x00\r\n"
+      },
+      {
+        "command": "o /b 0x3fb 0x0",
+        "output": ""
+      },
+      {
+        "command": "i /b 0x3f9",
+        "output": "portb[0x03f9] = 0x00\r\n"
+      },
+      {
+        "command": "o /b 0x3fb 0x80",
+        "output": ""
+      },
+      {
+        "command": "i /b 0x3f8",
+        "output": "portb[0x03f8] = 0x0c\r\n"
+      },
+      {
+        "command": "i /b 0x3f9",
+        "output": "portb[0x03f9] = 0x00\r\n"
+      },
+      {
+        "command": "o /b 0x3fb 0x0",
+        "output": ""
+      }
+    ],
+    "limitations": [
+      "TempleOS identity mapping is assumed when reading the IDT through physical memory.",
+      "FIFO contents, RX trigger selection, and other write-only/transient state cannot be compared.",
+      "IIR is read only for FIFO-enable bits; its transient interrupt reason is not graded."
+    ]
+  },
+  "protocol": {
+    "type": "host_uart",
+    "status": "failed",
+    "score": 0.0,
+    "passed_cases": 0,
+    "total_cases": 8,
+    "seed_hex": "1f419bf1fb97c66a8a9d8bc73de77a8b443c70b275e9a6fb0ab881bd4a49c02b",
+    "case_timeout_seconds": 2.0,
+    "reason": "0/8 host UART cases passed",
+    "cases": [
+      {
+        "name": "valid_short",
+        "status": "failed",
+        "reason": "Replies differ from the expected ordered byte stream",
+        "latency_ms": null,
+        "elapsed_ms": 2002.21,
+        "expected_replies_hex": [
+          "5a75843b646b03"
+        ],
+        "received_replies_hex": [],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5750176ec",
+            "at_ms": 0.07
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "random_payload_64",
+        "status": "failed",
+        "reason": "Replies differ from the expected ordered byte stream",
+        "latency_ms": null,
+        "elapsed_ms": 2002.895,
+        "expected_replies_hex": [
+          "5af13802d02d28"
+        ],
+        "received_replies_hex": [],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5f140b2b82fe4c2b14596611aec3530786f54a9cd3b61ed20be1c590c35b01d267b2c7da8121884cd4fb104da2f2c4f0facf5feefa564d4fb57f012d9b0574f1df0aa0c",
+            "at_ms": 0.031
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "fragmented_request",
+        "status": "failed",
+        "reason": "Replies differ from the expected ordered byte stream",
+        "latency_ms": null,
+        "elapsed_ms": 2002.75,
+        "expected_replies_hex": [
+          "5a0b5b0699e5ea"
+        ],
+        "received_replies_hex": [],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5",
+            "at_ms": 0.026
+          },
+          {
+            "direction": "host_to_guest",
+            "hex": "0b1f",
+            "at_ms": 15.163
+          },
+          {
+            "direction": "host_to_guest",
+            "hex": "93e6ab5e961d1397e17db920c5c5",
+            "at_ms": 30.323
+          },
+          {
+            "direction": "host_to_guest",
+            "hex": "ad425641fe942103a9bb81f1c985b773be12",
+            "at_ms": 45.659
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "back_to_back_burst_8",
+        "status": "failed",
+        "reason": "Replies differ from the expected ordered byte stream",
+        "latency_ms": null,
+        "elapsed_ms": 2002.176,
+        "expected_replies_hex": [
+          "5ac2de872585d1",
+          "5abb127d69a154",
+          "5aef2a8c6f5a6e",
+          "5a78c697905bc0",
+          "5a711fad10e835",
+          "5af52b66f45bd5",
+          "5a0c9db88e06f5",
+          "5a11aa91120765"
+        ],
+        "received_replies_hex": [],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5c2337499d625f3e7ee4a865adb8102deb3712bfed42cb79ef9da08c41d4a2aeaa0994de3b4bd9a827482a53cee401257c510dc1fadc8a5bb2f1c7fa879781c473858813420f27149cbac369bfabe1cd576a232bf3b098296e79f796fda72c6c326bd568f4a5a08ad4ca5ef1cbbbf65aae959beb5a816e788735c8209557e8aaa10ad4a7fe88b96da40a5780ce48e85c524d2957d7c894d20baa5710e7acb3fec89871ff8018b149c27a51ea5f51152621d1213426529791848eba76219ed03a2a50c08c4f77534f62106d96ea511400d0ea525fc79737145c3ef14cf814a16cc3258b604533a9c693156ea263c55d16a6cf7c7758585e0311ba720efa4ac3a12f478956d5df74429eb028decf4095159",
+            "at_ms": 0.029
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "bad_checksum_then_valid",
+        "status": "failed",
+        "reason": "Replies differ from the expected ordered byte stream",
+        "latency_ms": null,
+        "elapsed_ms": 2002.327,
+        "expected_replies_hex": [
+          "5ad6682ff01976"
+        ],
+        "received_replies_hex": [],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a53a1322659d663c757d913ab76e34a8993571b25c0724",
+            "at_ms": 0.026
+          },
+          {
+            "direction": "host_to_guest",
+            "hex": "a5d60d67d87ed49fd2a9ce08ce9b77fe42",
+            "at_ms": 15.184
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "valid_after_bad_checksum",
+        "status": "failed",
+        "reason": "Replies differ from the expected ordered byte stream",
+        "latency_ms": null,
+        "elapsed_ms": 2002.137,
+        "expected_replies_hex": [
+          "5a46d59048c2b5"
+        ],
+        "received_replies_hex": [],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a546174af294824a9d2247ae615b4517d4eb7533473406ead4a20d",
+            "at_ms": 0.026
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "invalid_length_then_valid",
+        "status": "failed",
+        "reason": "Replies differ from the expected ordered byte stream",
+        "latency_ms": null,
+        "elapsed_ms": 2002.122,
+        "expected_replies_hex": [
+          "5aedb48efced18"
+        ],
+        "received_replies_hex": [],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5df5fa5ed0b17ac735308822e9202163f22",
+            "at_ms": 0.025
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "embedded_header_payload",
+        "status": "failed",
+        "reason": "Replies differ from the expected ordered byte stream",
+        "latency_ms": null,
+        "elapsed_ms": 2002.132,
+        "expected_replies_hex": [
+          "5a067a80800181"
+        ],
+        "received_replies_hex": [],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5062ba500a55aff00b7a57b3ab4d63eebf5a1cd43fae9eb981f70ce9b04075e6b3abc722a4f8432fcadf4bb81a989",
+            "at_ms": 0.024
+          }
+        ],
+        "infrastructure_error": false
+      }
+    ],
+    "limitations": [
+      "Behavioral serial protocol test; does not prove IRQ-only processing.",
+      "Seed and byte transcript must remain hidden from the policy until grading ends."
+    ]
+  },
+  "irq4_dependence": {
+    "status": "skipped",
+    "reason": "Requires at least one valid serial case and hardware inspection"
+  },
+  "cleanup": {
+    "name": "safe_stop_restore_liveness",
+    "status": "failed",
+    "reason": "Stop return, hardware restoration, or fresh shell response could not be verified",
+    "host_commands": [
+      {
+        "purpose": "STOP1",
+        "command": "{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};\n",
+        "expected_line": "UA_STOP1_5295a2f5a3df3c02=8203",
+        "screenshot": "evaluation-stop-1.png",
+        "status": "failed",
+        "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+        "observations": [
+          {
+            "at_ms": 5385.292,
+            "exact_line_matches": 0,
+            "observed_text": "   :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};\n   :_\nce\ntion\n Case\n Labels\ne Local Var\nnes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:13 FPS:30 Mem:0015E8B400 CPU11                                 ;\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT   :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};\ufffd\ne   :_                                                                         \ufffd\nrce                                                                            \ufffd\nm                                                                              \ufffd\n\ufffdtion                                                                          \ufffd\nE Case                                                                         \ufffd\nd Labels                                                                       \ufffd\nie Local Var                                                                   \ufffd\ntnes:0_                                                                        \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0001 \ufffd\ufffdl:0088\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5617.145,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:13 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5865.232,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:14 FPS:30 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6105.266,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:14 FPS:30 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6354.598,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:14 FPS:30 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6612.246,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:14 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6855.085,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:15 FPS:29 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7092.075,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:15 FPS:29 Mem:0015E8B400 CPU17                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7336.682,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:15 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7579.635,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:15 FPS:29 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.DD.Z...~/Tmp.DD\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7825.284,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:15 FPS:29 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8071.992,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:16 FPS:31 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdZ...~/Tmp.DD.Z..\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8327.313,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:16 FPS:31 Mem:0015E8B400 CPU16                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8585.149,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:16 FPS:31 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd~/Tmp.DD.Z...~/T\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8831.267,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:16 FPS:31 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9087.876,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:17 FPS:30 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdp.DD.Z...~/Tmp.D\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9324.65,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:17 FPS:30 Mem:0015E8B400 CPU14                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9554.238,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:17 FPS:30 Mem:0015E8B400 CPU14                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.Z...~/Tmp.DD.Z.\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9787.114,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:17 FPS:30 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 10019.521,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:18 FPS:30 Mem:0015E8B400 CPU 9                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          },
+          {
+            "at_ms": 10254.698,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:18 FPS:30 Mem:0015E8B400 CPU14                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd"
+          }
+        ],
+        "extraction_crop_box": [
+          8,
+          16,
+          632,
+          472
+        ],
+        "observed_full_frame_text": "Mon 10/05 12:58:18 FPS:30 Mem:0015E8B400 CPU14                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :_                                                                          \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0014\ufffd\ufffd",
+        "reason": "Fresh output line missing or ambiguous; command echo is insufficient",
+        "elapsed_seconds": 10.255
+      },
+      {
+        "purpose": "STOP2",
+        "command": "{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1;};\n",
+        "expected_line": "UA_STOP2_1d34b56a4fc82f8f=609",
+        "screenshot": "evaluation-stop-2.png",
+        "status": "failed",
+        "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+        "observations": [
+          {
+            "at_ms": 5312.555,
+            "exact_line_matches": 0,
+            "observed_text": "  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\n  :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1;};_\ne\nion\nCase\nLabels\n Local Var\nes:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:24 FPS:30 Mem:0015E8B400 CPU14                                 ;\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdp.DD.Z...~/Tmp.D\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT  :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*87+25;};_\ufffd\ne  :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1;};_     \ufffd\nre                                                                             \ufffd\nm                                                                              \ufffd\n\ufffdion                                                                           \ufffd\nECase                                                                          \ufffd\ndLabels                                                                        \ufffd\ni Local Var                                                                    \ufffd\ntes:0_                                                                         \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDA \ufffdO\ufffd\ufffdLine:0002 C\ufffd\ufffd:0083\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5548.36,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:24 FPS:30 Mem:0015E8B400 CPU14                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5785.121,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:24 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6016.937,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:24 FPS:30 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6250.716,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:25 FPS:30 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6484.093,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:25 FPS:30 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6726.862,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:25 FPS:30 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6962.122,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:25 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7252.887,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:25 FPS:30 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdDD.Z...~/Tmp.DD.\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7490.163,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:26 FPS:29 Mem:0015E8B400 CPU17                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7726.735,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:26 FPS:29 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7986.087,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:26 FPS:29 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8239.059,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:26 FPS:29 Mem:0015E8B400 CPU 9                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8496.064,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:27 FPS:31 Mem:0015E8B400 CPU15                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8733.348,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:27 FPS:31 Mem:0015E8B400 CPU15                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8980.099,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:27 FPS:31 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9228.355,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:27 FPS:31 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9470.054,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:28 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9706.287,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:28 FPS:30 Mem:0015E8B400 CPU17                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9951.195,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:28 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          },
+          {
+            "at_ms": 10202.747,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\n ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:28 FPS:30 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdp.DD.Z...~/Tmp.D\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd"
+          }
+        ],
+        "extraction_crop_box": [
+          8,
+          16,
+          632,
+          472
+        ],
+        "observed_full_frame_text": "Mon 10/05 12:58:28 FPS:30 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdp.DD.Z...~/Tmp.D\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nr ] Replace                                                                    \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0002\ufffd\ufffd",
+        "reason": "Fresh output line missing or ambiguous; command echo is insufficient",
+        "elapsed_seconds": 10.203
+      },
+      {
+        "purpose": "ALIVE",
+        "command": "{DocClear;\"\\n  UA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};\n",
+        "expected_line": "UA_ALIVE_3cc00a09a23d06ad=526",
+        "screenshot": "evaluation-liveness.png",
+        "status": "failed",
+        "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+        "observations": [
+          {
+            "at_ms": 4449.959,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[ ] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:32 FPS:30 Mem:0015E8B400 CPU12                                 ;\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[ ] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 4695.765,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:33 FPS:26 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 4949.14,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:33 FPS:26 Mem:0015E8B400 CPU14                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5196.0,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:33 FPS:26 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5434.999,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:33 FPS:26 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5679.135,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:34 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5919.305,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:34 FPS:30 Mem:0015E8B400 CPU14                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6151.75,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:34 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6396.399,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:34 FPS:30 Mem:0015E8B400 CPU10                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6630.229,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:34 FPS:30 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 6862.935,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:35 FPS:29 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdD.Z...~/Tmp.DD.Z\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7095.995,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:35 FPS:29 Mem:0015E8B400 CPU13                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7330.769,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:35 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7563.47,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:35 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 7802.525,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:37 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8043.91,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:37 FPS:29 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8294.337,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:37 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8523.548,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:37 FPS:29 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8752.5,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:37 FPS:29 Mem:0015E8B400 CPU12                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 8980.214,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:38 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9209.012,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:38 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd~/Tmp.DD.Z...~/T\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          },
+          {
+            "at_ms": 9434.846,
+            "exact_line_matches": 0,
+            "observed_text": "ind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\neplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\nDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace\nX] Fwd\n ] Selection\nX] Match Case\n ] Whole Labels\n ] Rename Local Var\nilter Lines:0_",
+            "observed_full_frame_text": "Mon 10/05 12:58:38 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd"
+          }
+        ],
+        "extraction_crop_box": [
+          8,
+          16,
+          632,
+          472
+        ],
+        "observed_full_frame_text": "Mon 10/05 12:58:38 FPS:29 Mem:0015E8B400 CPU11                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nTind        :IRET{DocClear;BenchStop();\"\\n  UA_STOP1_5295a2f5a3df3c02=%d\\n\",94*\ufffd\neeplace     :{DocClear;BenchStop();\"\\n  UA_STOP2_1d34b56a4fc82f8f=%d\\n\",32*19+1\ufffd\nrDocClear;\"\\nUA_ALIVE_3cc00a09a23d06ad=%d\\n\",8*61+38;};[X] Replace             \ufffd\nmX] Fwd                                                                        \ufffd\n\ufffd ] Selection                                                                  \ufffd\nEX] Match Case                                                                 \ufffd\nd ] Whole Labels                                                               \ufffd\ni ] Rename Local Var                                                           \ufffd\ntilter Lines:0_                                                                \ufffd\nF                                                                          \ufffd   \ufffd\no                                                                          \ufffd\ufffd  \ufffd\nr                                                                              \ufffd\nm                                                                              \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdCB \ufffdO\ufffd\ufffdLine:0003 Col:0057\ufffd\ufffd",
+        "reason": "Fresh output line missing or ambiguous; command echo is insufficient",
+        "elapsed_seconds": 9.435
+      }
+    ],
+    "hardware_after_each_stop": [
+      {
+        "interrupt_vector": {
+          "number": 36,
+          "idt_base": 468200488,
+          "idt_limit": 4095,
+          "bytes_hex": "8afc4000008e00000000000000000000"
+        },
+        "pic": {
+          "master_mask": 248,
+          "irq4_masked": true
+        },
+        "uart": {
+          "lcr": 0,
+          "mcr": 8,
+          "fifo_enabled": false,
+          "scratch": 0,
+          "ier": 0,
+          "divisor_low": 12,
+          "divisor_high": 0
+        },
+        "host_commands": [
+          {
+            "command": "info registers",
+            "output": "\r\nCPU#0\r\nRAX=000000001bf8ba28 RBX=000000000000aa8f RCX=0000000016122c40 RDX=0000000000000000\r\nRSI=0000000000100300 RDI=000000001bf8c028 RBP=000000001611c6c8 RSP=000000001bf86c40\r\nR8 =0000000016122c38 R9 =00000000167ba228 R10=0000000000000000 R11=0000000000000000\r\nR12=0000000000000000 R13=0000000000000001 R14=00000000000bc869 R15=0000000000000000\r\nRIP=000000000000cc3a RFL=00000246 [---Z-P-] CPL=0 II=0 A20=1 SMM=0 HLT=1\r\nES =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nCS =0040 0000000000000000 00000000 00209a00 DPL=0 CS64 [-R-]\r\nSS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nDS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nFS =0060 000000001bf8ba28 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nGS =0060 000000001bf8c028 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nLDT=0000 0000000000000000 0000ffff 00008200 DPL=0 LDT\r\nTR =0080 000000001bf44a28 ffffffff 008f8900 DPL=0 TSS64-avl\r\nGDT=     0000000000008020 0000107f\r\nIDT=     000000001be82c28 00000fff\r\nCR0=80000031 CR2=0000000000000000 CR3=0000000000509000 CR4=000000b0\r\nDR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 \r\nDR6=00000000ffff0ff0 DR7=0000000000000400\r\nEFER=0000000000000500\r\nFCW=037f FSW=0020 [ST=0] FTW=00 MXCSR=00001f80\r\nFPR0=0000000000000000 0000 FPR1=0000000000000000 0000\r\nFPR2=0000000000000000 0000 FPR3=0000000000000000 0000\r\nFPR4=0000000000000000 0000 FPR5=0000000000000000 0000\r\nFPR6=ff285f8c1732b800 3ffe FPR7=9718e6ce677790e8 4008\r\nXMM00=0000000000000000 0000000000000000 XMM01=0000000000000000 0000000000000000\r\nXMM02=0000000000000000 0000000000000000 XMM03=0000000000000000 0000000000000000\r\nXMM04=0000000000000000 0000000000000000 XMM05=0000000000000000 0000000000000000\r\nXMM06=0000000000000000 0000000000000000 XMM07=0000000000000000 0000000000000000\r\nXMM08=0000000000000000 0000000000000000 XMM09=0000000000000000 0000000000000000\r\nXMM10=0000000000000000 0000000000000000 XMM11=0000000000000000 0000000000000000\r\nXMM12=0000000000000000 0000000000000000 XMM13=0000000000000000 0000000000000000\r\nXMM14=0000000000000000 0000000000000000 XMM15=0000000000000000 0000000000000000\r\n"
+          },
+          {
+            "command": "xp /16bx 0x1be82e68",
+            "output": "000000001be82e68: 0x8a 0xfc 0x40 0x00 0x00 0x8e 0x00 0x00\r\n000000001be82e70: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\r\n"
+          },
+          {
+            "command": "i /b 0x21",
+            "output": "portb[0x0021] = 0xf8\r\n"
+          },
+          {
+            "command": "i /b 0x3fb",
+            "output": "portb[0x03fb] = 0x00\r\n"
+          },
+          {
+            "command": "i /b 0x3fc",
+            "output": "portb[0x03fc] = 0x08\r\n"
+          },
+          {
+            "command": "i /b 0x3fa",
+            "output": "portb[0x03fa] = 0x01\r\n"
+          },
+          {
+            "command": "i /b 0x3ff",
+            "output": "portb[0x03ff] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x0",
+            "output": ""
+          },
+          {
+            "command": "i /b 0x3f9",
+            "output": "portb[0x03f9] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x80",
+            "output": ""
+          },
+          {
+            "command": "i /b 0x3f8",
+            "output": "portb[0x03f8] = 0x0c\r\n"
+          },
+          {
+            "command": "i /b 0x3f9",
+            "output": "portb[0x03f9] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x0",
+            "output": ""
+          }
+        ],
+        "limitations": [
+          "TempleOS identity mapping is assumed when reading the IDT through physical memory.",
+          "FIFO contents, RX trigger selection, and other write-only/transient state cannot be compared.",
+          "IIR is read only for FIFO-enable bits; its transient interrupt reason is not graded."
+        ]
+      },
+      {
+        "interrupt_vector": {
+          "number": 36,
+          "idt_base": 468200488,
+          "idt_limit": 4095,
+          "bytes_hex": "8afc4000008e00000000000000000000"
+        },
+        "pic": {
+          "master_mask": 248,
+          "irq4_masked": true
+        },
+        "uart": {
+          "lcr": 0,
+          "mcr": 8,
+          "fifo_enabled": false,
+          "scratch": 0,
+          "ier": 0,
+          "divisor_low": 12,
+          "divisor_high": 0
+        },
+        "host_commands": [
+          {
+            "command": "info registers",
+            "output": "\r\nCPU#0\r\nRAX=000000001bf8ba28 RBX=000000000000aa8f RCX=0000000016122c40 RDX=0000000000000000\r\nRSI=0000000000100300 RDI=000000001bf8c028 RBP=000000001611c6c8 RSP=000000001bf86c40\r\nR8 =0000000016122c38 R9 =00000000167ba228 R10=0000000000000000 R11=0000000000000000\r\nR12=0000000000000000 R13=0000000000000001 R14=00000000000befdb R15=0000000000000000\r\nRIP=000000000000cc3a RFL=00000246 [---Z-P-] CPL=0 II=0 A20=1 SMM=0 HLT=1\r\nES =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nCS =0040 0000000000000000 00000000 00209a00 DPL=0 CS64 [-R-]\r\nSS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nDS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nFS =0060 000000001bf8ba28 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nGS =0060 000000001bf8c028 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nLDT=0000 0000000000000000 0000ffff 00008200 DPL=0 LDT\r\nTR =0080 000000001bf44a28 ffffffff 008f8900 DPL=0 TSS64-avl\r\nGDT=     0000000000008020 0000107f\r\nIDT=     000000001be82c28 00000fff\r\nCR0=80000031 CR2=0000000000000000 CR3=0000000000509000 CR4=000000b0\r\nDR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 \r\nDR6=00000000ffff0ff0 DR7=0000000000000400\r\nEFER=0000000000000500\r\nFCW=037f FSW=0020 [ST=0] FTW=00 MXCSR=00001f80\r\nFPR0=0000000000000000 0000 FPR1=0000000000000000 0000\r\nFPR2=0000000000000000 0000 FPR3=0000000000000000 0000\r\nFPR4=0000000000000000 0000 FPR5=0000000000000000 0000\r\nFPR6=ff21c7edf5b24000 3ffe FPR7=9718e6ce677790e8 4008\r\nXMM00=0000000000000000 0000000000000000 XMM01=0000000000000000 0000000000000000\r\nXMM02=0000000000000000 0000000000000000 XMM03=0000000000000000 0000000000000000\r\nXMM04=0000000000000000 0000000000000000 XMM05=0000000000000000 0000000000000000\r\nXMM06=0000000000000000 0000000000000000 XMM07=0000000000000000 0000000000000000\r\nXMM08=0000000000000000 0000000000000000 XMM09=0000000000000000 0000000000000000\r\nXMM10=0000000000000000 0000000000000000 XMM11=0000000000000000 0000000000000000\r\nXMM12=0000000000000000 0000000000000000 XMM13=0000000000000000 0000000000000000\r\nXMM14=0000000000000000 0000000000000000 XMM15=0000000000000000 0000000000000000\r\n"
+          },
+          {
+            "command": "xp /16bx 0x1be82e68",
+            "output": "000000001be82e68: 0x8a 0xfc 0x40 0x00 0x00 0x8e 0x00 0x00\r\n000000001be82e70: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\r\n"
+          },
+          {
+            "command": "i /b 0x21",
+            "output": "portb[0x0021] = 0xf8\r\n"
+          },
+          {
+            "command": "i /b 0x3fb",
+            "output": "portb[0x03fb] = 0x00\r\n"
+          },
+          {
+            "command": "i /b 0x3fc",
+            "output": "portb[0x03fc] = 0x08\r\n"
+          },
+          {
+            "command": "i /b 0x3fa",
+            "output": "portb[0x03fa] = 0x01\r\n"
+          },
+          {
+            "command": "i /b 0x3ff",
+            "output": "portb[0x03ff] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x0",
+            "output": ""
+          },
+          {
+            "command": "i /b 0x3f9",
+            "output": "portb[0x03f9] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x80",
+            "output": ""
+          },
+          {
+            "command": "i /b 0x3f8",
+            "output": "portb[0x03f8] = 0x0c\r\n"
+          },
+          {
+            "command": "i /b 0x3f9",
+            "output": "portb[0x03f9] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x0",
+            "output": ""
+          }
+        ],
+        "limitations": [
+          "TempleOS identity mapping is assumed when reading the IDT through physical memory.",
+          "FIFO contents, RX trigger selection, and other write-only/transient state cannot be compared.",
+          "IIR is read only for FIFO-enable bits; its transient interrupt reason is not graded."
+        ]
+      }
+    ],
+    "restoration_checks": [
+      {
+        "type": "host_uart_restoration",
+        "status": "passed",
+        "checks": [
+          {
+            "field": "interrupt_vector.bytes_hex",
+            "status": "passed",
+            "before": "8afc4000008e00000000000000000000",
+            "after": "8afc4000008e00000000000000000000"
+          },
+          {
+            "field": "pic.irq4_masked",
+            "status": "passed",
+            "before": true,
+            "after": true
+          },
+          {
+            "field": "uart.lcr",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.mcr",
+            "status": "passed",
+            "before": 8,
+            "after": 8
+          },
+          {
+            "field": "uart.ier",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.divisor_low",
+            "status": "passed",
+            "before": 12,
+            "after": 12
+          },
+          {
+            "field": "uart.divisor_high",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.fifo_enabled",
+            "status": "passed",
+            "before": false,
+            "after": false
+          },
+          {
+            "field": "uart.scratch",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          }
+        ],
+        "reason": "Readable interrupt/PIC/UART state restored",
+        "limitations": [
+          "Only the saved PIC IRQ4 bit is compared; other IRQ masks belong to other devices.",
+          "Write-only FIFO trigger configuration and FIFO contents cannot be verified by these reads."
+        ]
+      },
+      {
+        "type": "host_uart_restoration",
+        "status": "passed",
+        "checks": [
+          {
+            "field": "interrupt_vector.bytes_hex",
+            "status": "passed",
+            "before": "8afc4000008e00000000000000000000",
+            "after": "8afc4000008e00000000000000000000"
+          },
+          {
+            "field": "pic.irq4_masked",
+            "status": "passed",
+            "before": true,
+            "after": true
+          },
+          {
+            "field": "uart.lcr",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.mcr",
+            "status": "passed",
+            "before": 8,
+            "after": 8
+          },
+          {
+            "field": "uart.ier",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.divisor_low",
+            "status": "passed",
+            "before": 12,
+            "after": 12
+          },
+          {
+            "field": "uart.divisor_high",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.fifo_enabled",
+            "status": "passed",
+            "before": false,
+            "after": false
+          },
+          {
+            "field": "uart.scratch",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          }
+        ],
+        "reason": "Readable interrupt/PIC/UART state restored",
+        "limitations": [
+          "Only the saved PIC IRQ4 bit is compared; other IRQ masks belong to other devices.",
+          "Write-only FIFO trigger configuration and FIFO contents cannot be verified by these reads."
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "errors": [],
+  "model_actions_added": 0
+}

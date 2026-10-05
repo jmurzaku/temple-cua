@@ -72,12 +72,15 @@ class BuildAssetLinks(HTMLParser):
             self.urls["app.js"] = attrs["src"]
         elif tag == "link" and attrs.get("rel") == "stylesheet":
             self.urls["styles.css"] = attrs.get("href")
+        elif tag == "a" and urlsplit(attrs.get("href", "")).path in {"assets/starter-results.json", "assets/starter-run.zip"}:
+            self.urls[urlsplit(attrs["href"]).path] = attrs["href"]
 
 
 def built_asset_urls(output):
     parser = BuildAssetLinks()
     parser.feed((output / "index.html").read_text())
-    assert set(parser.urls) == {"app.js", "styles.css", "assets/starter-data.json"}
+    assert set(parser.urls) == {"app.js", "styles.css", "assets/starter-data.json",
+                               "assets/starter-results.json", "assets/starter-run.zip"}
     for filename, url in parser.urls.items():
         assert url is not None
         parts = urlsplit(url)

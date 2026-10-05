@@ -92,6 +92,11 @@ exhausted 100 calls (769 seconds) without creating a sprite or launching the
 modified game. These GUI results have separate assistant trajectory reviews;
 their raw manual grades remain unscored.
 
+The [UART attempt](examples/cua-uart/) exhausted 80 calls (720 seconds of
+model time). Host evaluation took 46 seconds and returned reward 0/1
+(0/10 checks passed). The model stayed in file browsing and left a
+Find/Replace form open without installing the service.
+
 The [original sprite attempt](examples/cua-sprite/) stopped after 24 calls
 (159 seconds) when the adapter rejected a scroll request. The rerun used
 protocol v2 with recoverable input errors and scroll distances mapped to
@@ -102,7 +107,8 @@ one featured attempt per task; earlier recordings remain in `examples/`.
 ```sh
 uv run pytest
 uv run python scripts/build_site.py --run examples/cua-cursor \
-  --run examples/cua-counter --run examples/cua-sprite-rerun
+  --run examples/cua-counter --run examples/cua-sprite-rerun \
+  --run examples/cua-uart
 ```
 
 TempleOS is public domain; this harness is [MIT licensed](LICENSE). The ISO is

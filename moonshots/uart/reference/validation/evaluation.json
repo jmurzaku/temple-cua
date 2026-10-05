@@ -1,0 +1,1070 @@
+{
+  "schema_version": 1,
+  "phase": "host_evaluation_after_policy",
+  "created_at": "2026-10-05T12:48:54.601855+00:00",
+  "elapsed_seconds": 16.812,
+  "command_deadline_seconds": 60.0,
+  "timeout_scope": "Cleanup commands use an absolute deadline; UART and QMP calls have individual timeouts.",
+  "grade": {
+    "type": "uart",
+    "status": "passed",
+    "score": 1.0,
+    "passed_cases": 10,
+    "total_cases": 10,
+    "reason": "10/10 host UART checks passed",
+    "cases": [
+      {
+        "name": "valid_short",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Exact host-validated replies"
+      },
+      {
+        "name": "random_payload_64",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Exact host-validated replies"
+      },
+      {
+        "name": "fragmented_request",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Exact host-validated replies"
+      },
+      {
+        "name": "back_to_back_burst_8",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Exact host-validated replies"
+      },
+      {
+        "name": "bad_checksum_then_valid",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Exact host-validated replies"
+      },
+      {
+        "name": "valid_after_bad_checksum",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Exact host-validated replies"
+      },
+      {
+        "name": "invalid_length_then_valid",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Exact host-validated replies"
+      },
+      {
+        "name": "embedded_header_payload",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Exact host-validated replies"
+      },
+      {
+        "name": "irq4_mask_dependency",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "Silent with IRQ4 masked; exact reply after restoring the PIC mask without resending"
+      },
+      {
+        "name": "safe_stop_restore_liveness",
+        "status": "passed",
+        "score": 0.1,
+        "reason": "BenchStop returned twice, checked hardware was restored after each call, and shell responded"
+      }
+    ],
+    "evidence": [
+      "evaluation.json",
+      "evaluation-liveness.png",
+      "evaluation-stop-1.png",
+      "evaluation-stop-2.png"
+    ],
+    "limitations": [
+      "IRQ4 masking tests causal dependence for one challenge; it does not prove every RX path uses interrupts.",
+      "Behavioral checks do not prove bounded buffering, race freedom, or absence of privileged modifications.",
+      "Write-only UART FIFO details and pending device contents cannot all be restored or inspected.",
+      "Fresh shell output rejects ordinary echoes and constants; it is not a security boundary against malicious ring-0 code."
+    ]
+  },
+  "initial_hardware": {
+    "interrupt_vector": {
+      "number": 36,
+      "idt_base": 468200488,
+      "idt_limit": 4095,
+      "bytes_hex": "8afc4000008e00000000000000000000"
+    },
+    "pic": {
+      "master_mask": 248,
+      "irq4_masked": true
+    },
+    "uart": {
+      "lcr": 0,
+      "mcr": 8,
+      "fifo_enabled": false,
+      "scratch": 0,
+      "ier": 0,
+      "divisor_low": 12,
+      "divisor_high": 0
+    },
+    "host_commands": [
+      {
+        "command": "info registers",
+        "output": "\r\nCPU#0\r\nRAX=000000001bf8ba28 RBX=000000000000aa8f RCX=0000000016122c40 RDX=0000000000000000\r\nRSI=0000000000100300 RDI=000000001bf8c028 RBP=000000001611c6c8 RSP=000000001bf86c40\r\nR8 =0000000016122c38 R9 =00000000167ba228 R10=0000000000000000 R11=0000000000000000\r\nR12=0000000000000000 R13=0000000000000001 R14=0000000000006d7b R15=0000000000000000\r\nRIP=000000000000cc3a RFL=00000246 [---Z-P-] CPL=0 II=0 A20=1 SMM=0 HLT=1\r\nES =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nCS =0040 0000000000000000 00000000 00209a00 DPL=0 CS64 [-R-]\r\nSS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nDS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nFS =0060 000000001bf8ba28 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nGS =0060 000000001bf8c028 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nLDT=0000 0000000000000000 0000ffff 00008200 DPL=0 LDT\r\nTR =0080 000000001bf44a28 ffffffff 008f8900 DPL=0 TSS64-avl\r\nGDT=     0000000000008020 0000107f\r\nIDT=     000000001be82c28 00000fff\r\nCR0=80000031 CR2=0000000000000000 CR3=0000000000509000 CR4=000000b0\r\nDR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 \r\nDR6=00000000ffff0ff0 DR7=0000000000000400\r\nEFER=0000000000000500\r\nFCW=037f FSW=0020 [ST=0] FTW=00 MXCSR=00001f80\r\nFPR0=0000000000000000 0000 FPR1=0000000000000000 0000\r\nFPR2=0000000000000000 0000 FPR3=0000000000000000 0000\r\nFPR4=0000000000000000 0000 FPR5=0000000000000000 0000\r\nFPR6=ff21a2fe8ed24800 3ffe FPR7=a231cd9cceef21d0 4007\r\nXMM00=0000000000000000 0000000000000000 XMM01=0000000000000000 0000000000000000\r\nXMM02=0000000000000000 0000000000000000 XMM03=0000000000000000 0000000000000000\r\nXMM04=0000000000000000 0000000000000000 XMM05=0000000000000000 0000000000000000\r\nXMM06=0000000000000000 0000000000000000 XMM07=0000000000000000 0000000000000000\r\nXMM08=0000000000000000 0000000000000000 XMM09=0000000000000000 0000000000000000\r\nXMM10=0000000000000000 0000000000000000 XMM11=0000000000000000 0000000000000000\r\nXMM12=0000000000000000 0000000000000000 XMM13=0000000000000000 0000000000000000\r\nXMM14=0000000000000000 0000000000000000 XMM15=0000000000000000 0000000000000000\r\n"
+      },
+      {
+        "command": "xp /16bx 0x1be82e68",
+        "output": "000000001be82e68: 0x8a 0xfc 0x40 0x00 0x00 0x8e 0x00 0x00\r\n000000001be82e70: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x3fb",
+        "output": "portb[0x03fb] = 0x00\r\n"
+      },
+      {
+        "command": "i /b 0x3fc",
+        "output": "portb[0x03fc] = 0x08\r\n"
+      },
+      {
+        "command": "i /b 0x3fa",
+        "output": "portb[0x03fa] = 0x01\r\n"
+      },
+      {
+        "command": "i /b 0x3ff",
+        "output": "portb[0x03ff] = 0x00\r\n"
+      },
+      {
+        "command": "o /b 0x3fb 0x0",
+        "output": ""
+      },
+      {
+        "command": "i /b 0x3f9",
+        "output": "portb[0x03f9] = 0x00\r\n"
+      },
+      {
+        "command": "o /b 0x3fb 0x80",
+        "output": ""
+      },
+      {
+        "command": "i /b 0x3f8",
+        "output": "portb[0x03f8] = 0x0c\r\n"
+      },
+      {
+        "command": "i /b 0x3f9",
+        "output": "portb[0x03f9] = 0x00\r\n"
+      },
+      {
+        "command": "o /b 0x3fb 0x0",
+        "output": ""
+      }
+    ],
+    "limitations": [
+      "TempleOS identity mapping is assumed when reading the IDT through physical memory.",
+      "FIFO contents, RX trigger selection, and other write-only/transient state cannot be compared.",
+      "IIR is read only for FIFO-enable bits; its transient interrupt reason is not graded."
+    ]
+  },
+  "protocol": {
+    "type": "host_uart",
+    "status": "passed",
+    "score": 1.0,
+    "passed_cases": 8,
+    "total_cases": 8,
+    "seed_hex": "575a23edd7db9b58e08b149fd37e1283a3b1c746568f5f1dbe7162988be06f86",
+    "case_timeout_seconds": 2.0,
+    "reason": "8/8 host UART cases passed",
+    "cases": [
+      {
+        "name": "valid_short",
+        "status": "passed",
+        "reason": "Exact host-validated replies",
+        "latency_ms": 2.351,
+        "elapsed_ms": 52.559,
+        "expected_replies_hex": [
+          "5aaf9dff096cc0"
+        ],
+        "received_replies_hex": [
+          "5aaf9dff096cc0"
+        ],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5af017222",
+            "at_ms": 0.013
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a",
+            "at_ms": 2.32
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "af9dff096cc0",
+            "at_ms": 2.351
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "random_payload_64",
+        "status": "passed",
+        "reason": "Exact host-validated replies",
+        "latency_ms": 1.449,
+        "elapsed_ms": 51.59,
+        "expected_replies_hex": [
+          "5acec9773a2169"
+        ],
+        "received_replies_hex": [
+          "5acec9773a2169"
+        ],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5ce40e2515aa6c0977354a4e7eb92e6c2a807b27c17368b9a0e03d9dec459ab512b3000b7549467c4f3751fff1742fdb679ed194ad7f8b7b94cd8f082534d4917a92966",
+            "at_ms": 0.028
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5acec9773a2169",
+            "at_ms": 1.449
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "fragmented_request",
+        "status": "passed",
+        "reason": "Exact host-validated replies",
+        "latency_ms": 46.697,
+        "elapsed_ms": 96.828,
+        "expected_replies_hex": [
+          "5a0d8ae2ee8df4"
+        ],
+        "received_replies_hex": [
+          "5a0d8ae2ee8df4"
+        ],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5",
+            "at_ms": 0.027
+          },
+          {
+            "direction": "host_to_guest",
+            "hex": "0d1f",
+            "at_ms": 15.136
+          },
+          {
+            "direction": "host_to_guest",
+            "hex": "c7806620ce9251bedd09ec9cf90e",
+            "at_ms": 30.905
+          },
+          {
+            "direction": "host_to_guest",
+            "hex": "9a9ef5c8184cbc169e49d86c242e77ef9984",
+            "at_ms": 46.031
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a0d8ae2ee8df4",
+            "at_ms": 46.697
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "back_to_back_burst_8",
+        "status": "passed",
+        "reason": "Exact host-validated replies",
+        "latency_ms": 1.088,
+        "elapsed_ms": 51.881,
+        "expected_replies_hex": [
+          "5a0f919d4c1ca5",
+          "5a46ed631921d0",
+          "5a39948974f2bc",
+          "5a6d233b1c8d74",
+          "5a29b2b9de72e4",
+          "5a823a3b64e641",
+          "5adc6a172d43cd",
+          "5acb30e2a9179d"
+        ],
+        "received_replies_hex": [
+          "5a0f919d4c1ca5",
+          "5a46ed631921d0",
+          "5a39948974f2bc",
+          "5a6d233b1c8d74",
+          "5a29b2b9de72e4",
+          "5a823a3b64e641",
+          "5adc6a172d43cd",
+          "5acb30e2a9179d"
+        ],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a50f2c0051af92cdd6acf7287ce60564f5417267609d272b6becedbc2e7c00332eec5ef3bf33d113622054683398b03ba54630267df19e56b7e08585ad0abcaadc3ccaf0842b043c20026869c21dd36c48c0c9b5b989c52d542456ee5ebddc462fd777bea5393448bff3fb5659ea7d3d1a853faab134a4997694e54340d6c498abf03a171198547cded01f3afb39f66486d7778816f748870a3bd650a56d1152a7d4779e543f392607d8005ae8921fdafea52930223ab24827940ebf69096e73c95293862b97567aa2c1945f4ddaf518b08e22218be0a049b30a9c418ca3ff3a7ec2380730a58234fa7e55f247615e0f35a2cb804cd5b748a1ae040bf5cb68299c06ef172e2b65e9a3e7c0af9a60c652a22859093ab80083921ab7d1aaa5dc3eca1cc6b605ad5416d56c80e58d46a0f8473e947f98ade2b15b90aeb8b6fbf9ebfa7453e362a3a9eb9ad9f4089e19b121f26126e230d5e7659a46aca1cc643da5cb1752e566ec907a382f40647493f1521a0bcd3afea1b5ac372d",
+            "at_ms": 0.025
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a0f919d4c1ca5",
+            "at_ms": 1.088
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a46ed63",
+            "at_ms": 1.179
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "1921d0",
+            "at_ms": 1.185
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a399489",
+            "at_ms": 1.207
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "74f2bc",
+            "at_ms": 1.212
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a6d233b1c",
+            "at_ms": 1.225
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "8d74",
+            "at_ms": 1.228
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a29b2b9de",
+            "at_ms": 1.252
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "72e4",
+            "at_ms": 1.255
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a823a3b",
+            "at_ms": 1.279
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "64e641",
+            "at_ms": 1.282
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5adc6a172d43cd",
+            "at_ms": 1.502
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5acb30e2a9179d",
+            "at_ms": 1.767
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "bad_checksum_then_valid",
+        "status": "passed",
+        "reason": "Exact host-validated replies",
+        "latency_ms": 15.888,
+        "elapsed_ms": 66.035,
+        "expected_replies_hex": [
+          "5a83c793dcf4ad"
+        ],
+        "received_replies_hex": [
+          "5a83c793dcf4ad"
+        ],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a54d13509ef6a9095a258dc8f109694c320c71ea080d26",
+            "at_ms": 0.022
+          },
+          {
+            "direction": "host_to_guest",
+            "hex": "a5830d612565a4b54963ef17bb31d3e126",
+            "at_ms": 15.153
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a83c793dcf4ad",
+            "at_ms": 15.888
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "valid_after_bad_checksum",
+        "status": "passed",
+        "reason": "Exact host-validated replies",
+        "latency_ms": 0.721,
+        "elapsed_ms": 50.846,
+        "expected_replies_hex": [
+          "5a81b151cbd624"
+        ],
+        "received_replies_hex": [
+          "5a81b151cbd624"
+        ],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a58117e515deadbc94efce9e36a8d924b7b898d54052eb5523e95d",
+            "at_ms": 0.044
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a81b151cbd624",
+            "at_ms": 0.721
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "invalid_length_then_valid",
+        "status": "passed",
+        "reason": "Exact host-validated replies",
+        "latency_ms": 0.833,
+        "elapsed_ms": 50.984,
+        "expected_replies_hex": [
+          "5a1c7fb337aa2f"
+        ],
+        "received_replies_hex": [
+          "5a1c7fb337aa2f"
+        ],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5bbd1a51c0b16ed596a930e8ee801bc11d2",
+            "at_ms": 0.024
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a1c7fb337aa2f",
+            "at_ms": 0.833
+          }
+        ],
+        "infrastructure_error": false
+      },
+      {
+        "name": "embedded_header_payload",
+        "status": "passed",
+        "reason": "Exact host-validated replies",
+        "latency_ms": 0.799,
+        "elapsed_ms": 50.922,
+        "expected_replies_hex": [
+          "5a0135ea43a205"
+        ],
+        "received_replies_hex": [
+          "5a0135ea43a205"
+        ],
+        "anomalies": [],
+        "transcript": [
+          {
+            "direction": "host_to_guest",
+            "hex": "a5012ba500a55aff00b3691b055c624c0c05418b50a310712ce52de65d241031c375e4412950aad24ae6d3fb87b5d8",
+            "at_ms": 0.03
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "5a0135ea43a2",
+            "at_ms": 0.787
+          },
+          {
+            "direction": "guest_to_host",
+            "hex": "05",
+            "at_ms": 0.799
+          }
+        ],
+        "infrastructure_error": false
+      }
+    ],
+    "limitations": [
+      "Behavioral serial protocol test; does not prove IRQ-only processing.",
+      "Seed and byte transcript must remain hidden from the policy until grading ends."
+    ]
+  },
+  "irq4_dependence": {
+    "type": "host_irq4_dependence",
+    "status": "passed",
+    "infrastructure_error": false,
+    "reason": "Silent with IRQ4 masked; exact reply after restoring the PIC mask without resending",
+    "seed_hex": "9acee2d49a8a5ef08e7b235cdc039ab0a4e8dc266a8d594b6a257329dd1fe97e",
+    "request_hex": "a5480618e5563e0310f2",
+    "request_bytes": 10,
+    "expected_reply_hex": "5a48b9b27a4875",
+    "received_before_hex": "",
+    "received_masked_hex": "",
+    "received_after_restore_hex": "5a48b9b27a4875",
+    "irq4_mask_stayed_set": true,
+    "original_master_mask": 232,
+    "pic_mask_restored": true,
+    "mask_samples": [
+      {
+        "master_mask": 248,
+        "at_ms": 51.276
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 51.565
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 72.065
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 92.508
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 112.958
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 133.506
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 153.976
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 174.521
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 194.988
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 215.48
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 235.979
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 256.479
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 276.95
+      },
+      {
+        "master_mask": 248,
+        "at_ms": 297.435
+      }
+    ],
+    "transcript": [
+      {
+        "direction": "host_to_guest",
+        "phase": "masked",
+        "hex": "a5480618e5563e0310f2",
+        "at_ms": 51.29
+      },
+      {
+        "direction": "guest_to_host",
+        "phase": "after_restore",
+        "hex": "5a48b9b27a4875",
+        "at_ms": 302.397
+      }
+    ],
+    "host_commands": [
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xe8\r\n"
+      },
+      {
+        "command": "o /b 0x21 0xf8",
+        "output": ""
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xf8\r\n"
+      },
+      {
+        "command": "o /b 0x21 0xe8",
+        "output": ""
+      },
+      {
+        "command": "i /b 0x21",
+        "output": "portb[0x0021] = 0xe8\r\n"
+      }
+    ],
+    "elapsed_ms": 352.784,
+    "limitations": [
+      "IRQ4-dependent behavior is not a formal proof that the implementation contains no polling.",
+      "Mask checks sample host observations; they do not continuously monitor every guest port write."
+    ]
+  },
+  "cleanup": {
+    "name": "safe_stop_restore_liveness",
+    "status": "passed",
+    "reason": "BenchStop returned twice, checked hardware was restored after each call, and shell responded",
+    "host_commands": [
+      {
+        "purpose": "STOP1",
+        "command": "{DocClear;BenchStop();\"\\n  UA_STOP1_8cf918916b35b9f1=%d\\n\",7*28+59;};\n",
+        "expected_line": "UA_STOP1_8cf918916b35b9f1=255",
+        "screenshot": "evaluation-stop-1.png",
+        "status": "passed",
+        "observed_text": "  UA_STOP1_8cf918916b35b9f1=255\n0.003100s\nB:/Bench>",
+        "observations": [
+          {
+            "at_ms": 5339.605,
+            "exact_line_matches": 0,
+            "observed_text": ":/Bench>#define BENCH_COM 0x3F8\n:/Bench>#define BENCH_RING 4096\n:/Bench>U8 bench_rx[BENCH_RING]; I64 bench_head=0,bench_tail=0,bench_overflo\ns=0,bench_irqs=0; Bool bench_active=FALSE,bench_running=FALSE; CTask *bench_\norker=NULL; U64 bench_old_idt[2]; U8 bench_old_pic,bench_old_ier,bench_old_l\nr,bench_old_mcr; U8 bench_old_dll,bench_old_dlm,bench_old_fifo;\n:/Bench>interrupt U0 BenchIRQ() { I64 next; U8 ch; bench_irqs++; while (InU8\nBENCH_COM+5)&1) { ch=InU8(BENCH_COM); next=(bench_head+1)&(BENCH_RING-1); if\nnext==bench_tail) bench_overflows++; else { bench_rx[bench_head]=ch; bench_h\nad=next; } } OutU8(0x20,0x20); }\n:/Bench>I64 BenchRead() { I64 ch=-1; PUSHFD CLI if (bench_tail!=bench_head)\n ch=bench_rx[bench_tail]; bench_tail=(bench_tail+1)&(BENCH_RING-1); } POPFD\neturn ch; }\nptPass3 COCCompile PrsFun PrsGlblVarLst WARNING: Using 64-bit reg var.\nFL\ufffd~/Tmp\ufffdDD\ufffdZ\ufffd13 'ch' in 'BenchIRQ'\n:/Bench>U32 BenchCRC(U8 *payload,I64 len) { U32 crc=0xFFFFFFFF; I64 i,j; for\ni=0;i<len;i++) { crc^=payload[i]; for (j=0;j<8;j++) { if (crc&1) crc=(crc>>1\n^0xEDB88320; else crc>>=1; } } return crc^0xFFFFFFFF; }\n:/Bench>Bool BenchTransmit(U8 ch) { I64 deadline=cnts.jiffies+200; while (!(\nnU8(BENCH_COM+5)&0x20)) { if (!bench_running || cnts.jiffies>=deadline) retu\nn FALSE; Yield; } OutU8(BENCH_COM,ch); return TRUE; }\n:/Bench>U0 BenchReply(U8 seq,U8 *payload,I64 len) { U32 crc=BenchCRC(payload\nlen); U8 bytes[7]; I64 i,sum=seq; bytes[0]=0x5A; bytes[1]=seq; for (i=0;i<4;\n++) { bytes[2+i]=(crc>>(i*8))&255; sum+=bytes[2+i]; } bytes[6]=sum&255; for\ni=0;i<7;i++) if (!BenchTransmit(bytes[i])) break; }\n:/Bench>U0 BenchWorker(U8 *unused) { U8 payload[64]; I64 ch,state=0,seq=0,le\n=0,seen=0,sum=0,budget; while (bench_running) { budget=BENCH_RING; while (bu\nget-- && (ch=BenchRead())>=0) { switch (state) { case 0: if (ch==0xA5) state\n1; break; case 1: seq=ch; sum=ch; state\ufffd2; break; case 2: len=ch; seen=0; su\n+=ch; if (1<=len<=64) state=3; else stat\ufffd=0; break; case 3: payload[seen++]=\nh; sum+=ch; if (seen==len) state=4; break; case 4: if ((sum&255)==ch) BenchR\nply(seq,payload,len); state=0; break; } } Sleep(1); } }\n:/Bench>U0 BenchStart() { if (bench_active) return; PUSHFD CLI bench_old_pic\nInU8(0x21); OutU8(0x21,bench_old_pic|0x10); MemCpy(bench_old_idt,dev.idt(U8\n)+0x24*16,16); bench_old_lcr=InU8(BENCH_COM+3); bench_old_mcr=InU8(BENCH_COM\n4); bench_old_fifo=InU8(BENCH_COM+2)&0xC0; OutU8(BENCH_COM+3,bench_old_lcr&0\n7F); bench_old_ier=InU8(BENCH_COM+1); OutU8(BENCH_COM+1,0); OutU8(BENCH_COM+\n,0x80); bench_old_dll=InU8(BENCH_COM); bench_old_dlm=InU8(BENCH_COM+1); OutU\n(BENCH_COM,1); OutU8(BENCH_COM+1,0); OutU8(BENCH_COM+3,3); OutU8(BENCH_COM+2\n0xC7); OutU8(BENCH_COM+4,0x0B); bench_head=bench_tail=bench_overflows=bench_\nrqs=0; bench_running=TRUE; bench_active=TRUE; IntEntrySet(0x24,&BenchIRQ); P\nPFD bench_worker=Spawn(&BenchWorker,NULL,\"Telemetry\",,Fs); PUSHFD CLI OutU8(\nENCH_COM+1,1); OutU8(0x21,InU8(0x21)&~0x10); POPFD }\nrsFun PrsGlblVarLst PrsStmt &LexStmt2Bin WARNING: Unused var\nFL\ufffd~/Tmp\ufffdDD\ufffdZ\ufffd18 'unused' in 'BenchWorker'\n:/Bench>U0 BenchStop() { if (!bench_active) return; PUSHFD CLI OutU8(0x21,In\n8(0x21)|0x10); OutU8(BENCH_COM+1,0); POPFD if (bench_worker) { Kill(bench_wo\nker); bench_worker=NULL; } bench_running=FALSE; PUSHFD CLI MemCpy(dev.idt(U8\n)+0x24*16,bench_old_idt,16); OutU8(BENCH_COM+3,0x80); OutU8(BENCH_COM,bench_\nld_dll); OutU8(BENCH_COM+1,bench_old_dlm); OutU8(BENCH_COM+3,bench_old_lcr&0\n7F); if (bench_old_fifo) OutU8(BENCH_COM+2,1); else OutU8(BENCH_COM+2,0); Ou\nU8(BENCH_COM+4,bench_old_mcr); OutU8(BENCH_COM+1,bench_old_ier); OutU8(BENCH\nCOM+3,bench_old_lcr); OutU8(0x21,(InU8(0x21)&~0x10)|(bench_old_pic&0x10)); b\nnch_active=FALSE; POPFD }\n:/Bench>BenchStart;\n.000354s\n:/Bench>{DocClear;BenchStop();\"\\n  UA_STOP1_8cf918916b35b9f1=%d\\n\",7*28+59;}",
+            "observed_full_frame_text": "Mon 10/05 12:48:42 FPS:29 Mem:0015EC8000 CPU22                                 ;\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT:/Bench>#define BENCH_COM 0x3F8                                               \ufffd\ne:/Bench>#define BENCH_RING 4096                                               \ufffd\nr:/Bench>U8 bench_rx[BENCH_RING]; I64 bench_head=0,bench_tail=0,bench_overflo  \ufffd\nms=0,bench_irqs=0; Bool bench_active=FALSE,bench_running=FALSE; CTask *bench_  \ufffd\n\ufffdorker=NULL; U64 bench_old_idt[2]; U8 bench_old_pic,bench_old_ier,bench_old_l  \ufffd\n\ufffdr,bench_old_mcr; U8 bench_old_dll,bench_old_dlm,bench_old_fifo;               \ufffd\n\ufffd:/Bench>interrupt U0 BenchIRQ() { I64 next; U8 ch; bench_irqs++; while (InU8  \ufffd\n\ufffdBENCH_COM+5)&1) { ch=InU8(BENCH_COM); next=(bench_head+1)&(BENCH_RING-1); if  \ufffd\n\ufffdnext==bench_tail) bench_overflows++; else { bench_rx[bench_head]=ch; bench_h  \ufffd\n\ufffdad=next; } } OutU8(0x20,0x20); }                                              \ufffd\n\ufffd:/Bench>I64 BenchRead() { I64 ch=-1; PUSHFD CLI if (bench_tail!=bench_head)   \ufffd\n\ufffd ch=bench_rx[bench_tail]; bench_tail=(bench_tail+1)&(BENCH_RING-1); } POPFD   \ufffd\n\ufffdeturn ch; }                                                                   \ufffd\n\ufffdptPass3 COCCompile PrsFun PrsGlblVarLst WARNING: Using 64-bit reg var.        \ufffd\n\ufffdFL\ufffd~/Tmp\ufffdDD\ufffdZ\ufffd13 'ch' in 'BenchIRQ'                                           \ufffd\n\ufffd:/Bench>U32 BenchCRC(U8 *payload,I64 len) { U32 crc=0xFFFFFFFF; I64 i,j; for  \ufffd\n\ufffdi=0;i<len;i++) { crc^=payload[i]; for (j=0;j<8;j++) { if (crc&1) crc=(crc>>1  \ufffd\n\ufffd^0xEDB88320; else crc>>=1; } } return crc^0xFFFFFFFF; }                       \ufffd\n\ufffd:/Bench>Bool BenchTransmit(U8 ch) { I64 deadline=cnts.jiffies+200; while (!(  \ufffd\n\ufffdnU8(BENCH_COM+5)&0x20)) { if (!bench_running || cnts.jiffies>=deadline) retu  \ufffd\n\ufffdn FALSE; Yield; } OutU8(BENCH_COM,ch); return TRUE; }                         \ufffd\n\ufffd:/Bench>U0 BenchReply(U8 seq,U8 *payload,I64 len) { U32 crc=BenchCRC(payload  \ufffd\n\ufffdlen); U8 bytes[7]; I64 i,sum=seq; bytes[0]=0x5A; bytes[1]=seq; for (i=0;i<4;  \ufffd\n\ufffd++) { bytes[2+i]=(crc>>(i*8))&255; sum+=bytes[2+i]; } bytes[6]=sum&255; for   \ufffd\n\ufffdi=0;i<7;i++) if (!BenchTransmit(bytes[i])) break; }                           \ufffd\n\ufffd:/Bench>U0 BenchWorker(U8 *unused) { U8 payload[64]; I64 ch,state=0,seq=0,le  \ufffd\n\ufffd=0,seen=0,sum=0,budget; while (bench_running) { budget=BENCH_RING; while (bu  \ufffd\n\ufffdget-- && (ch=BenchRead())>=0) { switch (state) { case 0: if (ch==0xA5) state  \ufffd\n\ufffd1; break; case 1: seq=ch; sum=ch; state\ufffd2; break; case 2: len=ch; seen=0; su  \ufffd\n\ufffd+=ch; if (1<=len<=64) state=3; else stat\ufffd=0; break; case 3: payload[seen++]=  \ufffd\n\ufffdh; sum+=ch; if (seen==len) state=4; break; case 4: if ((sum&255)==ch) BenchR  \ufffd\n\ufffdply(seq,payload,len); state=0; break; } } Sleep(1); } }                       \ufffd\n\ufffd:/Bench>U0 BenchStart() { if (bench_active) return; PUSHFD CLI bench_old_pic  \ufffd\n\ufffdInU8(0x21); OutU8(0x21,bench_old_pic|0x10); MemCpy(bench_old_idt,dev.idt(U8   \ufffd\n\ufffd)+0x24*16,16); bench_old_lcr=InU8(BENCH_COM+3); bench_old_mcr=InU8(BENCH_COM  \ufffd\n\ufffd4); bench_old_fifo=InU8(BENCH_COM+2)&0xC0; OutU8(BENCH_COM+3,bench_old_lcr&0  \ufffd\n\ufffd7F); bench_old_ier=InU8(BENCH_COM+1); OutU8(BENCH_COM+1,0); OutU8(BENCH_COM+  \ufffd\n\ufffd,0x80); bench_old_dll=InU8(BENCH_COM); bench_old_dlm=InU8(BENCH_COM+1); OutU  \ufffd\n\ufffd(BENCH_COM,1); OutU8(BENCH_COM+1,0); OutU8(BENCH_COM+3,3); OutU8(BENCH_COM+2  \ufffd\n\ufffd0xC7); OutU8(BENCH_COM+4,0x0B); bench_head=bench_tail=bench_overflows=bench_  \ufffd\n\ufffdrqs=0; bench_running=TRUE; bench_active=TRUE; IntEntrySet(0x24,&BenchIRQ); P  \ufffd\n\ufffdPFD bench_worker=Spawn(&BenchWorker,NULL,\"Telemetry\",,Fs); PUSHFD CLI OutU8(  \ufffd\n\ufffdENCH_COM+1,1); OutU8(0x21,InU8(0x21)&~0x10); POPFD }                          \ufffd\n\ufffdrsFun PrsGlblVarLst PrsStmt &LexStmt2Bin WARNING: Unused var                  \ufffd\n\ufffdFL\ufffd~/Tmp\ufffdDD\ufffdZ\ufffd18 'unused' in 'BenchWorker'                                    \ufffd\n\ufffd:/Bench>U0 BenchStop() { if (!bench_active) return; PUSHFD CLI OutU8(0x21,In  \ufffd\n\ufffd8(0x21)|0x10); OutU8(BENCH_COM+1,0); POPFD if (bench_worker) { Kill(bench_wo  \ufffd\n\ufffdker); bench_worker=NULL; } bench_running=FALSE; PUSHFD CLI MemCpy(dev.idt(U8  \ufffd\n\ufffd)+0x24*16,bench_old_idt,16); OutU8(BENCH_COM+3,0x80); OutU8(BENCH_COM,bench_  \ufffd\n\ufffdld_dll); OutU8(BENCH_COM+1,bench_old_dlm); OutU8(BENCH_COM+3,bench_old_lcr&0  \ufffd\n\ufffd7F); if (bench_old_fifo) OutU8(BENCH_COM+2,1); else OutU8(BENCH_COM+2,0); Ou  \ufffd\n\ufffdU8(BENCH_COM+4,bench_old_mcr); OutU8(BENCH_COM+1,bench_old_ier); OutU8(BENCH  \ufffd\n\ufffdCOM+3,bench_old_lcr); OutU8(0x21,(InU8(0x21)&~0x10)|(bench_old_pic&0x10)); b  \ufffd\n\ufffdnch_active=FALSE; POPFD }                                                     \ufffd\n\ufffd:/Bench>BenchStart;                                                           \ufffd\n\ufffd.000354s                                                                      \ufffd\n\ufffd:/Bench>{DocClear;BenchStop();\"\\n  UA_STOP1_8cf918916b35b9f1=%d\\n\",7*28+59;}  \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5592.852,
+            "exact_line_matches": 1,
+            "observed_text": "  UA_STOP1_8cf918916b35b9f1=255\n0.003100s\nB:/Bench>",
+            "observed_full_frame_text": "Mon 10/05 12:48:42 FPS:29 Mem:0015EC8000 CPU24                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT                                                                              \ufffd\ne  UA_STOP1_8cf918916b35b9f1=255                                               \ufffd\nr0.003100s                                                                     \ufffd\nmB:/Bench>                                                                     \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd"
+          }
+        ],
+        "extraction_crop_box": [
+          8,
+          16,
+          632,
+          472
+        ],
+        "observed_full_frame_text": "Mon 10/05 12:48:42 FPS:29 Mem:0015EC8000 CPU24                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT                                                                              \ufffd\ne  UA_STOP1_8cf918916b35b9f1=255                                               \ufffd\nr0.003100s                                                                     \ufffd\nmB:/Bench>                                                                     \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd",
+        "reason": "Exact fresh arithmetic output line observed",
+        "elapsed_seconds": 5.593
+      },
+      {
+        "purpose": "STOP2",
+        "command": "{DocClear;BenchStop();\"\\n  UA_STOP2_527236ad47fb7508=%d\\n\",86*79+18;};\n",
+        "expected_line": "UA_STOP2_527236ad47fb7508=6812",
+        "screenshot": "evaluation-stop-2.png",
+        "status": "passed",
+        "observed_text": "  UA_STOP2_527236ad47fb7508=6812\n0.001099s\nB:/Bench>",
+        "observations": [
+          {
+            "at_ms": 5381.583,
+            "exact_line_matches": 0,
+            "observed_text": "  UA_STOP1_8cf918916b35b9f1=255\n0.003100s\nB:/Bench>{DocClear;BenchStop();\"\\n  UA_STOP2_527236ad47fb7508=%d\\n\",86*79+18;\n};",
+            "observed_full_frame_text": "Mon 10/05 12:48:48 FPS:29 Mem:0015F0D400 CPU13                                 ;\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd_8cf918916b35b9\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT                                                                              \ufffd\ne  UA_STOP1_8cf918916b35b9f1=255                                               \ufffd\nr0.003100s                                                                     \ufffd\nmB:/Bench>{DocClear;BenchStop();\"\\n  UA_STOP2_527236ad47fb7508=%d\\n\",86*79+18; \ufffd\n\ufffd};                                                                            \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd"
+          },
+          {
+            "at_ms": 5610.537,
+            "exact_line_matches": 1,
+            "observed_text": "  UA_STOP2_527236ad47fb7508=6812\n0.001099s\nB:/Bench>",
+            "observed_full_frame_text": "Mon 10/05 12:48:48 FPS:29 Mem:0015F0D400 CPU16                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT                                                                              \ufffd\ne  UA_STOP2_527236ad47fb7508=6812                                              \ufffd\nr0.001099s                                                                     \ufffd\nmB:/Bench>                                                                     \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd"
+          }
+        ],
+        "extraction_crop_box": [
+          8,
+          16,
+          632,
+          472
+        ],
+        "observed_full_frame_text": "Mon 10/05 12:48:48 FPS:29 Mem:0015F0D400 CPU16                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT                                                                              \ufffd\ne  UA_STOP2_527236ad47fb7508=6812                                              \ufffd\nr0.001099s                                                                     \ufffd\nmB:/Bench>                                                                     \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd",
+        "reason": "Exact fresh arithmetic output line observed",
+        "elapsed_seconds": 5.611
+      },
+      {
+        "purpose": "ALIVE",
+        "command": "{DocClear;\"\\n  UA_ALIVE_3665e1f047145dd3=%d\\n\",90*77+22;};\n",
+        "expected_line": "UA_ALIVE_3665e1f047145dd3=6952",
+        "screenshot": "evaluation-liveness.png",
+        "status": "passed",
+        "observed_text": "  UA_ALIVE_3665e1f047145dd3=6952\n0.000950s\nB:/Bench>",
+        "observations": [
+          {
+            "at_ms": 4543.397,
+            "exact_line_matches": 0,
+            "observed_text": "  UA_STOP2_527236ad47fb7508=6812\n0.001099s\nB:/Bench>{DocClear;\"\\n  UA_ALIVE_3665e1f047145dd3=%d\\n\",90*77+22;};",
+            "observed_full_frame_text": "Mon 10/05 12:48:52 FPS:30 Mem:0015F0D400 CPU12                                 ;\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT                                                                              \ufffd\ne  UA_STOP2_527236ad47fb7508=6812                                              \ufffd\nr0.001099s                                                                     \ufffd\nmB:/Bench>{DocClear;\"\\n  UA_ALIVE_3665e1f047145dd3=%d\\n\",90*77+22;};           \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd"
+          },
+          {
+            "at_ms": 4773.35,
+            "exact_line_matches": 1,
+            "observed_text": "  UA_ALIVE_3665e1f047145dd3=6952\n0.000950s\nB:/Bench>",
+            "observed_full_frame_text": "Mon 10/05 12:48:53 FPS:30 Mem:0015F0D400 CPU17                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd  \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT                                                                              \ufffd\ne  UA_ALIVE_3665e1f047145dd3=6952                                              \ufffd\nr0.000950s                                                                     \ufffd\nmB:/Bench>                                                                     \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd"
+          }
+        ],
+        "extraction_crop_box": [
+          8,
+          16,
+          632,
+          472
+        ],
+        "observed_full_frame_text": "Mon 10/05 12:48:53 FPS:30 Mem:0015F0D400 CPU17                             ENTER\n\ufffdMENU\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd  \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd15E6A428\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[X]\ufffd\nT                                                                              \ufffd\ne  UA_ALIVE_3665e1f047145dd3=6952                                              \ufffd\nr0.000950s                                                                     \ufffd\nmB:/Bench>                                                                     \ufffd\n\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdEOF\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd",
+        "reason": "Exact fresh arithmetic output line observed",
+        "elapsed_seconds": 4.773
+      }
+    ],
+    "hardware_after_each_stop": [
+      {
+        "interrupt_vector": {
+          "number": 36,
+          "idt_base": 468200488,
+          "idt_limit": 4095,
+          "bytes_hex": "8afc4000008e00000000000000000000"
+        },
+        "pic": {
+          "master_mask": 248,
+          "irq4_masked": true
+        },
+        "uart": {
+          "lcr": 0,
+          "mcr": 8,
+          "fifo_enabled": false,
+          "scratch": 0,
+          "ier": 0,
+          "divisor_low": 12,
+          "divisor_high": 0
+        },
+        "host_commands": [
+          {
+            "command": "info registers",
+            "output": "\r\nCPU#0\r\nRAX=000000001bf8ba28 RBX=000000000000aa8f RCX=0000000016122c40 RDX=0000000000000000\r\nRSI=0000000000100300 RDI=000000001bf8c028 RBP=000000001611c6c8 RSP=000000001bf86c40\r\nR8 =0000000016122c38 R9 =00000000167ba228 R10=0000000000000000 R11=0000000000000000\r\nR12=0000000000000000 R13=0000000000000001 R14=0000000000059987 R15=0000000000000000\r\nRIP=000000000000cc3a RFL=00000246 [---Z-P-] CPL=0 II=0 A20=1 SMM=0 HLT=1\r\nES =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nCS =0040 0000000000000000 00000000 00209a00 DPL=0 CS64 [-R-]\r\nSS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nDS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nFS =0060 000000001bf8ba28 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nGS =0060 000000001bf8c028 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nLDT=0000 0000000000000000 0000ffff 00008200 DPL=0 LDT\r\nTR =0080 000000001bf44a28 ffffffff 008f8900 DPL=0 TSS64-avl\r\nGDT=     0000000000008020 0000107f\r\nIDT=     000000001be82c28 00000fff\r\nCR0=80000031 CR2=0000000000000000 CR3=0000000000509000 CR4=000000b0\r\nDR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 \r\nDR6=00000000ffff0ff0 DR7=0000000000000400\r\nEFER=0000000000000500\r\nFCW=037f FSW=0020 [ST=0] FTW=00 MXCSR=00001f80\r\nFPR0=0000000000000000 0000 FPR1=0000000000000000 0000\r\nFPR2=0000000000000000 0000 FPR3=0000000000000000 0000\r\nFPR4=0000000000000000 0000 FPR5=0000000000000000 0000\r\nFPR6=ff21a33633f88800 3ffe FPR7=a231cd9cceef21d0 4007\r\nXMM00=0000000000000000 0000000000000000 XMM01=0000000000000000 0000000000000000\r\nXMM02=0000000000000000 0000000000000000 XMM03=0000000000000000 0000000000000000\r\nXMM04=0000000000000000 0000000000000000 XMM05=0000000000000000 0000000000000000\r\nXMM06=0000000000000000 0000000000000000 XMM07=0000000000000000 0000000000000000\r\nXMM08=0000000000000000 0000000000000000 XMM09=0000000000000000 0000000000000000\r\nXMM10=0000000000000000 0000000000000000 XMM11=0000000000000000 0000000000000000\r\nXMM12=0000000000000000 0000000000000000 XMM13=0000000000000000 0000000000000000\r\nXMM14=0000000000000000 0000000000000000 XMM15=0000000000000000 0000000000000000\r\n"
+          },
+          {
+            "command": "xp /16bx 0x1be82e68",
+            "output": "000000001be82e68: 0x8a 0xfc 0x40 0x00 0x00 0x8e 0x00 0x00\r\n000000001be82e70: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\r\n"
+          },
+          {
+            "command": "i /b 0x21",
+            "output": "portb[0x0021] = 0xf8\r\n"
+          },
+          {
+            "command": "i /b 0x3fb",
+            "output": "portb[0x03fb] = 0x00\r\n"
+          },
+          {
+            "command": "i /b 0x3fc",
+            "output": "portb[0x03fc] = 0x08\r\n"
+          },
+          {
+            "command": "i /b 0x3fa",
+            "output": "portb[0x03fa] = 0x01\r\n"
+          },
+          {
+            "command": "i /b 0x3ff",
+            "output": "portb[0x03ff] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x0",
+            "output": ""
+          },
+          {
+            "command": "i /b 0x3f9",
+            "output": "portb[0x03f9] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x80",
+            "output": ""
+          },
+          {
+            "command": "i /b 0x3f8",
+            "output": "portb[0x03f8] = 0x0c\r\n"
+          },
+          {
+            "command": "i /b 0x3f9",
+            "output": "portb[0x03f9] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x0",
+            "output": ""
+          }
+        ],
+        "limitations": [
+          "TempleOS identity mapping is assumed when reading the IDT through physical memory.",
+          "FIFO contents, RX trigger selection, and other write-only/transient state cannot be compared.",
+          "IIR is read only for FIFO-enable bits; its transient interrupt reason is not graded."
+        ]
+      },
+      {
+        "interrupt_vector": {
+          "number": 36,
+          "idt_base": 468200488,
+          "idt_limit": 4095,
+          "bytes_hex": "8afc4000008e00000000000000000000"
+        },
+        "pic": {
+          "master_mask": 248,
+          "irq4_masked": true
+        },
+        "uart": {
+          "lcr": 0,
+          "mcr": 8,
+          "fifo_enabled": false,
+          "scratch": 0,
+          "ier": 0,
+          "divisor_low": 12,
+          "divisor_high": 0
+        },
+        "host_commands": [
+          {
+            "command": "info registers",
+            "output": "\r\nCPU#0\r\nRAX=000000001bf8ba28 RBX=000000000000aa8f RCX=0000000016122c40 RDX=0000000000000000\r\nRSI=0000000000100300 RDI=000000001bf8c028 RBP=000000001611c6c8 RSP=000000001bf86c40\r\nR8 =0000000016122c38 R9 =00000000167ba228 R10=0000000000000000 R11=0000000000000000\r\nR12=0000000000000000 R13=0000000000000001 R14=000000000005af50 R15=0000000000000000\r\nRIP=000000000000cc3a RFL=00000246 [---Z-P-] CPL=0 II=0 A20=1 SMM=0 HLT=1\r\nES =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nCS =0040 0000000000000000 00000000 00209a00 DPL=0 CS64 [-R-]\r\nSS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nDS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nFS =0060 000000001bf8ba28 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nGS =0060 000000001bf8c028 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nLDT=0000 0000000000000000 0000ffff 00008200 DPL=0 LDT\r\nTR =0080 000000001bf44a28 ffffffff 008f8900 DPL=0 TSS64-avl\r\nGDT=     0000000000008020 0000107f\r\nIDT=     000000001be82c28 00000fff\r\nCR0=80000031 CR2=0000000000000000 CR3=0000000000509000 CR4=000000b0\r\nDR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 \r\nDR6=00000000ffff0ff0 DR7=0000000000000400\r\nEFER=0000000000000500\r\nFCW=037f FSW=0020 [ST=0] FTW=00 MXCSR=00001f80\r\nFPR0=0000000000000000 0000 FPR1=0000000000000000 0000\r\nFPR2=0000000000000000 0000 FPR3=0000000000000000 0000\r\nFPR4=0000000000000000 0000 FPR5=0000000000000000 0000\r\nFPR6=ff21cc7a3ad64000 3ffe FPR7=a231cd9cceef21d0 4007\r\nXMM00=0000000000000000 0000000000000000 XMM01=0000000000000000 0000000000000000\r\nXMM02=0000000000000000 0000000000000000 XMM03=0000000000000000 0000000000000000\r\nXMM04=0000000000000000 0000000000000000 XMM05=0000000000000000 0000000000000000\r\nXMM06=0000000000000000 0000000000000000 XMM07=0000000000000000 0000000000000000\r\nXMM08=0000000000000000 0000000000000000 XMM09=0000000000000000 0000000000000000\r\nXMM10=0000000000000000 0000000000000000 XMM11=0000000000000000 0000000000000000\r\nXMM12=0000000000000000 0000000000000000 XMM13=0000000000000000 0000000000000000\r\nXMM14=0000000000000000 0000000000000000 XMM15=0000000000000000 0000000000000000\r\n"
+          },
+          {
+            "command": "xp /16bx 0x1be82e68",
+            "output": "000000001be82e68: 0x8a 0xfc 0x40 0x00 0x00 0x8e 0x00 0x00\r\n000000001be82e70: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\r\n"
+          },
+          {
+            "command": "i /b 0x21",
+            "output": "portb[0x0021] = 0xf8\r\n"
+          },
+          {
+            "command": "i /b 0x3fb",
+            "output": "portb[0x03fb] = 0x00\r\n"
+          },
+          {
+            "command": "i /b 0x3fc",
+            "output": "portb[0x03fc] = 0x08\r\n"
+          },
+          {
+            "command": "i /b 0x3fa",
+            "output": "portb[0x03fa] = 0x01\r\n"
+          },
+          {
+            "command": "i /b 0x3ff",
+            "output": "portb[0x03ff] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x0",
+            "output": ""
+          },
+          {
+            "command": "i /b 0x3f9",
+            "output": "portb[0x03f9] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x80",
+            "output": ""
+          },
+          {
+            "command": "i /b 0x3f8",
+            "output": "portb[0x03f8] = 0x0c\r\n"
+          },
+          {
+            "command": "i /b 0x3f9",
+            "output": "portb[0x03f9] = 0x00\r\n"
+          },
+          {
+            "command": "o /b 0x3fb 0x0",
+            "output": ""
+          }
+        ],
+        "limitations": [
+          "TempleOS identity mapping is assumed when reading the IDT through physical memory.",
+          "FIFO contents, RX trigger selection, and other write-only/transient state cannot be compared.",
+          "IIR is read only for FIFO-enable bits; its transient interrupt reason is not graded."
+        ]
+      }
+    ],
+    "restoration_checks": [
+      {
+        "type": "host_uart_restoration",
+        "status": "passed",
+        "checks": [
+          {
+            "field": "interrupt_vector.bytes_hex",
+            "status": "passed",
+            "before": "8afc4000008e00000000000000000000",
+            "after": "8afc4000008e00000000000000000000"
+          },
+          {
+            "field": "pic.irq4_masked",
+            "status": "passed",
+            "before": true,
+            "after": true
+          },
+          {
+            "field": "uart.lcr",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.mcr",
+            "status": "passed",
+            "before": 8,
+            "after": 8
+          },
+          {
+            "field": "uart.ier",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.divisor_low",
+            "status": "passed",
+            "before": 12,
+            "after": 12
+          },
+          {
+            "field": "uart.divisor_high",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.fifo_enabled",
+            "status": "passed",
+            "before": false,
+            "after": false
+          },
+          {
+            "field": "uart.scratch",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          }
+        ],
+        "reason": "Readable interrupt/PIC/UART state restored",
+        "limitations": [
+          "Only the saved PIC IRQ4 bit is compared; other IRQ masks belong to other devices.",
+          "Write-only FIFO trigger configuration and FIFO contents cannot be verified by these reads."
+        ]
+      },
+      {
+        "type": "host_uart_restoration",
+        "status": "passed",
+        "checks": [
+          {
+            "field": "interrupt_vector.bytes_hex",
+            "status": "passed",
+            "before": "8afc4000008e00000000000000000000",
+            "after": "8afc4000008e00000000000000000000"
+          },
+          {
+            "field": "pic.irq4_masked",
+            "status": "passed",
+            "before": true,
+            "after": true
+          },
+          {
+            "field": "uart.lcr",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.mcr",
+            "status": "passed",
+            "before": 8,
+            "after": 8
+          },
+          {
+            "field": "uart.ier",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.divisor_low",
+            "status": "passed",
+            "before": 12,
+            "after": 12
+          },
+          {
+            "field": "uart.divisor_high",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          },
+          {
+            "field": "uart.fifo_enabled",
+            "status": "passed",
+            "before": false,
+            "after": false
+          },
+          {
+            "field": "uart.scratch",
+            "status": "passed",
+            "before": 0,
+            "after": 0
+          }
+        ],
+        "reason": "Readable interrupt/PIC/UART state restored",
+        "limitations": [
+          "Only the saved PIC IRQ4 bit is compared; other IRQ masks belong to other devices.",
+          "Write-only FIFO trigger configuration and FIFO contents cannot be verified by these reads."
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "errors": [],
+  "model_actions_added": 0
+}
