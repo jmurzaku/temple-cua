@@ -16,23 +16,30 @@ STARTER = {
     "directory_navigation": ("Directory navigation", "Navigate to the graphics examples and leave their listing visible.", "Filesystem"),
     "file_roundtrip": ("Write and read a file", "Save three lines to the RAM drive, then read the file back.", "Filesystem"),
 }
-STARTER_README = """# TempleOS starter harness
+STARTER_README = r"""# TempleOS starter harness
 
 Six screenshot-based tasks: arithmetic, a loop, a function, strings, directory
 navigation, and a file round trip. The actual Cua ComputerAgent owns the model
 and action loop. TempleOS QMP input, reset, time budgets and visual grading stay
 in the local harness. Other research modules remain available separately.
+All ten task definitions and the test suite are included. The four additional
+desktop tasks require manual review; the command below selects only the six
+starter tasks shown on the website.
 
 Linux, Python 3.11+, and QEMU are required. Use your own OpenAI credential in
 OPENAI_API_KEY; credentials are never included in the download.
 
 ```sh
 python -m venv .venv
-.venv/bin/pip install -e '.[cua]'
+.venv/bin/pip install -e '.[cua,dev]'
 .venv/bin/temple-cua fetch-iso
 .venv/bin/temple-cua prepare --output assets/baseline.qcow2
 .venv/bin/temple-cua run --provider cua --model openai/gpt-6.1-sol \
-  --baseline assets/baseline.qcow2 --output runs/starter
+  --baseline assets/baseline.qcow2 --boot-wait 1 \
+  --task arithmetic --task sum_of_squares --task triangular_function \
+  --task string_statistics --task directory_navigation --task file_roundtrip \
+  --max-steps 24 --timeout 300 --api-timeout 90 \
+  --max-output-tokens 4096 --cua-image-history 2 --output runs/starter
 ```
 
 Add `--task arithmetic` to select one task. The generated report and JSONL
@@ -123,15 +130,12 @@ def main():
             archive.writestr("starter-run/" + relative.as_posix(), content)
     excluded = {".git", ".openai", ".pytest_cache", ".venv", ".runtime",
                 "assets", "runs", "research-sources", "__pycache__", "site"}
-    selected_task_names = {task.source.name for task in tasks.values()}
     with zipfile.ZipFile(assets / "starter-harness.zip", "w", zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(root.rglob("*")):
             relative = path.relative_to(root)
             if not path.is_file() or any(part in excluded or part.endswith(".egg-info") for part in relative.parts) or path.suffix in {".zip", ".pyc"}:
                 continue
             if path.name == ".env" or path.name.startswith(".env."):
-                continue
-            if relative.parts[0] == "tasks" and path.name not in selected_task_names:
                 continue
             content = path.read_bytes()
             if KEY_PATTERN.search(content):
