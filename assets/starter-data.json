@@ -1,5 +1,51 @@
 {
-  "run": null,
+  "run": {
+    "id": "01-cua-starter",
+    "provider": "cua",
+    "model": "openai/gpt-6.1-sol",
+    "cua_version": "0.9.0",
+    "created_at": "2026-10-05T00:27:11.588954+00:00",
+    "config": {
+      "iso": "assets/TempleOS.ISO",
+      "baseline": "assets/cli-baseline.qcow2",
+      "memory_mb": 512,
+      "max_steps_override": 24,
+      "timeout_override": 300.0,
+      "boot_wait": 1.0,
+      "model_options": {
+        "cua_version": "0.9.0",
+        "max_output_tokens": 4096,
+        "api_timeout": 90.0,
+        "image_history": 2
+      },
+      "baseline_identity": {
+        "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+        "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+        "memory_mb": 512,
+        "extra_args": [],
+        "device_layout_version": 1
+      },
+      "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+    },
+    "provenance": {
+      "agent_package": "cua-agent",
+      "agent_version": "0.9.0",
+      "inference": "upstream ComputerAgent and LiteLLM",
+      "agent_loop": "TempleOpenAIComputerUseConfig",
+      "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+      "backend": "TempleVM/QMP legacy PC devices",
+      "framebuffer": [
+        640,
+        480
+      ],
+      "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+      "execution_mode": "live_model",
+      "telemetry_enabled": false,
+      "max_actions_per_response": 4,
+      "step_definition": "actual model API attempts; Cua automatic retries disabled",
+      "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+    }
+  },
   "runs": [
     {
       "id": "01-cua-starter",
