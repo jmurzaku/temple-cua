@@ -78,8 +78,8 @@ def load_task(path: Path) -> Task:
             raise ValueError(f"{path}: missing {key}")
     if not _TASK_ID_PATTERN.fullmatch(data["id"]):
         raise ValueError(f"{path}: invalid task id")
-    if not isinstance(data.get("grader"), dict) or data["grader"].get("type") not in {"ocr", "manual"}:
-        raise ValueError(f"{path}: grader must have type ocr or manual")
+    if not isinstance(data.get("grader"), dict) or data["grader"].get("type") not in {"ocr", "manual", "uart"}:
+        raise ValueError(f"{path}: grader must have type ocr, manual, or uart")
     if type(data.get("max_steps", 40)) is not int or not 1 <= data.get("max_steps", 40) <= 1000:
         raise ValueError(f"{path}: max_steps must be within 1..1000")
     timeout = data.get("timeout_seconds", 180)

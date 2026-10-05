@@ -94,6 +94,25 @@ def read_review(folder):
     return review
 
 
+def export_evaluation(folder, output, task_id, result):
+    """Link host grading evidence without mixing it into the model replay."""
+    if result.get("grade", {}).get("type") != "uart":
+        return None
+    artifacts = {}
+    for name in result["grade"].get("evidence", []):
+        if not isinstance(name, str) or Path(name).suffix not in {".json", ".png", ".txt"}:
+            continue
+        if not re.fullmatch(r"[A-Za-z0-9_-]+\.(?:json|png|txt)", name):
+            raise ValueError("Host evaluation evidence must be a filename within its task directory")
+        source = folder / name
+        if source.is_symlink() or not source.is_file():
+            raise ValueError(f"Missing or unsafe host evaluation evidence: {name}")
+        relative = f"assets/evaluations/{task_id}/{name}"
+        copy(source, output / relative)
+        artifacts[name] = relative
+    return artifacts
+
+
 def export_run(source, destination, selected):
     envelope = source["envelope"]
     indexed = {result["task_id"]: result for result in envelope["results"]}
@@ -185,6 +204,9 @@ def build(run, output, selected=None, additional_runs=None):
         review = read_review(folder)
         if review is not None:
             tasks[-1]["review"] = review
+        evaluation = export_evaluation(folder, output, task_id, result)
+        if evaluation is not None:
+            tasks[-1]["evaluation_artifacts"] = evaluation
     used_ids = {task["run"]["id"] for task in tasks if task.get("run")}
     used_sources = [source for source in sources if source["id"] in used_ids]
     # Keep the primary run alias for viewers cached before multi-run support.

@@ -173,6 +173,19 @@ def test_inactive_driver_earns_zero_including_rejection_cases(tmp_path):
     assert result["status"] == "failed"
     assert result["score"] == 0
     assert all(case["expected_replies_hex"] for case in result["cases"])
+    assert not any(case["infrastructure_error"] for case in result["cases"])
+
+
+def test_closed_serial_transport_is_flagged_as_oracle_incomplete(tmp_path):
+    judge = UARTJudge(tmp_path / "unused", seed=1)
+    host, peer = socket.socketpair()
+    judge._socket = host
+    peer.close()
+    try:
+        result = judge.run()
+    finally:
+        judge.close()
+    assert all(case["infrastructure_error"] for case in result["cases"])
 
 
 @pytest.mark.parametrize("mode", ["wrong_crc", "wrong_sequence", "noise", "duplicate"])

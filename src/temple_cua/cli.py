@@ -152,6 +152,11 @@ def main(argv=None):
             if args.timeout is not None and not 0 < args.timeout <= 7200:
                 parser.error("--timeout must be 0..7200")
             tasks = load_tasks(args.tasks, args.task)
+            if any(task.grader.get("type") == "uart" for task in tasks):
+                if args.provider != "cua":
+                    parser.error("UART tasks require --provider cua for live device grading")
+                if args.baseline is not None:
+                    parser.error("UART tasks require a fresh boot with COM1; omit --baseline")
             if args.cua_fixture and args.provider != "cua":
                 parser.error("--cua-fixture is only valid with --provider cua")
             if args.provider == "cua":

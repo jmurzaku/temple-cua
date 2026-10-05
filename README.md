@@ -28,13 +28,21 @@ uv run temple-cua run --provider cua --model openai/gpt-6.1-sol \
 ```
 
 Use an exact model ID available to your account. Anthropic uses
-`anthropic/<model-id>` and `ANTHROPIC_API_KEY`. Each task restores the same
+`anthropic/<model-id>` and `ANTHROPIC_API_KEY`. `--baseline` restores a prepared
 snapshot; results, screenshots, and actions go into `runs/`.
+
+The UART task requires a fresh boot and configures COM1:
+
+```sh
+uv run temple-cua run --provider cua --model openai/gpt-6.1-sol \
+  --task uart_irq_service --output runs/uart
+```
 
 ## Tasks
 
-The site features four tasks: arithmetic, a live cursor callback, a
-[live counter panel](tasks/08_interactive_counter_panel.yaml), and a game sprite.
+The site features five tasks: arithmetic, a live cursor callback, a
+[live counter panel](tasks/08_interactive_counter_panel.yaml), a game sprite,
+and a UART interrupt service.
 The panel requires clickable controls that increment, decrement, and reset
 shared state while its draw callback runs.
 [Cursor callback](tasks/07_cursor_callback.yaml) asks the agent to compile a draw
@@ -46,6 +54,16 @@ create a robot sprite, integrate it into the [bundled game](https://github.com/c
 play it with real clicks, and relaunch the saved version. Select it with
 `--task tictactoe_sprite`. TempleOS supports both [sprite editing](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/Sprite.DD)
 and [sprites built in HolyC](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Graphics/SpriteRaw.HC).
+
+[Live kernel interrupt handler](tasks/10_uart_irq_service.yaml) asks the agent
+to build a COM1 request/reply service using HolyC and a real interrupt handler.
+Ten checks run after the model episode and yield a 0–1 reward: eight binary
+serial protocol cases, an IRQ4 mask/unmask intervention, and cleanup with
+state restoration. Host inputs are separate from the model replay. These
+behavioral checks give partial credit; proving interrupt-only code still
+requires source review. TempleOS exposes [interrupt entry installation](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Kernel/KInts.HC#L109)
+and [PIC control](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Kernel/KInts.HC#L129)
+directly to HolyC. Select this task with `--task uart_irq_service`.
 
 ```sh
 uv run temple-cua list-tasks

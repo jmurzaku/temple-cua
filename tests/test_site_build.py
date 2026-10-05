@@ -17,7 +17,7 @@ from temple_cua.tasks import load_tasks
 
 ROOT = Path(__file__).resolve().parents[1]
 RUN = ROOT / "examples/cua-starter"
-CURATED = ["arithmetic", "cursor_callback", "interactive_counter_panel", "tictactoe_sprite"]
+CURATED = ["arithmetic", "cursor_callback", "interactive_counter_panel", "tictactoe_sprite", "uart_irq_service"]
 spec = importlib.util.spec_from_file_location("build_site", ROOT / "scripts/build_site.py")
 builder = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(builder)
@@ -25,6 +25,23 @@ spec.loader.exec_module(builder)
 
 def read_json(path):
     return json.loads(path.read_text())
+
+
+def make_uart_grade_fixture(run, evidence=None):
+    folder = run / "cursor_callback"
+    task = read_json(folder / "task.json")
+    task["grader"] = {"type": "uart", "rubric": "Host byte and interrupt checks."}
+    (folder / "task.json").write_text(json.dumps(task))
+    envelope = read_json(run / "results.json")
+    envelope["results"][0]["grade"] = {
+        "type": "uart", "status": "failed", "score": 0.3,
+        "reason": "3/10 host checks passed", "passed_cases": 3, "total_cases": 10,
+        "cases": [{"name": "valid_short", "status": "passed", "score": 1.0}],
+        "evidence": evidence if evidence is not None else ["evaluation.json", "host-stop.png"],
+    }
+    (run / "results.json").write_text(json.dumps(envelope))
+    (folder / "result.json").write_text(json.dumps(envelope["results"][0]))
+    return folder, envelope["results"][0]
 
 
 def archive_files(output):
@@ -118,8 +135,8 @@ def test_default_catalog_uses_curated_tasks_and_preserves_real_task_snapshot(tmp
     catalog = read_json(tmp_path / "assets/starter-data.json")
     tasks = catalog["tasks"]
     assert [task["id"] for task in tasks] == CURATED
-    assert [task["difficulty"] for task in tasks] == ["easy", "medium", "hard", "hard"]
-    assert summary["tasks"] == 4
+    assert [task["difficulty"] for task in tasks] == ["easy", "medium", "hard", "hard", "hard"]
+    assert summary["tasks"] == 5
     assert catalog["run"]["model"] == read_json(RUN / "results.json")["model"]
     assert tasks[0]["result"] == source_results["arithmetic"]
     snapshot = read_json(RUN / "arithmetic/task.json")
@@ -143,12 +160,12 @@ def test_default_catalog_uses_curated_tasks_and_preserves_real_task_snapshot(tmp
         assert image.read_bytes() == (RUN / "arithmetic" / image.name).read_bytes()
 
 
-def test_four_task_catalog_preserves_three_recordings_and_leaves_sprite_unrun(tmp_path):
+def test_five_task_catalog_preserves_three_recordings_and_leaves_new_tasks_unrun(tmp_path):
     sources = [RUN, ROOT / "examples/cua-cursor", ROOT / "examples/cua-counter"]
     summary = builder.build(sources[0], tmp_path, additional_runs=sources[1:])
     tasks = read_json(tmp_path / "assets/starter-data.json")["tasks"]
     assert [task["id"] for task in tasks] == CURATED
-    assert summary["tasks"] == 4
+    assert summary["tasks"] == 5
     assert sum(task["result"] is not None for task in tasks) == 3
     for task, source in zip(tasks[:3], sources):
         original = next(result for result in read_json(source / "results.json")["results"]
@@ -170,7 +187,7 @@ def test_four_real_sources_preserve_provenance_downloads_and_sprite_error_review
                ROOT / "examples/cua-sprite"]
     summary = builder.build(sources[0], tmp_path, additional_runs=sources[1:])
     catalog = read_json(tmp_path / "assets/starter-data.json")
-    assert summary["tasks"] == 4
+    assert summary["tasks"] == 5
     assert [task["id"] for task in catalog["tasks"]] == CURATED
     assert len(catalog["runs"]) == 4
     assert len({metadata["id"] for metadata in catalog["runs"]}) == 4
@@ -395,7 +412,8 @@ def test_supplementary_runs_preserve_task_provenance_and_separate_download_envel
     assert catalog["run"]["model"] == read_json(RUN / "results.json")["model"]
     assert len(catalog["runs"]) == 2
     original, supplementary = read_json(RUN / "results.json"), read_json(supplemental_run / "results.json")
-    arithmetic, callback, panel, sprite = catalog["tasks"]
+    arithmetic, callback, panel, sprite, uart = catalog["tasks"]
+    assert uart["result"] is None and uart["frames"] == []
     for task, source in ((arithmetic, original), (callback, supplementary)):
         metadata = task["run"]
         for key in ("provider", "model", "created_at", "config", "provenance"):
@@ -522,7 +540,7 @@ def test_cli_repeated_run_argument_routes_supplementary_sources(tmp_path, supple
     monkeypatch.setattr(sys, "argv", ["build_site", str(RUN), "--run", str(supplemental_run),
                                      "--run", str(panel_run), "--output", str(output)])
     builder.main()
-    assert json.loads(capsys.readouterr().out)["tasks"] == 4
+    assert json.loads(capsys.readouterr().out)["tasks"] == 5
     catalog = read_json(output / "assets/starter-data.json")
     assert catalog["tasks"][1]["run"]["model"] == read_json(supplemental_run / "results.json")["model"]
     assert catalog["tasks"][2]["run"]["model"] == panel_envelope["model"]
@@ -659,3 +677,46 @@ def test_older_recordings_receive_empty_recovery_fields_without_inventing_errors
     assert all(frame["requested_calls"] == frame["input_errors"] == [] for frame in task["frames"])
     for frame, turn in zip(task["frames"][1:], source_turns):
         assert frame["actions"] == turn["executed_actions"]
+
+
+def test_uart_host_evidence_preserves_fractional_reward_without_adding_model_frames(tmp_path, supplemental_run):
+    folder, result = make_uart_grade_fixture(supplemental_run)
+    evaluation = {"phase": "host_evaluation_after_policy", "model_actions_added": 0,
+                  "grade": result["grade"], "transcript": [{"direction": "host_to_guest", "hex": "a501010203"}]}
+    (folder / "evaluation.json").write_text(json.dumps(evaluation))
+    shutil.copyfile(folder / "final.png", folder / "host-stop.png")
+    original_turns = (folder / "trajectory.jsonl").read_bytes()
+    output = tmp_path / "published-host-fixture"
+    builder.build(supplemental_run, output, selected=["cursor_callback"])
+    task = read_json(output / "assets/starter-data.json")["tasks"][0]
+    assert task["result"] == result
+    assert task["result"]["grade"]["score"] == 0.3
+    assert len(task["frames"]) == len(original_turns.splitlines()) + 1
+    assert task["evaluation_artifacts"] == {
+        "evaluation.json": "assets/evaluations/cursor_callback/evaluation.json",
+        "host-stop.png": "assets/evaluations/cursor_callback/host-stop.png",
+    }
+    for name, url in task["evaluation_artifacts"].items():
+        assert (output / url).read_bytes() == (folder / name).read_bytes()
+    archived = archive_files(output)
+    assert json.loads(archived["starter-run/cursor_callback/evaluation.json"]) == evaluation
+    assert archived["starter-run/cursor_callback/trajectory.jsonl"] == original_turns
+    assert json.loads(archived["starter-run/cursor_callback/result.json"]) == result
+
+
+@pytest.mark.parametrize("unsafe", ["../evaluation.json", "/evaluation.json", "nested/evaluation.json"])
+def test_uart_host_evidence_rejects_paths_outside_task_directory(tmp_path, supplemental_run, unsafe):
+    make_uart_grade_fixture(supplemental_run, [unsafe])
+    with pytest.raises(ValueError, match="filename within its task directory"):
+        builder.build(supplemental_run, tmp_path / "output", selected=["cursor_callback"])
+
+
+@pytest.mark.parametrize("kind", ["missing", "symlink"])
+def test_uart_host_evidence_requires_real_local_artifact(tmp_path, supplemental_run, kind):
+    folder, _ = make_uart_grade_fixture(supplemental_run, ["evaluation.json"])
+    if kind == "symlink":
+        target = tmp_path / "outside.json"
+        target.write_text('{}')
+        (folder / "evaluation.json").symlink_to(target)
+    with pytest.raises(ValueError, match="Missing or unsafe"):
+        builder.build(supplemental_run, tmp_path / "output", selected=["cursor_callback"])

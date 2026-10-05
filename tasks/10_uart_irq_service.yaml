@@ -1,0 +1,70 @@
+version: 1
+id: uart_irq_service
+title: Live kernel interrupt handler
+category: kernel
+difficulty: hard
+setup:
+  - kind: type
+    text: "Cd(\"B:/Bench\",TRUE);DocClear;\n"
+prompt: |
+  Build a live COM1 telemetry service in TempleOS using HolyC through this
+  desktop. COM1 is a QEMU 16550 UART at ports 0x3F8..0x3FF, IRQ4, interrupt
+  vector 0x24, with a host serial connection. Configure 115200 baud and
+  8 data bits, no parity, one stop bit. Preserve the keyboard, mouse,
+  timer, scheduler, and a usable shell.
+
+  Save your source as B:/Bench/Telemetry.HC; this writable directory is
+  already prepared. Compile it using #include "B:/Bench/Telemetry.HC";
+  with the semicolon. Implement BenchStart() and BenchStop(), both safe
+  to call repeatedly. Start the service and leave it active when you finish.
+
+  Receive bytes through a real interrupt U0 handler installed with
+  IntEntrySet(0x24,&YourHandler). Drain RX into a bounded buffer and use
+  a background worker to parse requests and send replies. Do not poll RX
+  from a foreground or background loop. Polling transmitter readiness is
+  allowed. Keep the interrupt handler brief and do not sleep inside it.
+
+  TempleOS provides InU8, OutU8, IntEntryGet, IntEntrySet, Spawn, Sleep,
+  Yield, and Kill. The master PIC IRQ4 mask is bit 4 at port 0x21;
+  preserve the other mask bits. Acknowledge serviced IRQ4 interrupts
+  with OutU8(0x20,0x20). The UART modem-control OUT2 bit enables its IRQ
+  output. BenchStop must stop the worker and restore the previous
+  interrupt entry, IRQ4 mask bit, and UART state as far as readable
+  hardware state permits.
+
+  Wire protocol (each field is a byte unless stated otherwise):
+  Request = A5, sequence, length, payload[length], checksum.
+  Length is 1..64. Checksum is (sequence+length+sum(payload)) modulo 256.
+  Payloads may contain any byte, including A5 and zero.
+  Reply = 5A, sequence, FOUR little-endian CRC32(payload) bytes, checksum.
+  Reply checksum is (sequence+sum(the four CRC bytes)) modulo 256.
+  CRC32 is IEEE reflected CRC32: polynomial 0xEDB88320, initial value
+  0xFFFFFFFF, final XOR 0xFFFFFFFF, compatible with zlib.crc32.
+
+  Reject corrupt checksums and lengths outside 1..64 without a reply;
+  recover to accept the next valid frame. Handle fragmented requests,
+  idle gaps, and bursts. Emit no serial banner or other unsolicited bytes;
+  local shell diagnostics are fine.
+
+  After you finish, the host sends fresh binary challenges, temporarily
+  masks and unmasks IRQ4 to check interrupt dependence, and calls
+  BenchStop twice to check cleanup and state restoration. Leave the
+  service running for those checks. Printed success markers earn no reward.
+max_steps: 80
+timeout_seconds: 900
+grader:
+  type: uart
+  rubric: |
+    Grade actual host-observed serial bytes using fresh hidden requests.
+    Eight protocol checks cover valid packets, binary payloads,
+    fragmentation, bursts, malformed-request recovery, and embedded
+    headers. A causal IRQ4 mask/unmask probe checks interrupt dependence.
+    Cleanup checks repeated BenchStop calls, restored interrupt/PIC/UART
+    state, and a responsive guest. Keep challenge seeds and transcripts
+    private until model actions end. Require genuine live responses before
+    awarding intervention or cleanup credit; silence alone is not success.
+
+    Serial behavior and IRQ masking strengthen the signal but do not
+    conclusively prove an interrupt-only implementation against an
+    adversarial all-ring-0 policy. Source and trajectory review remain
+    necessary for that stronger mechanism claim.

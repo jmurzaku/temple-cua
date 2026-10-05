@@ -29,7 +29,7 @@
       <div>
         <h1 id="intro-title">TempleOSBench</h1>
         <p class="lead">Computer use in a ring 0 operating system.</p>
-        <p id="catalog-description">Four tasks in TempleOS. An agent sees screenshots, writes HolyC, and controls the mouse in a QEMU virtual machine.</p>
+        <p id="catalog-description">Five tasks in TempleOS. An agent sees screenshots, writes HolyC, and controls the mouse in a QEMU virtual machine.</p>
       </div>
       <dl class="environment-facts">
         <div><dt>Guest</dt><dd>TempleOS 5.03</dd></div><div><dt>Display</dt><dd>640 × 480</dd></div><div><dt>Agent interface</dt><dd>Screenshots, keyboard, mouse</dd></div><div><dt>Execution</dt><dd>QEMU · no guest network</dd></div>
@@ -73,6 +73,15 @@
               <details><summary>Review evidence</summary><ul id="review-evidence"></ul></details>
               <details id="review-limitations" hidden><summary>Review limits</summary><ul id="review-limits"></ul></details>
             </div>
+            <div id="host-evaluation" class="trajectory-review" hidden>
+              <h3>Host evaluation</h3>
+              <p id="host-evaluation-score"></p>
+              <p id="host-evaluation-reason"></p>
+              <p class="small muted">Host inputs run after the model episode and do not count as model turns.</p>
+              <details><summary id="host-evaluation-checks-title">Checks</summary><ul id="host-evaluation-checks"></ul></details>
+              <details id="host-evaluation-evidence" hidden><summary>Evaluation evidence</summary><ul id="host-evaluation-artifacts"></ul></details>
+              <details id="host-evaluation-limitations" hidden><summary>Evaluation limits</summary><ul id="host-evaluation-limits"></ul></details>
+            </div>
             <details id="task-criteria-details" hidden><summary>Completion criteria</summary><div id="recorded-criteria"></div></details>
             <details id="task-run-details" hidden><summary>Run configuration</summary><pre id="task-run-config"></pre></details>
           </div>
@@ -82,7 +91,7 @@
     </section>
     <section id="run" class="run-section" aria-labelledby="run-title">
       <div class="section-heading"><h2 id="run-title">Recorded attempts</h2><a href="assets/starter-results.json" download>Results JSON</a></div>
-      <dl id="run-facts" class="run-facts"><div><dt>Model</dt><dd id="run-model">—</dd></div><div><dt>Agent</dt><dd id="run-agent">—</dd></div><div><dt>Recorded tasks</dt><dd id="run-task">—</dd></div><div><dt>Automatic checks</dt><dd id="run-score">—</dd></div><div id="review-summary-field" hidden><dt>Trajectory reviews</dt><dd id="run-reviews">—</dd></div></dl>
+      <dl id="run-facts" class="run-facts"><div><dt>Model</dt><dd id="run-model">—</dd></div><div><dt>Agent</dt><dd id="run-agent">—</dd></div><div><dt>Recorded tasks</dt><dd id="run-task">—</dd></div><div><dt>Automatic grades</dt><dd id="run-score">—</dd></div><div id="review-summary-field" hidden><dt>Trajectory reviews</dt><dd id="run-reviews">—</dd></div></dl>
       <p id="run-protocol">Cua’s ComputerAgent drives a TempleOS computer adapter; the harness enforces the recorded time and turn limits.</p>
       <p id="run-note" class="muted">The site shows one featured attempt per task. Trajectory reviews are separate from automatic grading.</p>
       <div class="text-links"><a href="assets/starter-run.zip" download>Download recorded run</a></div>

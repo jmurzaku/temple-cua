@@ -189,6 +189,7 @@ class UARTJudge:
         transcript: list[dict] = []
         first_reply_ms: float | None = None
         error = None
+        infrastructure_error = False
         try:
             for index, chunk in enumerate(case.chunks):
                 remaining = deadline - time.monotonic()
@@ -222,6 +223,10 @@ class UARTJudge:
                     receive_deadline = min(deadline, time.monotonic() + self.quiet_seconds)
         except (OSError, TimeoutError) as exc:
             error = f"{type(exc).__name__}: {exc}"
+            # A normal receive timeout is handled above as absent behavioral
+            # evidence. Transport loss or inability to finish transmitting a
+            # challenge leaves the host oracle incomplete, not a model zero.
+            infrastructure_error = True
         anomalies.extend(parser.finish())
         passed = not error and not anomalies and received == list(case.replies)
         if passed:
@@ -237,7 +242,8 @@ class UARTJudge:
                 "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
                 "expected_replies_hex": [frame.hex() for frame in case.replies],
                 "received_replies_hex": [frame.hex() for frame in received],
-                "anomalies": anomalies, "transcript": transcript}
+                "anomalies": anomalies, "transcript": transcript,
+                "infrastructure_error": infrastructure_error}
 
     def run(self) -> dict:
         if self._socket is None:

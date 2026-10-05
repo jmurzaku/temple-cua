@@ -6,7 +6,7 @@ import asyncio
 import base64
 from copy import deepcopy
 from contextlib import contextmanager
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 import hashlib
 from importlib.metadata import PackageNotFoundError, version
@@ -15,6 +15,7 @@ import math
 import os
 from pathlib import Path
 import shutil
+import tempfile
 import time
 from typing import Any
 
@@ -32,6 +33,11 @@ CUA_VERSION = "0.9.0"
 COMPUTER_PROTOCOL_VERSION = 2
 SCROLL_PIXELS_PER_NOTCH = 8
 SCROLL_NOTCHES_PER_ACTION = 20
+UART_HARDWARE_PROFILE = {
+    "name": "com1-16550a-irq4", "device": "isa-serial (16550A)",
+    "port": "COM1", "io_base": "0x3f8", "irq": 4,
+    "transport": "host Unix socket", "fresh_vm": True,
+}
 INSTRUCTIONS = """You are operating TempleOS 5.03 through screenshots and keyboard/mouse actions.
 The actual framebuffer is 640x480: absolute pixels x=0..639, y=0..479, origin top left.
 The transport environment tag is linux only because Cua has no TempleOS tag.
@@ -510,8 +516,38 @@ async def _episode(computer: TempleCuaComputer, callback: EpisodeCallback, task:
         await stream.aclose()
 
 
+def _validate_uart_config(tasks: list[Task], config: VMConfig):
+    if config.baseline is not None and any(task.grader.get("type") == "uart" for task in tasks):
+        raise ValueError("UART tasks require a fresh VM with COM1 hardware; omit --baseline")
+
+
+@contextmanager
+def _task_vm(task: Task, config: VMConfig, folder: Path):
+    if task.grader.get("type") != "uart":
+        with TempleVM(config, folder) as vm:
+            yield vm, None
+        return
+    from .uart_judge import UARTJudge
+
+    # Unix socket paths must stay short even when artifacts have a long path.
+    with tempfile.TemporaryDirectory(prefix="temple-uart-") as transport:
+        socket_path = Path(transport) / "com1.sock"
+        extra = ("-chardev", f"socket,id=bench_uart,path={socket_path},server=on,wait=off",
+                 "-device", "isa-serial,chardev=bench_uart,index=0,iobase=0x3f8,irq=4")
+        uart_config = replace(config, extra_args=(*config.extra_args, *extra))
+        with TempleVM(uart_config, folder) as vm:
+            judge = UARTJudge(socket_path)
+            try:
+                judge.connect(timeout=5)
+                yield vm, judge
+            finally:
+                judge.close()
+
+
 def run_cua_task(task: Task, config: VMConfig, artifact_dir: Path, options: CuaOptions,
                  *, max_steps=None, timeout=None, progress=None, async_runner: asyncio.Runner | None = None) -> dict:
+    _validate_uart_config([task], config)
+    uart = task.grader.get("type") == "uart"
     artifact_dir.mkdir(parents=True, exist_ok=False)
     data = asdict(task)
     data.pop("source")
@@ -524,15 +560,24 @@ def run_cua_task(task: Task, config: VMConfig, artifact_dir: Path, options: CuaO
               "grade": {"status": "error", "score": None, "reason": "No screenshot"},
               "budget": {"max_steps": step_limit, "timeout_seconds": time_limit, "max_input_actions": step_limit * 8},
               "task_fingerprint": hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()}
+    if uart:
+        result["hardware_profile"] = deepcopy(UART_HARDWARE_PROFILE)
+        result["grade"] = {"type": "uart", "status": "error", "score": None,
+                           "reason": "Host UART evaluation has not run"}
     started = time.monotonic()
     final = artifact_dir / "final.png"
     computer = None
     try:
-        with TempleVM(config, artifact_dir / "vm") as vm:
+        with _task_vm(task, config, artifact_dir / "vm") as (vm, judge):
             if config.baseline is None:
                 initialize_shell(vm)
             for action in task.setup:
                 vm.execute(action)
+            if uart:
+                from .uart_hardware import UARTHardwareProbe
+                from .uart_evaluation import evaluate_uart
+                initial_hardware = UARTHardwareProbe(vm, judge).capture_state()
+                _write_json(artifact_dir / "initial-hardware.json", initial_hardware)
             vm.screenshot(artifact_dir / "0000.png")
             vm.screenshot(final)
             task_started = time.monotonic()
@@ -540,40 +585,84 @@ def run_cua_task(task: Task, config: VMConfig, artifact_dir: Path, options: CuaO
             computer = TempleCuaComputer(vm, artifact_dir, task_started + time_limit, step_limit * 8)
             callback = EpisodeCallback(computer, step_limit, progress, options.image_history)
             try:
-                with fixture_responses(options.fixture):
-                    if async_runner is None:
-                        asyncio.run(_episode(computer, callback, task, options))
-                    else:
-                        async_runner.run(_episode(computer, callback, task, options))
-                result["status"] = "completed" if callback.completion_text else "budget_exhausted"
-                if callback.completion_text:
-                    result["completion_text"] = callback.completion_text
-            finally:
                 try:
-                    computer.release()
+                    with fixture_responses(options.fixture):
+                        if async_runner is None:
+                            asyncio.run(_episode(computer, callback, task, options))
+                        else:
+                            async_runner.run(_episode(computer, callback, task, options))
+                    result["status"] = "completed" if callback.completion_text else "budget_exhausted"
+                    if callback.completion_text:
+                        result["completion_text"] = callback.completion_text
+                    if uart:
+                        result["policy_status"] = result["status"]
+                except CuaBudgetExceeded as exc:
+                    if uart:
+                        result["policy_status"] = "budget_exhausted"
+                        result["budget_reason"] = str(exc)
+                    raise
+                except Exception as exc:
+                    if uart:
+                        result["policy_status"] = "timeout" if isinstance(exc, TimeoutError) else "error"
+                        status = getattr(exc, "status_code", None)
+                        detail = str(exc) if isinstance(exc, (VMInputError, CuaProtocolError)) else f"HTTP {status}" if type(status) is int else "See provider status and runtime configuration"
+                        result["policy_error"] = f"{type(exc).__name__}: {detail}"
+                    raise
                 finally:
                     try:
-                        vm.screenshot(final)
+                        computer.release()
                     finally:
                         try:
-                            callback.flush()
+                            vm.screenshot(final)
                         finally:
-                            result["steps"] = callback.calls
-                            result["usage"] = callback.usage
-                            result["input_actions"] = computer.input_actions
-                            result["observations"] = computer.screenshots
+                            try:
+                                callback.flush()
+                            finally:
+                                result["steps"] = callback.calls
+                                result["usage"] = callback.usage
+                                result["input_actions"] = computer.input_actions
+                                result["observations"] = computer.screenshots
+            finally:
+                result["policy_seconds"] = round(time.monotonic() - task_started, 3)
+                if uart:
+                    evaluation_started = time.monotonic()
+                    try:
+                        result["grade"] = evaluate_uart(vm, judge, initial_hardware, artifact_dir)
+                        oracle = result["grade"]
+                        score = oracle.get("score") if isinstance(oracle, dict) else None
+                        if not isinstance(oracle, dict) or oracle.get("type") != "uart":
+                            raise ValueError("UART evaluator returned an invalid grade")
+                        if oracle.get("status") == "error" and score is None:
+                            result["evaluation_error"] = oracle.get("reason", "UART host evaluation failed")
+                        elif (oracle.get("status") not in {"passed", "failed"}
+                              or isinstance(score, bool) or not isinstance(score, (int, float))
+                              or not math.isfinite(score) or not 0 <= score <= 1):
+                            raise ValueError("UART evaluator returned an invalid grade")
+                    except Exception as exc:
+                        result["evaluation_error"] = f"{type(exc).__name__}: UART host evaluation failed"
+                        result["grade"] = {"type": "uart", "status": "error", "score": None,
+                                           "reason": result["evaluation_error"]}
+                    finally:
+                        result["evaluation_seconds"] = round(time.monotonic() - evaluation_started, 3)
     except CuaBudgetExceeded as exc:
         result["status"] = "budget_exhausted"
         result["budget_reason"] = str(exc)
     except Exception as exc:
-        result["status"] = "timeout" if isinstance(exc, TimeoutError) or (computer and time.monotonic() >= computer.deadline) else "error"
+        result["status"] = "timeout" if isinstance(exc, TimeoutError) or (not uart and computer and time.monotonic() >= computer.deadline) else "error"
         # Model errors can contain headers/request details; retain their class,
         # and include only our own clearly controlled validation messages.
         status = getattr(exc, "status_code", None)
         detail = str(exc) if isinstance(exc, (VMInputError, CuaProtocolError)) else f"HTTP {status}" if type(status) is int else "See provider status and runtime configuration"
         result["error"] = f"{type(exc).__name__}: {detail}"
+        if uart and "policy_error" in result and result["error"] != result["policy_error"]:
+            result["cleanup_error"] = result["error"]
+            result["error"] = result["policy_error"]
     result["elapsed_seconds"] = round(time.monotonic() - started, 3)
-    if final.exists():
+    if uart:
+        result.setdefault("policy_status", result["status"])
+        if "evaluation_error" in result:
+            result["status"] = "error"
+    elif final.exists():
         try:
             result["grade"] = grade(task.grader, final, artifact_dir)
         except Exception as exc:
@@ -584,6 +673,7 @@ def run_cua_task(task: Task, config: VMConfig, artifact_dir: Path, options: CuaO
 
 def run_cua_suite(tasks: list[Task], config: VMConfig, output: Path, options: CuaOptions,
                   *, max_steps=None, timeout=None, progress=None) -> dict:
+    _validate_uart_config(tasks, config)
     load_cua()  # Validate optional dependency before creating artifacts or VMs.
     from cua_agent.decorators import find_agent_config
     agent_config = find_agent_config(options.model)
@@ -610,6 +700,9 @@ def run_cua_suite(tasks: list[Task], config: VMConfig, output: Path, options: Cu
                                "step_definition": "deterministic fixture prediction turns; no API requests" if options.fixture else "actual model API attempts; Cua automatic retries disabled",
                                "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"},
                 "results": []}
+    if any(task.grader.get("type") == "uart" for task in tasks):
+        envelope["provenance"]["uart_hardware_profile"] = deepcopy(UART_HARDWARE_PROFILE)
+        envelope["provenance"]["uart_evaluation"] = "Host UART/IRQ/restoration oracle after policy; separate actions and wall time"
     if config.baseline:
         sidecar = Path(str(config.baseline) + ".json")
         if sidecar.is_file():
