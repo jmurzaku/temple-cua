@@ -1,0 +1,38 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "I64 BenchTri(I64 n){I64 i,total=0;for(i=1;i<=n;i++)total+=i;return total;}\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "DocClear;\"BENCH_TRI=%d\\n\",BenchTri(25);\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The function result is visible."
+      }
+    ],
+    "note": ""
+  }
+]

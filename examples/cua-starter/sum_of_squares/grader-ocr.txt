@@ -1,0 +1,6 @@
+0.000781s
+T:/Home>I64 n,sum=0; for(n=1;n<=12;n++) sum+=n*n; Print("BENCH_SUM=%d\n",sum)
+;
+BENCH_SUM=650
+0.000183s
+T:/Home>

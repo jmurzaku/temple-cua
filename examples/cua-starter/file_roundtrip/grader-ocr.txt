@@ -1,0 +1,15 @@
+0.000781s
+T:/Home>DirMk("B:/Bench");
+Make Directory:B:/Bench
+0.020641s ans=0x00000001=1
+T:/Home>FileWrite("B:/Bench/Notes.TXT","alpha\nbeta\ngamma\n",17);
+0.001157s ans=0x0000007B=123
+T:/Home>I64 bench_size;
+T:/Home>U8 *bench_text=FileRead("B:/Bench/Notes.TXT",&bench_size);
+T:/Home>Print("BENCH_FILE_BYTES=%d\n",bench_size); Print("%s",bench_text);
+BENCH_FILE_BYTES=17
+alpha
+beta
+gamma
+0.000119s
+T:/Home>

@@ -1,0 +1,31 @@
+{
+  "task_id": "draw_shapes",
+  "title": "Draw a persistent scene with the graphics API",
+  "status": "completed",
+  "steps": 4,
+  "elapsed_seconds": 13.752,
+  "grade": {
+    "type": "manual",
+    "status": "needs_review",
+    "score": null,
+    "reason": "Pass if the final screenshot shows the red circular outline, the filled\nblue rectangle, the green sloping line, and BENCH_DRAW text, with positions\nand dimensions matching the requested client-area coordinates within\nabout 5 pixels. Review the trajectory to confirm the drawing was created\nwith TempleOS graphics calls and survives at least one subsequent screen\nobservation. Printed text naming the shapes, a source listing without a\nvisible drawing, or a completion claim alone is a failure.\n",
+    "evidence": [
+      "Manual review required; no automatic success claim was made."
+    ]
+  },
+  "usage": {
+    "turn": 10,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0
+  },
+  "artifact_dir": "draw_shapes",
+  "final_screenshot": "draw_shapes/final.png",
+  "setup_seconds": 1.3141289810000671,
+  "completion_text": "The requested drawing is visible.",
+  "task_fingerprint": "42029380947b41f51da83af67b089f0cf036e4be3efdeaac0eb31b9180fa139c",
+  "budget": {
+    "max_steps": 70,
+    "timeout_seconds": 300
+  }
+}

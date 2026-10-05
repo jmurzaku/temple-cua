@@ -1,0 +1,38 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "U8 *bench_str=\"TEMPLEOS TEMPLEOS\";\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "DocClear;\"BENCH_LENGTH=%d\\n\",StrLen(bench_str);\"BENCH_E_COUNT=%d\\n\",StrOcc(bench_str,'E');\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "Both string measurements are visible."
+      }
+    ],
+    "note": ""
+  }
+]

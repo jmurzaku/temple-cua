@@ -1,0 +1,38 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "Cd(\"B:/Bench\",TRUE);U8 *bench_text=\"alpha\\nbeta\\ngamma\\n\";FileWrite(\"Notes.TXT\",bench_text,StrLen(bench_text));\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "I64 bench_size;U8 *bench_read=FileRead(\"Notes.TXT\",&bench_size);DocClear;\"BENCH_FILE_BYTES=%d\\n%s\",bench_size,bench_read;Free(bench_read);\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The saved file byte count and contents are visible."
+      }
+    ],
+    "note": ""
+  }
+]

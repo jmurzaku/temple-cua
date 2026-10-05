@@ -1,0 +1,288 @@
+{
+  "type": "host_uart",
+  "status": "passed",
+  "score": 1.0,
+  "passed_cases": 8,
+  "total_cases": 8,
+  "seed_hex": "3039",
+  "case_timeout_seconds": 2.0,
+  "reason": "8/8 host UART cases passed",
+  "cases": [
+    {
+      "name": "valid_short",
+      "status": "passed",
+      "reason": "Exact host-validated replies",
+      "latency_ms": 1.09,
+      "elapsed_ms": 51.225,
+      "expected_replies_hex": [
+        "5ad5f64a03c9e1"
+      ],
+      "received_replies_hex": [
+        "5ad5f64a03c9e1"
+      ],
+      "anomalies": [],
+      "transcript": [
+        {
+          "direction": "host_to_guest",
+          "hex": "a5d501552b",
+          "at_ms": 0.02
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "5ad5f64a03c9e1",
+          "at_ms": 1.09
+        }
+      ]
+    },
+    {
+      "name": "random_payload_64",
+      "status": "passed",
+      "reason": "Exact host-validated replies",
+      "latency_ms": 5.159,
+      "elapsed_ms": 55.303,
+      "expected_replies_hex": [
+        "5a0591f75ef1dc"
+      ],
+      "received_replies_hex": [
+        "5a0591f75ef1dc"
+      ],
+      "anomalies": [],
+      "transcript": [
+        {
+          "direction": "host_to_guest",
+          "hex": "a505404b692761aea40ceaad0dd40103535b9232d4365dc077a814763dff6e5f83de4215549a044c75b3af50c5a506191fe328c65b05bc6e3ef61f07fba6d767ba3d4c42",
+          "at_ms": 0.028
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "5a0591f75ef1dc",
+          "at_ms": 5.159
+        }
+      ]
+    },
+    {
+      "name": "fragmented_request",
+      "status": "passed",
+      "reason": "Exact host-validated replies",
+      "latency_ms": 49.126,
+      "elapsed_ms": 99.24,
+      "expected_replies_hex": [
+        "5a9878bb366869"
+      ],
+      "received_replies_hex": [
+        "5a9878bb366869"
+      ],
+      "anomalies": [],
+      "transcript": [
+        {
+          "direction": "host_to_guest",
+          "hex": "a5",
+          "at_ms": 0.019
+        },
+        {
+          "direction": "host_to_guest",
+          "hex": "981f",
+          "at_ms": 15.4
+        },
+        {
+          "direction": "host_to_guest",
+          "hex": "28fd54ab76685353934c2e014b01",
+          "at_ms": 30.524
+        },
+        {
+          "direction": "host_to_guest",
+          "hex": "fd5e3187cf21ebd55d7c5e0dbea95aca5ba6",
+          "at_ms": 45.626
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "5a",
+          "at_ms": 49.068
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "98",
+          "at_ms": 49.091
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "78",
+          "at_ms": 49.1
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "bb",
+          "at_ms": 49.107
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "36",
+          "at_ms": 49.114
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "68",
+          "at_ms": 49.12
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "69",
+          "at_ms": 49.126
+        }
+      ]
+    },
+    {
+      "name": "back_to_back_burst_8",
+      "status": "passed",
+      "reason": "Exact host-validated replies",
+      "latency_ms": 1.193,
+      "elapsed_ms": 51.336,
+      "expected_replies_hex": [
+        "5abc67c3e72efb",
+        "5a63d605504ad8",
+        "5a8a904c18ae2c",
+        "5adf0f7af0a0f8",
+        "5a527ffa19361a",
+        "5abff80cc75be5",
+        "5a3fe1fe80ca68",
+        "5add6f1a0958c7"
+      ],
+      "received_replies_hex": [
+        "5abc67c3e72efb",
+        "5a63d605504ad8",
+        "5a8a904c18ae2c",
+        "5adf0f7af0a0f8",
+        "5a527ffa19361a",
+        "5abff80cc75be5",
+        "5a3fe1fe80ca68",
+        "5add6f1a0958c7"
+      ],
+      "anomalies": [],
+      "transcript": [
+        {
+          "direction": "host_to_guest",
+          "hex": "a5bc177fd3d5a63d22eb63674577a995401e85da16ba37224fbea1a563058ce3bccd9dfda58a3a879ffcf51987e40f70b045012a0f3860cbfb5d8bb26a99a1c6269abc14d6615229499c76aad966074c3a10aec8a3147b33f84c6984b75191132e78a5df0d6ad1074da653ead4e10cbe0ec6b1a5522e08a3f0e017a3a0c79840c21d38f83c3159111a9e6e31ebfff01ed87071a853c47bf15c6a6d51e9076325233e308721a5bf1f6d8e73febde4ce7fe6370fbc7accfc2ad7ee38a77fe39bd93f576fc5865a02b2a53f240cf5aa679a0ecbbb6e80752f688002084d44a86d419c920e6bdbc9cde18f9025f4f751d85fa5dd07323d88a1d3c8f40b",
+          "at_ms": 0.033
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "5abc67c3e72efb5a63d605504ad85a8a904c18ae2c5adf0f7af0a0f85a527ffa19361a5abff80cc75be55a3fe1fe80ca685add6f1a0958c7",
+          "at_ms": 1.193
+        }
+      ]
+    },
+    {
+      "name": "bad_checksum_then_valid",
+      "status": "passed",
+      "reason": "Exact host-validated replies",
+      "latency_ms": 15.664,
+      "elapsed_ms": 65.785,
+      "expected_replies_hex": [
+        "5a59bb577c2e15"
+      ],
+      "received_replies_hex": [
+        "5a59bb577c2e15"
+      ],
+      "anomalies": [],
+      "transcript": [
+        {
+          "direction": "host_to_guest",
+          "hex": "a585132fc73edc7503ea4f07b6518a49c6529fa5a1dc12",
+          "at_ms": 0.032
+        },
+        {
+          "direction": "host_to_guest",
+          "hex": "a5590d14b57dea0db1c8fe46bf9843fff9",
+          "at_ms": 15.139
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "5a59bb577c2e15",
+          "at_ms": 15.664
+        }
+      ]
+    },
+    {
+      "name": "valid_after_bad_checksum",
+      "status": "passed",
+      "reason": "Exact host-validated replies",
+      "latency_ms": 0.821,
+      "elapsed_ms": 50.944,
+      "expected_replies_hex": [
+        "5a5f318623e21b"
+      ],
+      "received_replies_hex": [
+        "5a5f318623e21b"
+      ],
+      "anomalies": [],
+      "transcript": [
+        {
+          "direction": "host_to_guest",
+          "hex": "a55f17e705eebc76d1f173aefb9775d4a3314c5f173ec640bd20f7",
+          "at_ms": 0.027
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "5a5f318623e21b",
+          "at_ms": 0.821
+        }
+      ]
+    },
+    {
+      "name": "invalid_length_then_valid",
+      "status": "passed",
+      "reason": "Exact host-validated replies",
+      "latency_ms": 0.808,
+      "elapsed_ms": 50.945,
+      "expected_replies_hex": [
+        "5a2edd36409819"
+      ],
+      "received_replies_hex": [
+        "5a2edd36409819"
+      ],
+      "anomalies": [],
+      "transcript": [
+        {
+          "direction": "host_to_guest",
+          "hex": "a5b5a5a52e0b666e0030ac857f8d9eb1a16a",
+          "at_ms": 0.029
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "5a2edd36409819",
+          "at_ms": 0.808
+        }
+      ]
+    },
+    {
+      "name": "embedded_header_payload",
+      "status": "passed",
+      "reason": "Exact host-validated replies",
+      "latency_ms": 0.774,
+      "elapsed_ms": 50.91,
+      "expected_replies_hex": [
+        "5ad31e45a615f1"
+      ],
+      "received_replies_hex": [
+        "5ad31e45a615f1"
+      ],
+      "anomalies": [],
+      "transcript": [
+        {
+          "direction": "host_to_guest",
+          "hex": "a5d32ba500a55aff000a3de0e1a178823257941f414864896c82b71828487716470a1249c1d9d70c584f49fb35b6af",
+          "at_ms": 0.03
+        },
+        {
+          "direction": "guest_to_host",
+          "hex": "5ad31e45a615f1",
+          "at_ms": 0.774
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Behavioral serial protocol test; does not prove IRQ-only processing.",
+    "Seed and byte transcript must remain hidden from the policy until grading ends."
+  ]
+}

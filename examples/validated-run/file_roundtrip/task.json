@@ -1,0 +1,20 @@
+{
+  "id": "file_roundtrip",
+  "title": "Write and read a file on a RAM drive",
+  "prompt": "Use the writable B: RAM drive. Create /Bench if necessary and save a file\nB:/Bench/Notes.TXT containing exactly these three lowercase lines, each\nterminated by an LF newline:\nalpha\nbeta\ngamma\nRead the file back from the drive. Print its byte count, as obtained from\nthe file read, as BENCH_FILE_BYTES=<decimal count> on its own line. Then\ndisplay the file's actual text. Leave the count and all three lines visible\nand finish. TempleOS boot media is read-only, so use B: for this task.\n",
+  "grader": {
+    "type": "ocr",
+    "all": [
+      "BENCH_FILE_BYTES=17",
+      "alpha",
+      "beta",
+      "gamma"
+    ]
+  },
+  "category": "filesystem",
+  "difficulty": "medium",
+  "max_steps": 50,
+  "timeout_seconds": 240,
+  "setup": [],
+  "source": "tasks/06_file_roundtrip.yaml"
+}

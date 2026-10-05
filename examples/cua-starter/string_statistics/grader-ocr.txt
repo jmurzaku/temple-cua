@@ -1,0 +1,11 @@
+0.000781s
+T:/Home>U8 *bench_s="TEMPLEOS TEMPLEOS";
+T:/Home>I64 bench_len=StrLen(bench_s),bench_e=0,bench_i;
+T:/Home>for(bench_i=0;bench_i<bench_len;bench_i++) if(bench_s[bench_i]=='E')
+bench_e++;
+0.000068s ans=0x00000011=17
+T:/Home>Print("BENCH_LENGTH=%d\nBENCH_E_COUNT=%d\n",bench_len,bench_e);
+BENCH_LENGTH=17
+BENCH_E_COUNT=4
+0.000082s
+T:/Home>

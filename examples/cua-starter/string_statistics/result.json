@@ -1,0 +1,38 @@
+{
+  "task_id": "string_statistics",
+  "title": "Measure a string using TempleOS routines",
+  "status": "completed",
+  "steps": 2,
+  "elapsed_seconds": 25.624,
+  "usage": {
+    "input_tokens": 2575,
+    "output_tokens": 197,
+    "total_tokens": 2772,
+    "estimated_cost_usd": 0.0051554
+  },
+  "artifact_dir": "string_statistics",
+  "final_screenshot": "string_statistics/final.png",
+  "grade": {
+    "type": "ocr",
+    "status": "passed",
+    "score": 1.0,
+    "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
+    "evidence": [
+      "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
+      "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+      "grader-ocr.txt"
+    ],
+    "engine": "templeos-bitmap",
+    "match_mode": "line"
+  },
+  "budget": {
+    "max_steps": 24,
+    "timeout_seconds": 300.0,
+    "max_input_actions": 192
+  },
+  "task_fingerprint": "42378f448476df2ea33cdde2ff34009da4017d6aa11e0c8c6df32c94eaf1bc5f",
+  "setup_seconds": 1.3057410270002947,
+  "completion_text": "Stored and measured the string in TempleOS. Both output lines are visible:\n\n```text\nBENCH_LENGTH=17\nBENCH_E_COUNT=4\n```",
+  "input_actions": 1,
+  "observations": 2
+}

@@ -1,0 +1,26 @@
+version: 1
+id: editor_program
+title: Save and execute a program from the editor
+category: editor
+difficulty: hard
+prompt: |
+  Use the TempleOS editor to create B:/Bench/Cube.HC on the writable B: RAM
+  drive, creating /Bench if necessary. The file must define an I64 function
+  BenchCube(I64 n) that returns n cubed and must call it with n=7, printing
+  BENCH_CUBE=<decimal result> on its own line.
+  Save the file through the editor, close it, and execute the saved file from
+  the command line. Leave the resulting output visible and finish.
+  Use the editor for entering and saving the source; shell-only FileWrite
+  creation does not meet this task's interaction requirement.
+max_steps: 65
+timeout_seconds: 300
+grader:
+  type: manual
+  rubric: |
+    Pass only if the recorded trajectory opens B:/Bench/Cube.HC in the editor,
+    enters a correct BenchCube definition and call, saves via Ctrl+S or an
+    editor save menu, closes the editor, and executes the saved file. The final
+    screenshot must show BENCH_CUBE=343 as program output. Confirm that the
+    source implements n*n*n or equivalent, rather than returning a constant.
+    Typing a literal success marker, creating the file only through FileWrite,
+    or claiming completion without visible execution is a failure.

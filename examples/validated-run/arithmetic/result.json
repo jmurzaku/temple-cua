@@ -1,0 +1,34 @@
+{
+  "task_id": "arithmetic",
+  "title": "Evaluate an integer expression in HolyC",
+  "status": "completed",
+  "steps": 3,
+  "elapsed_seconds": 4.069,
+  "grade": {
+    "type": "ocr",
+    "status": "passed",
+    "score": 1.0,
+    "reason": "Required visual text matched. Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+    "evidence": [
+      "Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+      "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+      "grader-ocr.txt"
+    ],
+    "engine": "templeos-bitmap"
+  },
+  "usage": {
+    "turn": 6,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0
+  },
+  "artifact_dir": "arithmetic",
+  "final_screenshot": "arithmetic/final.png",
+  "setup_seconds": 1.3496807239999953,
+  "completion_text": "The arithmetic output is visible.",
+  "task_fingerprint": "f62df6a7a4cdbf64829066ec44c081f50c94afb7cc53bae13a6dc4e1dfb1715d",
+  "budget": {
+    "max_steps": 24,
+    "timeout_seconds": 120
+  }
+}

@@ -1,0 +1,106 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "Cd(\"B:/Bench\",TRUE);\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "Ed(\"Cube.HC\");\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "I64 BenchCube(I64 n){return n*n*n;}\n\"BENCH_CUBE=%d\\n\",BenchCube(7);\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "key",
+        "keys": [
+          "ctrl",
+          "s"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "key",
+        "keys": [
+          "esc"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "DocClear;\n#include \"B:/Bench/Cube.HC\";\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The saved editor program has executed."
+      }
+    ],
+    "note": ""
+  }
+]

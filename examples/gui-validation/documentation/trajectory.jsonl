@@ -1,0 +1,5 @@
+{"step": 1, "action": {"kind": "type", "text": "Ed(\"::/Doc/HelpIndex.DD\");\n"}, "screenshot_before": "0000.png", "screenshot_after": "0001.png"}
+{"step": 2, "action": {"kind": "wait", "seconds": 1}, "screenshot_before": "0001.png", "screenshot_after": "0002.png"}
+{"step": 3, "action": {"kind": "click", "x": 65, "y": 75, "button": "left", "clicks": 1}, "screenshot_before": "0002.png", "screenshot_after": "0003.png"}
+{"step": 4, "action": {"kind": "key", "keys": ["enter"]}, "screenshot_before": "0003.png", "screenshot_after": "0004.png"}
+{"step": 5, "action": {"kind": "wait", "seconds": 1}, "screenshot_before": "0004.png", "screenshot_after": "0005.png"}

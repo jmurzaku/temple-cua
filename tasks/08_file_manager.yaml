@@ -1,0 +1,23 @@
+version: 1
+id: file_manager
+title: Browse graphics examples in the file manager
+category: gui
+difficulty: medium
+prompt: |
+  Open the TempleOS graphical file manager. Navigate or expand the boot-drive
+  directory tree to /Demo/Graphics. Use the file-manager interface to open
+  Blot.HC (which may appear as Blot.HC.Z) for editing or viewing.
+  Leave the opened source visible and finish. Do not run the example or
+  modify it. Opening the file directly from a shell command does not satisfy
+  the required file-manager interaction.
+max_steps: 60
+timeout_seconds: 300
+grader:
+  type: manual
+  rubric: |
+    Pass only if the trajectory visibly opens FileMgr, uses its tree or
+    controls to reach the boot-drive /Demo/Graphics directory, and opens
+    Blot.HC or Blot.HC.Z from the file manager. The final screen must show the
+    actual source, identifiable by CDC *dc=DCAlias and the img1/img2 graphics
+    example. The file must be viewed, not executed or changed. A direct Ed
+    command, a directory listing alone, or a typed imitation is a failure.

@@ -1,0 +1,38 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "U0 BenchDraw(CTask *task,CDC *dc){dc->color=RED;GrCircle(dc,110,90,30);dc->color=BLUE;GrRect(dc,180,60,60,60);dc->color=GREEN;GrLine(dc,40,170,250,140);dc->color=BLACK;GrPrint(dc,40,20,\"BENCH_DRAW\");}\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "DocClear;Fs->draw_it=&BenchDraw;GetChar(,FALSE);\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 1
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The requested drawing is visible."
+      }
+    ],
+    "note": ""
+  }
+]

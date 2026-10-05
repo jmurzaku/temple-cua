@@ -1,0 +1,38 @@
+{
+  "task_id": "directory_navigation",
+  "title": "Navigate to the graphics examples",
+  "status": "completed",
+  "steps": 3,
+  "elapsed_seconds": 13.911,
+  "usage": {
+    "input_tokens": 3981,
+    "output_tokens": 193,
+    "total_tokens": 4174,
+    "estimated_cost_usd": 0.0079426
+  },
+  "artifact_dir": "directory_navigation",
+  "final_screenshot": "directory_navigation/final.png",
+  "grade": {
+    "type": "ocr",
+    "status": "passed",
+    "score": 1.0,
+    "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
+    "evidence": [
+      "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
+      "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+      "grader-ocr.txt"
+    ],
+    "engine": "templeos-bitmap",
+    "match_mode": "substring"
+  },
+  "budget": {
+    "max_steps": 24,
+    "timeout_seconds": 300.0,
+    "max_input_actions": 192
+  },
+  "task_fingerprint": "fd7e0f0f1a5277c46e6d2d5016f0eb061895c3b3a6b4c62306935e7ede598806",
+  "setup_seconds": 1.3421203880006942,
+  "completion_text": "Changed to the boot drive\u2019s `::/Demo/Graphics` directory and displayed its listing. `Blot.HC.Z` is visible, and the directory remains current.",
+  "input_actions": 2,
+  "observations": 3
+}

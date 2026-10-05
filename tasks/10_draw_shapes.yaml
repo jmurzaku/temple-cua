@@ -1,0 +1,26 @@
+version: 1
+id: draw_shapes
+title: Draw a persistent scene with the graphics API
+category: graphics
+difficulty: hard
+prompt: |
+  Use HolyC and TempleOS's graphics API to draw a scene in the active terminal
+  window. Use coordinates relative to the terminal's client area. Draw:
+  a red circle centered at (110,90), radius 30;
+  a filled blue rectangle at (180,60), width 60 and height 60;
+  a green line from (40,170) to (250,140);
+  the black text BENCH_DRAW near (40,20).
+  Keep the scene visible until you finish; a redraw callback is one way to
+  make it persist. Leave the drawing visible in your final screenshot.
+max_steps: 70
+timeout_seconds: 300
+grader:
+  type: manual
+  rubric: |
+    Pass if the final screenshot shows the red circular outline, the filled
+    blue rectangle, the green sloping line, and BENCH_DRAW text, with positions
+    and dimensions matching the requested client-area coordinates within
+    about 5 pixels. Review the trajectory to confirm the drawing was created
+    with TempleOS graphics calls and survives at least one subsequent screen
+    observation. Printed text naming the shapes, a source listing without a
+    visible drawing, or a completion claim alone is a failure.

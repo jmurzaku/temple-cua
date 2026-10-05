@@ -1,0 +1,29 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "Cd(\"::/Demo/Graphics\");DocClear;Dir(\"B*.HC*\");\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The graphics example directory is listed."
+      }
+    ],
+    "note": ""
+  }
+]

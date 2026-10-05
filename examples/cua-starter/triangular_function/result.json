@@ -1,0 +1,38 @@
+{
+  "task_id": "triangular_function",
+  "title": "Define and call a HolyC function",
+  "status": "completed",
+  "steps": 3,
+  "elapsed_seconds": 19.279,
+  "usage": {
+    "input_tokens": 4059,
+    "output_tokens": 220,
+    "total_tokens": 4279,
+    "estimated_cost_usd": 0.0083572
+  },
+  "artifact_dir": "triangular_function",
+  "final_screenshot": "triangular_function/final.png",
+  "grade": {
+    "type": "ocr",
+    "status": "passed",
+    "score": 1.0,
+    "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
+    "evidence": [
+      "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
+      "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+      "grader-ocr.txt"
+    ],
+    "engine": "templeos-bitmap",
+    "match_mode": "line"
+  },
+  "budget": {
+    "max_steps": 24,
+    "timeout_seconds": 300.0,
+    "max_input_actions": 192
+  },
+  "task_fingerprint": "e2f29b98f33285fddd464654a9d723209aec47f86b6d9f79969cd25cbcad755e",
+  "setup_seconds": 1.330731623000247,
+  "completion_text": "Defined and called `BenchTri(25)`. Verified the visible output:\n\n```text\nBENCH_TRI=325\n```",
+  "input_actions": 2,
+  "observations": 3
+}

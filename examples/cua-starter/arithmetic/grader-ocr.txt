@@ -1,0 +1,5 @@
+0.000781s
+T:/Home>Print("BENCH_ARITH=%d\n", (37 * 19) - (24 * 13));
+BENCH_ARITH=391
+0.000202s
+T:/Home>

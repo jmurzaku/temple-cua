@@ -1,0 +1,7 @@
+#!/bin/sh
+# Convenience wrapper for QEMU extracted under .runtime in this workspace.
+set -eu
+project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+runtime_dir="$project_dir/.runtime/qemu"
+export LD_LIBRARY_PATH="$runtime_dir/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+exec "$runtime_dir/usr/bin/qemu-system-x86_64" -L "$runtime_dir/usr/share/qemu" "$@"

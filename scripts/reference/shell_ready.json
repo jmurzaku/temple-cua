@@ -1,0 +1,65 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 1.5
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 1.5
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "Cd(\"::/Home\");WinMax;AutoComplete(OFF);ms_grid.x=ms_grid.y=1;DocClear;\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The trusted live-ISO shell preparation is complete."
+      }
+    ],
+    "note": ""
+  }
+]

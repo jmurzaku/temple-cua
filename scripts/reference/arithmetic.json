@@ -1,0 +1,29 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "\"BENCH_ARITH=%d\\n\",37*19-24*13;\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The arithmetic output is visible."
+      }
+    ],
+    "note": ""
+  }
+]

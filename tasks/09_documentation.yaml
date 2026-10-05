@@ -1,0 +1,23 @@
+version: 1
+id: documentation
+title: Find the built-in command-line documentation
+category: gui
+difficulty: easy
+prompt: |
+  Use TempleOS's built-in documentation interface to open the page titled
+  Command Line Overview. Start by opening the help index or the built-in
+  start page, then follow its link to the command-line overview.
+  Leave the actual documentation page open at its beginning and finish.
+  The final screen should show its title and the explanation of how the
+  command line feeds statements into the HolyC compiler.
+max_steps: 40
+timeout_seconds: 180
+grader:
+  type: manual
+  rubric: |
+    Pass only if the trajectory opens the built-in HelpIndex.DD or Start.DD,
+    follows a documentation link to CmdLineOverview.DD, and ends at the real
+    page. The final screenshot must show Command Line Overview and the
+    explanation that the command line feeds the HolyC compiler line by line.
+    A direct Ed of CmdLineOverview.DD, printing a copied title, or claiming
+    to have read the page without opening it does not meet the task.

@@ -1,0 +1,289 @@
+{
+  "created_at": "2026-10-04T22:56:26.754171+00:00",
+  "provider": "scripted",
+  "model": "scripted-reference",
+  "validation": "Actual TempleOS deterministic reference replay; no live model evaluation.",
+  "config": {
+    "iso": "assets/TempleOS.ISO",
+    "baseline": "assets/baseline.qcow2",
+    "memory_mb": 512,
+    "baseline_identity": {
+      "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+      "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+      "memory_mb": 512,
+      "extra_args": [],
+      "device_layout_version": 1
+    },
+    "baseline_sha256": "2a76fda706b89574dbe55bbeee4d60a7b7aed110146b48414cf3469e98fe5c30",
+    "max_steps_override": null,
+    "timeout_override": null
+  },
+  "results": [
+    {
+      "task_id": "arithmetic",
+      "title": "Evaluate an integer expression in HolyC",
+      "status": "completed",
+      "steps": 3,
+      "elapsed_seconds": 4.069,
+      "grade": {
+        "type": "ocr",
+        "status": "passed",
+        "score": 1.0,
+        "reason": "Required visual text matched. Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+        "evidence": [
+          "Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+          "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+          "grader-ocr.txt"
+        ],
+        "engine": "templeos-bitmap"
+      },
+      "usage": {
+        "turn": 6,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "artifact_dir": "arithmetic",
+      "final_screenshot": "arithmetic/final.png",
+      "setup_seconds": 1.3496807239999953,
+      "completion_text": "The arithmetic output is visible.",
+      "task_fingerprint": "f62df6a7a4cdbf64829066ec44c081f50c94afb7cc53bae13a6dc4e1dfb1715d",
+      "budget": {
+        "max_steps": 24,
+        "timeout_seconds": 120
+      }
+    },
+    {
+      "task_id": "sum_of_squares",
+      "title": "Sum the first twelve squares with a loop",
+      "status": "completed",
+      "steps": 4,
+      "elapsed_seconds": 8.196,
+      "grade": {
+        "type": "ocr",
+        "status": "passed",
+        "score": 1.0,
+        "reason": "Required visual text matched. Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+        "evidence": [
+          "Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+          "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+          "grader-ocr.txt"
+        ],
+        "engine": "templeos-bitmap"
+      },
+      "usage": {
+        "turn": 10,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "artifact_dir": "sum_of_squares",
+      "final_screenshot": "sum_of_squares/final.png",
+      "setup_seconds": 1.361094908000041,
+      "completion_text": "The loop result is visible.",
+      "task_fingerprint": "8ef70fa372465f294e2b6bdd25a14b2c535a3fae2f15ef5dada9454f31106ee1",
+      "budget": {
+        "max_steps": 40,
+        "timeout_seconds": 180
+      }
+    },
+    {
+      "task_id": "triangular_function",
+      "title": "Define and call a HolyC function",
+      "status": "completed",
+      "steps": 4,
+      "elapsed_seconds": 7.767,
+      "grade": {
+        "type": "ocr",
+        "status": "passed",
+        "score": 1.0,
+        "reason": "Required visual text matched. Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+        "evidence": [
+          "Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+          "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+          "grader-ocr.txt"
+        ],
+        "engine": "templeos-bitmap"
+      },
+      "usage": {
+        "turn": 10,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "artifact_dir": "triangular_function",
+      "final_screenshot": "triangular_function/final.png",
+      "setup_seconds": 1.3518619239999907,
+      "completion_text": "The function result is visible.",
+      "task_fingerprint": "2fc73a8173aee949ebf2dd2df181ce8c024d323a89bc1079c5bc52b11c58c2e4",
+      "budget": {
+        "max_steps": 40,
+        "timeout_seconds": 180
+      }
+    },
+    {
+      "task_id": "string_statistics",
+      "title": "Measure a string using TempleOS routines",
+      "status": "completed",
+      "steps": 4,
+      "elapsed_seconds": 17.282,
+      "grade": {
+        "type": "ocr",
+        "status": "passed",
+        "score": 1.0,
+        "reason": "Required visual text matched. Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+        "evidence": [
+          "Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+          "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+          "grader-ocr.txt"
+        ],
+        "engine": "templeos-bitmap"
+      },
+      "usage": {
+        "turn": 10,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "artifact_dir": "string_statistics",
+      "final_screenshot": "string_statistics/final.png",
+      "setup_seconds": 5.943234134999898,
+      "completion_text": "Both string measurements are visible.",
+      "task_fingerprint": "2af7415fabe42dd2e8d135993b4f4b8d37e70f5e293f8e32f2d5df3889ccda11",
+      "budget": {
+        "max_steps": 40,
+        "timeout_seconds": 180
+      }
+    },
+    {
+      "task_id": "directory_navigation",
+      "title": "Navigate to the graphics examples",
+      "status": "completed",
+      "steps": 3,
+      "elapsed_seconds": 15.626,
+      "grade": {
+        "type": "ocr",
+        "status": "passed",
+        "score": 1.0,
+        "reason": "Required visual text matched. Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+        "evidence": [
+          "Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+          "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+          "grader-ocr.txt"
+        ],
+        "engine": "templeos-bitmap"
+      },
+      "usage": {
+        "turn": 6,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "artifact_dir": "directory_navigation",
+      "final_screenshot": "directory_navigation/final.png",
+      "setup_seconds": 10.539511252000011,
+      "completion_text": "The graphics example directory is listed.",
+      "task_fingerprint": "223f6a0d4c9bebdd63b4a6cfc61c9da45f637435aa8ab355435107122a2b11d2",
+      "budget": {
+        "max_steps": 30,
+        "timeout_seconds": 150
+      }
+    },
+    {
+      "task_id": "file_roundtrip",
+      "title": "Write and read a file on a RAM drive",
+      "status": "completed",
+      "steps": 4,
+      "elapsed_seconds": 26.826,
+      "grade": {
+        "type": "ocr",
+        "status": "passed",
+        "score": 1.0,
+        "reason": "Required visual text matched. Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+        "evidence": [
+          "Heuristic visual evidence only: matching text can appear in command echo or source code; guest state is not verified.",
+          "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+          "grader-ocr.txt"
+        ],
+        "engine": "templeos-bitmap"
+      },
+      "usage": {
+        "turn": 10,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "artifact_dir": "file_roundtrip",
+      "final_screenshot": "file_roundtrip/final.png",
+      "setup_seconds": 6.5653714200000195,
+      "completion_text": "The saved file byte count and contents are visible.",
+      "task_fingerprint": "9920101dc4c99e4f769dff8180d192ab2e8ed2cab94aa6f9528a0f10be5eced2",
+      "budget": {
+        "max_steps": 50,
+        "timeout_seconds": 240
+      }
+    },
+    {
+      "task_id": "editor_program",
+      "title": "Save and execute a program from the editor",
+      "status": "completed",
+      "steps": 11,
+      "elapsed_seconds": 24.101,
+      "grade": {
+        "type": "manual",
+        "status": "needs_review",
+        "score": null,
+        "reason": "Pass only if the recorded trajectory opens B:/Bench/Cube.HC in the editor,\nenters a correct BenchCube definition and call, saves via Ctrl+S or an\neditor save menu, closes the editor, and executes the saved file. The final\nscreenshot must show BENCH_CUBE=343 as program output. Confirm that the\nsource implements n*n*n or equivalent, rather than returning a constant.\nTyping a literal success marker, creating the file only through FileWrite,\nor claiming completion without visible execution is a failure.\n",
+        "evidence": [
+          "Manual review required; no automatic success claim was made."
+        ]
+      },
+      "usage": {
+        "turn": 66,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "artifact_dir": "editor_program",
+      "final_screenshot": "editor_program/final.png",
+      "budget": {
+        "max_steps": 65,
+        "timeout_seconds": 300
+      },
+      "task_fingerprint": "5bfd5f569b2be7aefa668e472d3f26a0a4e1808857f7418122d033b1854f5c01",
+      "setup_seconds": 6.709462320000057,
+      "completion_text": "The saved editor program has executed."
+    },
+    {
+      "task_id": "draw_shapes",
+      "title": "Draw a persistent scene with the graphics API",
+      "status": "completed",
+      "steps": 4,
+      "elapsed_seconds": 13.752,
+      "grade": {
+        "type": "manual",
+        "status": "needs_review",
+        "score": null,
+        "reason": "Pass if the final screenshot shows the red circular outline, the filled\nblue rectangle, the green sloping line, and BENCH_DRAW text, with positions\nand dimensions matching the requested client-area coordinates within\nabout 5 pixels. Review the trajectory to confirm the drawing was created\nwith TempleOS graphics calls and survives at least one subsequent screen\nobservation. Printed text naming the shapes, a source listing without a\nvisible drawing, or a completion claim alone is a failure.\n",
+        "evidence": [
+          "Manual review required; no automatic success claim was made."
+        ]
+      },
+      "usage": {
+        "turn": 10,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "artifact_dir": "draw_shapes",
+      "final_screenshot": "draw_shapes/final.png",
+      "setup_seconds": 1.3141289810000671,
+      "completion_text": "The requested drawing is visible.",
+      "task_fingerprint": "42029380947b41f51da83af67b089f0cf036e4be3efdeaac0eb31b9180fa139c",
+      "budget": {
+        "max_steps": 70,
+        "timeout_seconds": 300
+      }
+    }
+  ]
+}

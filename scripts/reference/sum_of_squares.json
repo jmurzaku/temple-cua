@@ -1,0 +1,38 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "I64 bench_i,bench_sum=0;for(bench_i=1;bench_i<=12;bench_i++)bench_sum+=bench_i*bench_i;\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "DocClear;\"BENCH_SUM=%d\\n\",bench_sum;\n"
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "wait",
+        "seconds": 0.6
+      }
+    ],
+    "note": ""
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The loop result is visible."
+      }
+    ],
+    "note": ""
+  }
+]
