@@ -26,7 +26,7 @@ from .protocol import Action, Decision
 from .report import build_report
 from .runner import initialize_shell, _write_json
 from .tasks import Task
-from .vm import TempleVM, VMConfig, VMInputError
+from .vm import TempleVM, VMConfig, VMError, VMInputError
 
 CUA_VERSION = "0.9.0"
 COMPUTER_PROTOCOL_VERSION = 2
@@ -136,7 +136,7 @@ class TempleCuaComputer:
         path = self.vm.screenshot(self.folder / relative)
         with Image.open(path) as captured:
             if captured.size != (640, 480):
-                raise VMInputError(f"Cua requires a 640x480 framebuffer, received {captured.size}")
+                raise VMError(f"Cua requires a 640x480 framebuffer, received {captured.size}")
         self._check()
         self.last_screenshot = relative
         if self.record is not None:
@@ -170,9 +170,18 @@ class TempleCuaComputer:
         self._execute(Action("type", text=text))
 
     async def keypress(self, keys):
+        from .vm import _qcode
+
         if isinstance(keys, str):
             keys = keys.split("+") if "+" in keys else [keys]
-        self._execute(Action("key", keys=keys))
+        try:
+            action = Action("key", keys=keys)
+        except ValueError as exc:
+            raise VMInputError("Keypress requires 1..5 valid key names") from exc
+        normalized = [_qcode(key) for key in action.keys]
+        if len(set(normalized)) != len(normalized):
+            raise VMInputError("A key chord cannot contain duplicate keys")
+        self._execute(action)
 
     async def move(self, x, y):
         self._execute(Action("move", x=x, y=y))
@@ -230,6 +239,8 @@ class TempleCuaComputer:
                 self.left_held = False
 
     async def drag(self, path):
+        if self.left_held:
+            raise VMInputError("Release the held left mouse button before dragging")
         if not isinstance(path, list) or not 2 <= len(path) <= 32:
             raise VMInputError("Drag requires 2..32 screenshot points")
         actions = [Action("move", x=p.get("x"), y=p.get("y")) if isinstance(p, dict) and set(p) == {"x", "y"} else None for p in path]
@@ -266,12 +277,21 @@ class EpisodeCallback:
                    and isinstance(item.get("output"), dict) and "image_url" in item["output"]]
         keep = outputs[-self.image_history:]
         removed = {item.get("call_id") for item in outputs[:-self.image_history]}
+        removed.update(item.get("call_id") for item in messages
+                       if item.get("type") == "computer_call_output" and item.get("validation_error")
+                       and isinstance(item.get("output"), dict) and "image_url" not in item["output"])
+        # Every error from the latest turn must reach its first repair inference,
+        # even when a parallel rejected batch exceeds the screenshot limit.
+        recent_errors = {item.get("call_id") for item in (self.current or {}).get("input_errors", [])}
         result = []
         initial_images_left = max(0, self.image_history - len(keep))
         for original in messages:
             if original.get("type") in {"computer_call", "computer_call_output"} and original.get("call_id") in removed:
-                continue
+                if original.get("call_id") not in recent_errors:
+                    continue
             item = deepcopy(original)
+            if item.get("type") == "computer_call_output" and item.get("call_id") in removed:
+                item["output"].pop("image_url", None)
             content = item.get("content")
             if item.get("role") == "user" and isinstance(content, list):
                 parts = []
@@ -442,13 +462,18 @@ def fixture_responses(path: Path | None):
 
 async def _episode(computer: TempleCuaComputer, callback: EpisodeCallback, task: Task, options: CuaOptions):
     ComputerAgent, CustomComputerHandler = load_cua()
+    backend = computer
 
     class RecoverableComputerAgent(ComputerAgent):
         async def _handle_item(self, item, computer=None, ignore_call_ids=None):
+            before = (backend.input_actions, backend.left_held,
+                      len(backend.record.get("executed_actions", [])) if backend.record else 0)
             try:
                 return await super()._handle_item(item, computer, ignore_call_ids)
             except VMInputError as exc:
-                if item.get("type") != "computer_call":
+                after = (backend.input_actions, backend.left_held,
+                         len(backend.record.get("executed_actions", [])) if backend.record else 0)
+                if item.get("type") != "computer_call" or before != after:
                     raise
                 # Only controlled, pre-input validation failures are recoverable.
                 # Deadlines, spent budgets, and VM failures still terminate the run.

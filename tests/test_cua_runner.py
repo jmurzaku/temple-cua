@@ -429,3 +429,165 @@ def test_cleanup_infrastructure_failure_retains_flushed_calls_and_usage(upstream
     persisted = json.loads((folder / "result.json").read_text())
     assert persisted["status"] == "error" and persisted["steps"] == 2
     assert persisted["usage"] == result["usage"]
+
+
+def test_post_input_vm_validation_error_remains_fatal_without_false_rejection(upstream, fake_vm, tmp_path, monkeypatch):
+    import litellm
+
+    requests = []
+
+    async def fake_responses(**kwargs):
+        requests.append(kwargs)
+        assert len(requests) == 1, "A failure after input must not request model repair"
+        return {"output": [{"type": "function_call", "name": "computer", "call_id": "partial-input",
+                            "arguments": json.dumps({"action": "type", "text": "PARTIAL"})}],
+                "usage": {"input_tokens": 7, "output_tokens": 3, "total_tokens": 10}}
+
+    original_execute = fake_vm.execute
+
+    def fail_after_input(vm, action, *, deadline=None):
+        original_execute(vm, action, deadline=deadline)
+        raise VMInputError("Synthetic validation error after sending input")
+
+    monkeypatch.setattr(litellm, "aresponses", fake_responses)
+    monkeypatch.setattr(fake_vm, "execute", fail_after_input)
+    folder = tmp_path / "episode"
+    result = cua_runner.run_cua_task(task(), config(), folder, CuaOptions("openai/fixture-partial-input"))
+    assert result["status"] == "error" and result["error"].startswith("VMInputError:")
+    assert len(requests) == result["steps"] == 1
+    assert result["usage"]["total_tokens"] == 10
+    assert [action.text for action in fake_vm.instances[0].actions] == ["PARTIAL"]
+    records = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines()]
+    assert len(records) == 1 and "input_errors" not in records[0]
+    assert records[0]["partial_action"] == {"kind": "type", "text": "PARTIAL"}
+    assert fake_vm.instances[0].closed
+
+
+def test_wrong_framebuffer_is_infrastructure_error_without_guest_input(tmp_path):
+    from temple_cua.vm import VMError
+
+    adapter = computer(tmp_path)
+
+    def wrong_framebuffer(path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        Image.new("RGB", (640, 400), "white").save(path)
+        return path
+
+    adapter.vm.screenshot = wrong_framebuffer
+    with pytest.raises(VMError, match="640x480") as failure:
+        asyncio.run(adapter.screenshot())
+    assert not isinstance(failure.value, VMInputError)
+    assert adapter.input_actions == 0 and adapter.vm.actions == []
+
+
+def test_drag_preflight_does_not_release_an_existing_held_button_or_move_pointer(tmp_path):
+    adapter = computer(tmp_path)
+    asyncio.run(adapter.left_mouse_down(80, 120))
+    actions, events = list(adapter.vm.actions), list(adapter.vm.events)
+    try:
+        with pytest.raises(VMInputError, match="held"):
+            asyncio.run(adapter.drag([{"x": 180, "y": 220}, {"x": 280, "y": 320}]))
+        assert adapter.left_held is True
+        assert adapter.vm.actions == actions
+        assert adapter.vm.events == events
+    finally:
+        adapter.release()
+
+
+def test_latest_rejection_errors_survive_image_limit_once_without_orphaned_pairs(tmp_path):
+    from temple_cua.cua_compat import _cua_output, _wire_history
+
+    calls = [{"type": "function_call", "name": "computer", "call_id": str(index),
+              "arguments": json.dumps({"action": "unsupported"} if index == 0 else {
+                  "action": "type", "text": f"SIBLING-{index}"})} for index in range(4)]
+    rejected = _cua_output(calls, 640, 480)
+    messages = rejected + [{"type": "computer_call_output", "call_id": item["call_id"],
+                            "validation_error": item["validation_error"],
+                            "output": {"type": "input_image", "image_url": "data:image/png;base64,current"}}
+                           for item in rejected]
+    callback = EpisodeCallback(computer(tmp_path), 4, image_history=2)
+    callback.current = {"input_errors": [{"call_id": item["call_id"]} for item in rejected]}
+    retained = asyncio.run(callback.on_llm_start(messages))
+    wire = _wire_history(retained)
+    assert {item["call_id"] for item in wire if item.get("type") == "function_call"} == {"0", "1", "2", "3"}
+    errors = {item["call_id"]: json.loads(item["output"]) for item in wire
+              if item.get("type") == "function_call_output"}
+    assert set(errors) == {"0", "1", "2", "3"}
+    assert errors["0"]["error"]["message"] == "Unknown computer action"
+    assert [errors[str(index)]["screenshot"] for index in range(4)] == ["omitted", "omitted", "attached", "attached"]
+    assert sum(item.get("role") == "user" for item in wire) == 2
+    assert all("image_url" in item["output"] for item in messages if item.get("type") == "computer_call_output")
+
+    callback.current = {}
+    repaired = [{"type": "computer_call", "call_id": "repaired", "action": {"type": "type", "text": "OK"}},
+                {"type": "computer_call_output", "call_id": "repaired",
+                 "output": {"type": "input_image", "image_url": "data:image/png;base64,repaired"}}]
+    following = asyncio.run(callback.on_llm_start(retained + repaired))
+    assert [item["call_id"] for item in following if item.get("type") == "computer_call"] == ["3", "repaired"]
+    assert [item["call_id"] for item in following if item.get("type") == "computer_call_output"] == ["3", "repaired"]
+
+
+def test_actual_upstream_four_call_rejection_delivers_first_error_with_bounded_images(upstream, fake_vm, tmp_path, monkeypatch):
+    import litellm
+
+    calls = [{"type": "function_call", "name": "computer", "call_id": f"batch-{index}",
+              "arguments": json.dumps({"action": "keypress", "keys": ["invented_key"]} if index == 0 else {
+                  "action": "type", "text": f"MUST NOT RUN {index}"})} for index in range(4)]
+    requests = []
+
+    async def fake_responses(**kwargs):
+        requests.append(kwargs)
+        assert len(requests) <= 3
+        if len(requests) == 1:
+            output = calls
+        elif len(requests) == 2:
+            assert fake_vm.instances[0].actions == []
+            history = kwargs["input"]
+            wire_calls = {item["call_id"]: item["arguments"] for item in history if item.get("type") == "function_call"}
+            errors = {item["call_id"]: json.loads(item["output"]) for item in history
+                      if item.get("type") == "function_call_output"}
+            assert wire_calls == {item["call_id"]: item["arguments"] for item in calls}
+            assert set(errors) == set(wire_calls)
+            assert "unsupported TempleOS key" in errors["batch-0"]["error"]["message"]
+            assert all(error["ok"] is False and error["input_executed"] is False for error in errors.values())
+            assert errors["batch-0"]["screenshot"] == "omitted"
+            images = [part for item in history if isinstance(item.get("content"), list)
+                      for part in item["content"] if part.get("type") == "input_image"]
+            assert len(images) == 2
+            output = [{"type": "function_call", "name": "computer", "call_id": "repaired",
+                       "arguments": json.dumps({"action": "type", "text": "REPAIRED"})}]
+        else:
+            history = kwargs["input"]
+            assert not any(item.get("call_id") in {"batch-0", "batch-1"} for item in history)
+            assert [action.text for action in fake_vm.instances[0].actions] == ["REPAIRED"]
+            output = [{"type": "function_call", "name": "computer", "call_id": "done",
+                       "arguments": json.dumps({"action": "terminate", "status": "success"})}]
+        return {"output": output, "usage": {"input_tokens": 7, "output_tokens": 3, "total_tokens": 10}}
+
+    monkeypatch.setattr(litellm, "aresponses", fake_responses)
+    folder = tmp_path / "episode"
+    result = cua_runner.run_cua_task(task(), config(), folder, CuaOptions("openai/fixture-retention", image_history=2))
+    assert result["status"] == "completed" and result["steps"] == len(requests) == 3
+    assert result["usage"]["total_tokens"] == 30
+    assert result["input_actions"] == 1
+    records = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines()]
+    assert len(records[0]["input_errors"]) == 4
+    assert records[0]["actions"] == records[0]["executed_actions"] == []
+
+
+@pytest.mark.parametrize("keys", [["invented_key"], ["enter", "return"], ["ctrl", "control"], [], "ctrl++c"])
+def test_backend_keypress_rejects_unknown_duplicate_or_malformed_chords_before_recording_input(tmp_path, keys):
+    adapter = computer(tmp_path)
+    adapter.record = {"actions": [], "executed_actions": []}
+    with pytest.raises(VMInputError):
+        asyncio.run(adapter.keypress(keys))
+    assert adapter.input_actions == 0
+    assert adapter.record == {"actions": [], "executed_actions": []}
+    assert adapter.vm.actions == [] and adapter.vm.events == []
+
+
+def test_backend_keypress_accepts_supported_alias_chord_after_preflight(tmp_path):
+    adapter = computer(tmp_path)
+    asyncio.run(adapter.keypress("control+return"))
+    assert adapter.input_actions == 1
+    assert [action.to_dict() for action in adapter.vm.actions] == [{"kind": "key", "keys": ["control", "return"]}]

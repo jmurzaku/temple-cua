@@ -134,17 +134,22 @@ def _wire_history(messages: list[dict]) -> list[dict]:
             output = item.get("output")
             if not isinstance(output, dict) or output.get("type") != "input_image":
                 raise CuaProtocolError("Computer output requires an input_image screenshot")
-            image_url = output.get("image_url")
-            if not isinstance(image_url, str) or not image_url.startswith("data:image/"):
-                raise CuaProtocolError("Computer screenshot requires an image data URL")
             error = item.get("validation_error")
             if error is not None and not isinstance(error, dict):
                 raise CuaProtocolError("Malformed computer validation error in history")
+            image_url = output.get("image_url")
+            if image_url is None and error is not None:
+                screenshot = "omitted"
+            elif isinstance(image_url, str) and image_url.startswith("data:image/"):
+                screenshot = "attached"
+            else:
+                raise CuaProtocolError("Computer screenshot requires an image data URL")
             status = {"ok": True, "screenshot": "attached"} if error is None else {
-                "ok": False, "error": error, "input_executed": False, "screenshot": "attached"}
+                "ok": False, "error": error, "input_executed": False, "screenshot": screenshot}
             result.append({"type": "function_call_output", "call_id": _call_id(item),
                            "output": json.dumps(status)})
-            result.append({"role": "user", "content": [{"type": "input_image", "image_url": image_url}]})
+            if screenshot == "attached":
+                result.append({"role": "user", "content": [{"type": "input_image", "image_url": image_url}]})
         else:
             result.append(item)
     return result
