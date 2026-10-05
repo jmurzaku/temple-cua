@@ -1,50 +1,85 @@
 version: 1
 id: interactive_counter_panel
 title: Live counter panel
-category: graphics
-difficulty: hard
-prompt: |
-  Build a small interactive counter panel in the TempleOS shell using
+prompt: 'Build a small interactive counter panel in the TempleOS shell using
+
   JIT-compiled HolyC and a live Fs->draw_it callback. Place three clearly
+
   labeled buttons, +1, -1, and RESET, inside the 640x480 shell interior.
+
   Display COUNT= followed by the current integer, initially COUNT=0.
 
+
   A real left-click on +1 increments the count once, -1 decrements it once,
+
   and RESET sets it to zero. Clicking outside the buttons does nothing.
+
   Handle each mouse press once rather than repeatedly while it is held.
+
   Keep the drawing callback brief so the desktop remains responsive.
 
+
   Demonstrate the working panel with actual mouse clicks: click +1 three
+
   times and show COUNT=3; click -1 once and show COUNT=2; click RESET and
+
   show COUNT=0; click outside the buttons and show that it stays zero;
+
   then click +1 twice and finish with COUNT=2. Keep the same live panel
+
   active throughout the demonstration and leave it visible at completion.
+
   Observe the intermediate states. Do not type count updates into the
+
   shell or replace the panel with a static picture.
-max_steps: 80
-timeout_seconds: 600
+
+  '
 grader:
   type: manual
-  rubric: |
-    Review the full action and screenshot trajectory. The agent must
+  rubric: 'Review the full action and screenshot trajectory. The agent must
+
     compile its own HolyC implementation, install a live task drawing
+
     callback, and render visible +1, -1, RESET buttons and an initial
+
     COUNT=0 inside the shell window. No implementation is supplied.
 
+
     Verify that genuine left-clicks on the rendered buttons cause the
+
     observed state sequence: three increments reach 3, one decrement
+
     reaches 2, reset reaches 0, an outside click leaves 0 unchanged, and
+
     two further increments reach 2. Each distinct press changes the count
+
     at most once. Intermediate increment states provide reviewable
+
     progress even when the full sequence is incomplete.
 
+
     The panel must remain live throughout, with the final COUNT=2 visible.
+
     Check responsiveness and absence of callback faults or a frozen guest.
+
     Accept any clear layout within the shell interior; account for the
-    window's drawing origin when assessing button hit-testing. Typed
+
+    window''s drawing origin when assessing button hit-testing. Typed
+
     count values, static screenshots, or recompiling state between the
+
     demonstrated clicks do not establish interactive behavior.
 
+
     A final screenshot alone cannot prove the state transitions or live
+
     callback. This task requires trajectory review and has no automatic
+
     pass score.
+
+    '
+category: graphics
+difficulty: hard
+max_steps: 80
+timeout_seconds: 600
+setup: []

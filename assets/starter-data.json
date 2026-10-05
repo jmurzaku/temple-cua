@@ -1,10 +1,148 @@
 {
-  "run": {
-    "model": "openai/gpt-6.1-sol",
-    "cua_version": "0.9.0",
-    "created_at": "2026-10-05T00:27:11.588954+00:00",
-    "description": "One attempt per task, each from the same VM snapshot."
-  },
+  "run": null,
+  "runs": [
+    {
+      "id": "01-cua-starter",
+      "provider": "cua",
+      "model": "openai/gpt-6.1-sol",
+      "cua_version": "0.9.0",
+      "created_at": "2026-10-05T00:27:11.588954+00:00",
+      "config": {
+        "iso": "assets/TempleOS.ISO",
+        "baseline": "assets/cli-baseline.qcow2",
+        "memory_mb": 512,
+        "max_steps_override": 24,
+        "timeout_override": 300.0,
+        "boot_wait": 1.0,
+        "model_options": {
+          "cua_version": "0.9.0",
+          "max_output_tokens": 4096,
+          "api_timeout": 90.0,
+          "image_history": 2
+        },
+        "baseline_identity": {
+          "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+          "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+          "memory_mb": 512,
+          "extra_args": [],
+          "device_layout_version": 1
+        },
+        "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+      },
+      "provenance": {
+        "agent_package": "cua-agent",
+        "agent_version": "0.9.0",
+        "inference": "upstream ComputerAgent and LiteLLM",
+        "agent_loop": "TempleOpenAIComputerUseConfig",
+        "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+        "backend": "TempleVM/QMP legacy PC devices",
+        "framebuffer": [
+          640,
+          480
+        ],
+        "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+        "execution_mode": "live_model",
+        "telemetry_enabled": false,
+        "max_actions_per_response": 4,
+        "step_definition": "actual model API attempts; Cua automatic retries disabled",
+        "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+      }
+    },
+    {
+      "id": "02-cua-cursor",
+      "provider": "cua",
+      "model": "openai/gpt-6.1-sol",
+      "cua_version": "0.9.0",
+      "created_at": "2026-10-05T01:51:04.018181+00:00",
+      "config": {
+        "iso": "assets/TempleOS.ISO",
+        "baseline": "assets/cli-baseline.qcow2",
+        "memory_mb": 512,
+        "max_steps_override": null,
+        "timeout_override": null,
+        "boot_wait": 1.0,
+        "model_options": {
+          "cua_version": "0.9.0",
+          "max_output_tokens": 4096,
+          "api_timeout": 90,
+          "image_history": 2
+        },
+        "baseline_identity": {
+          "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+          "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+          "memory_mb": 512,
+          "extra_args": [],
+          "device_layout_version": 1
+        },
+        "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+      },
+      "provenance": {
+        "agent_package": "cua-agent",
+        "agent_version": "0.9.0",
+        "inference": "upstream ComputerAgent and LiteLLM",
+        "agent_loop": "TempleOpenAIComputerUseConfig",
+        "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+        "backend": "TempleVM/QMP legacy PC devices",
+        "framebuffer": [
+          640,
+          480
+        ],
+        "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+        "execution_mode": "live_model",
+        "telemetry_enabled": false,
+        "max_actions_per_response": 4,
+        "step_definition": "actual model API attempts; Cua automatic retries disabled",
+        "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+      }
+    },
+    {
+      "id": "03-cua-counter",
+      "provider": "cua",
+      "model": "openai/gpt-6.1-sol",
+      "cua_version": "0.9.0",
+      "created_at": "2026-10-05T01:51:03.918680+00:00",
+      "config": {
+        "iso": "assets/TempleOS.ISO",
+        "baseline": "assets/cli-baseline.qcow2",
+        "memory_mb": 512,
+        "max_steps_override": null,
+        "timeout_override": null,
+        "boot_wait": 1.0,
+        "model_options": {
+          "cua_version": "0.9.0",
+          "max_output_tokens": 4096,
+          "api_timeout": 90,
+          "image_history": 2
+        },
+        "baseline_identity": {
+          "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+          "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+          "memory_mb": 512,
+          "extra_args": [],
+          "device_layout_version": 1
+        },
+        "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+      },
+      "provenance": {
+        "agent_package": "cua-agent",
+        "agent_version": "0.9.0",
+        "inference": "upstream ComputerAgent and LiteLLM",
+        "agent_loop": "TempleOpenAIComputerUseConfig",
+        "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+        "backend": "TempleVM/QMP legacy PC devices",
+        "framebuffer": [
+          640,
+          480
+        ],
+        "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+        "execution_mode": "live_model",
+        "telemetry_enabled": false,
+        "max_actions_per_response": 4,
+        "step_definition": "actual model API attempts; Cua automatic retries disabled",
+        "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+      }
+    }
+  ],
   "tasks": [
     {
       "id": "arithmetic",
@@ -102,33 +240,1284 @@
           "note": "Executed in HolyC and verified the visible output:\n```text\nBENCH_ARITH=391\n```",
           "actions": []
         }
-      ]
+      ],
+      "run": {
+        "id": "01-cua-starter",
+        "provider": "cua",
+        "model": "openai/gpt-6.1-sol",
+        "cua_version": "0.9.0",
+        "created_at": "2026-10-05T00:27:11.588954+00:00",
+        "config": {
+          "iso": "assets/TempleOS.ISO",
+          "baseline": "assets/cli-baseline.qcow2",
+          "memory_mb": 512,
+          "max_steps_override": 24,
+          "timeout_override": 300.0,
+          "boot_wait": 1.0,
+          "model_options": {
+            "cua_version": "0.9.0",
+            "max_output_tokens": 4096,
+            "api_timeout": 90.0,
+            "image_history": 2
+          },
+          "baseline_identity": {
+            "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+            "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+            "memory_mb": 512,
+            "extra_args": [],
+            "device_layout_version": 1
+          },
+          "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+        },
+        "provenance": {
+          "agent_package": "cua-agent",
+          "agent_version": "0.9.0",
+          "inference": "upstream ComputerAgent and LiteLLM",
+          "agent_loop": "TempleOpenAIComputerUseConfig",
+          "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+          "backend": "TempleVM/QMP legacy PC devices",
+          "framebuffer": [
+            640,
+            480
+          ],
+          "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+          "execution_mode": "live_model",
+          "telemetry_enabled": false,
+          "max_actions_per_response": 4,
+          "step_definition": "actual model API attempts; Cua automatic retries disabled",
+          "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+        }
+      }
     },
     {
       "id": "cursor_callback",
       "title": "Live cursor callback",
+      "description": "",
       "category": "Graphics",
       "difficulty": "medium",
-      "prompt": "At the TempleOS shell, JIT-compile this exact callback:\n\nU0 Cross(CTask *, CDC *dc) {\n  dc->color=YELLOW;\n  GrLine(dc,ms.pos.x-16,ms.pos.y,ms.pos.x+16,ms.pos.y);\n  GrLine(dc,ms.pos.x,ms.pos.y-16,ms.pos.x,ms.pos.y+16);\n}\n\nInstall it with Fs->draw_it=&Cross;. Move the pointer to at least two\ndistinct positions and observe the live yellow cross following it.\nRight-click in the top menu bar, open the built-in help index, and click\nits Command Line documentation link. Keep the same callback installed\nthroughout; do not clear, replace, or reinstall it.\nMove the pointer to two distinct positions over the opened document.\nFinish with Command Line Overview open and the cross still following\nthe pointer over the document.\n",
       "grader": {
         "type": "manual",
         "rubric": "Review the full trajectory. The exact anonymous-CTask callback must\ncompile in the live shell and be installed using Fs->draw_it=&Cross.\nA live yellow cross must appear at two pointer positions before and\nafter opening the document, moving by the same delta as the pointer.\nAllow the stock bordered fixture's measured +8,+16 rendering offset.\nThe trajectory must include a right-click over the top menu bar with\na visible pulldown, then the help index and an actual clicked link to\nCommand Line Overview. That document must remain open at completion.\nTempleOS exposes the top menu on hover; a desktop context menu is not\nrequired.\nThe callback must not be cleared, replaced, reinstalled after navigation,\nor reproduced as a static image. Menus may cover the cross where they\noverlap because they render later; this does not imply callback removal.\nA screenshot alone cannot prove the callback remains live. Review its\nmovement across the full trajectory; this task has no automatic pass score.\n"
       },
-      "result": null,
-      "frames": []
+      "prompt": "At the TempleOS shell, JIT-compile this exact callback:\n\nU0 Cross(CTask *, CDC *dc) {\n  dc->color=YELLOW;\n  GrLine(dc,ms.pos.x-16,ms.pos.y,ms.pos.x+16,ms.pos.y);\n  GrLine(dc,ms.pos.x,ms.pos.y-16,ms.pos.x,ms.pos.y+16);\n}\n\nInstall it with Fs->draw_it=&Cross;. Move the pointer to at least two\ndistinct positions and observe the live yellow cross following it.\nRight-click in the top menu bar, open the built-in help index, and click\nits Command Line documentation link. Keep the same callback installed\nthroughout; do not clear, replace, or reinstall it.\nMove the pointer to two distinct positions over the opened document.\nFinish with Command Line Overview open and the cross still following\nthe pointer over the document.\n",
+      "result": {
+        "task_id": "cursor_callback",
+        "title": "Live cursor callback",
+        "status": "budget_exhausted",
+        "steps": 40,
+        "elapsed_seconds": 209.347,
+        "usage": {
+          "input_tokens": 69084,
+          "output_tokens": 3136,
+          "total_tokens": 72220,
+          "estimated_cost_usd": 0.16735820000000004
+        },
+        "artifact_dir": "cursor_callback",
+        "final_screenshot": "cursor_callback/final.png",
+        "grade": {
+          "type": "manual",
+          "status": "needs_review",
+          "score": null,
+          "reason": "Review the full trajectory. The exact anonymous-CTask callback must\ncompile in the live shell and be installed using Fs->draw_it=&Cross.\nA live yellow cross must appear at two pointer positions before and\nafter opening the document, moving by the same delta as the pointer.\nAllow the stock bordered fixture's measured +8,+16 rendering offset.\nThe trajectory must include a right-click over the top menu bar with\na visible pulldown, then the help index and an actual clicked link to\nCommand Line Overview. That document must remain open at completion.\nTempleOS exposes the top menu on hover; a desktop context menu is not\nrequired.\nThe callback must not be cleared, replaced, reinstalled after navigation,\nor reproduced as a static image. Menus may cover the cross where they\noverlap because they render later; this does not imply callback removal.\nA screenshot alone cannot prove the callback remains live. Review its\nmovement across the full trajectory; this task has no automatic pass score.\n",
+          "evidence": [
+            "Manual review required; no automatic success claim was made."
+          ]
+        },
+        "budget": {
+          "max_steps": 40,
+          "timeout_seconds": 240,
+          "max_input_actions": 320
+        },
+        "task_fingerprint": "fbb6efafbc015d598644e8ec85ec067706bc078d821b357989f25a8ceb0c0a69",
+        "setup_seconds": 1.3582893820002937,
+        "input_actions": 40,
+        "observations": 41,
+        "budget_reason": "Cua model call budget exhausted"
+      },
+      "frames": [
+        {
+          "step": 0,
+          "src": "assets/starter-frames/cursor_callback/0000.png",
+          "note": "Before the first action.",
+          "actions": []
+        },
+        {
+          "step": 1,
+          "src": "assets/starter-frames/cursor_callback/0001.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "U0 Cross(CTask *, CDC *dc) {\n  dc->color=YELLOW;\n  GrLine(dc,ms.pos.x-16,ms.pos.y,ms.pos.x+16,ms.pos.y);\n  GrLine(dc,ms.pos.x,ms.pos.y-16,ms.pos.x,ms.pos.y+16);\n}\nFs->draw_it=&Cross;\n"
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "src": "assets/starter-frames/cursor_callback/0002.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 210,
+              "y": 190
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "src": "assets/starter-frames/cursor_callback/0003.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 460,
+              "y": 330
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "src": "assets/starter-frames/cursor_callback/0004.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 220,
+              "y": 11,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "src": "assets/starter-frames/cursor_callback/0005.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 215,
+              "y": 3,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "src": "assets/starter-frames/cursor_callback/0006.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 500,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "src": "assets/starter-frames/cursor_callback/0007.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 506,
+              "y": 20,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "src": "assets/starter-frames/cursor_callback/0008.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 240,
+              "y": 190
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "src": "assets/starter-frames/cursor_callback/0009.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 415,
+              "y": 315
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "src": "assets/starter-frames/cursor_callback/0010.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 161,
+              "y": 11,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "src": "assets/starter-frames/cursor_callback/0011.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 288,
+              "y": 202
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "src": "assets/starter-frames/cursor_callback/0012.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 431,
+              "y": 320
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "src": "assets/starter-frames/cursor_callback/0013.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 25,
+              "y": 11,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "src": "assets/starter-frames/cursor_callback/0014.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 240,
+              "y": 180
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "src": "assets/starter-frames/cursor_callback/0015.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 400,
+              "y": 290
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "src": "assets/starter-frames/cursor_callback/0016.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 160,
+              "y": 10,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "src": "assets/starter-frames/cursor_callback/0017.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 170,
+              "y": 3,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 18,
+          "src": "assets/starter-frames/cursor_callback/0018.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 19,
+          "src": "assets/starter-frames/cursor_callback/0019.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 400,
+              "y": 180,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 20,
+          "src": "assets/starter-frames/cursor_callback/0020.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 270,
+              "y": 260
+            }
+          ]
+        },
+        {
+          "step": 21,
+          "src": "assets/starter-frames/cursor_callback/0021.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 290,
+              "y": 10,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 22,
+          "src": "assets/starter-frames/cursor_callback/0022.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 170,
+              "y": 3,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 23,
+          "src": "assets/starter-frames/cursor_callback/0023.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "key",
+              "keys": [
+                "esc"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 24,
+          "src": "assets/starter-frames/cursor_callback/0024.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 310,
+              "y": 230,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 25,
+          "src": "assets/starter-frames/cursor_callback/0025.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 420,
+              "y": 310
+            }
+          ]
+        },
+        {
+          "step": 26,
+          "src": "assets/starter-frames/cursor_callback/0026.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 250,
+              "y": 11,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 27,
+          "src": "assets/starter-frames/cursor_callback/0027.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 180,
+              "y": 210
+            }
+          ]
+        },
+        {
+          "step": 28,
+          "src": "assets/starter-frames/cursor_callback/0028.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 410,
+              "y": 310
+            }
+          ]
+        },
+        {
+          "step": 29,
+          "src": "assets/starter-frames/cursor_callback/0029.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 275,
+              "y": 4,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 30,
+          "src": "assets/starter-frames/cursor_callback/0030.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 505,
+              "y": 4
+            }
+          ]
+        },
+        {
+          "step": 31,
+          "src": "assets/starter-frames/cursor_callback/0031.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 505,
+              "y": 13,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 32,
+          "src": "assets/starter-frames/cursor_callback/0032.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 280,
+              "y": 230
+            }
+          ]
+        },
+        {
+          "step": 33,
+          "src": "assets/starter-frames/cursor_callback/0033.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 420,
+              "y": 340
+            }
+          ]
+        },
+        {
+          "step": 34,
+          "src": "assets/starter-frames/cursor_callback/0034.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 180,
+              "y": 4,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 35,
+          "src": "assets/starter-frames/cursor_callback/0035.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 501,
+              "y": 4
+            }
+          ]
+        },
+        {
+          "step": 36,
+          "src": "assets/starter-frames/cursor_callback/0036.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 503,
+              "y": 12,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 37,
+          "src": "assets/starter-frames/cursor_callback/0037.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 280,
+              "y": 210
+            }
+          ]
+        },
+        {
+          "step": 38,
+          "src": "assets/starter-frames/cursor_callback/0038.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 410,
+              "y": 310
+            }
+          ]
+        },
+        {
+          "step": 39,
+          "src": "assets/starter-frames/cursor_callback/0039.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 250,
+              "y": 4,
+              "button": "right",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 40,
+          "src": "assets/starter-frames/cursor_callback/0040.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 503,
+              "y": 4
+            }
+          ]
+        }
+      ],
+      "run": {
+        "id": "02-cua-cursor",
+        "provider": "cua",
+        "model": "openai/gpt-6.1-sol",
+        "cua_version": "0.9.0",
+        "created_at": "2026-10-05T01:51:04.018181+00:00",
+        "config": {
+          "iso": "assets/TempleOS.ISO",
+          "baseline": "assets/cli-baseline.qcow2",
+          "memory_mb": 512,
+          "max_steps_override": null,
+          "timeout_override": null,
+          "boot_wait": 1.0,
+          "model_options": {
+            "cua_version": "0.9.0",
+            "max_output_tokens": 4096,
+            "api_timeout": 90,
+            "image_history": 2
+          },
+          "baseline_identity": {
+            "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+            "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+            "memory_mb": 512,
+            "extra_args": [],
+            "device_layout_version": 1
+          },
+          "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+        },
+        "provenance": {
+          "agent_package": "cua-agent",
+          "agent_version": "0.9.0",
+          "inference": "upstream ComputerAgent and LiteLLM",
+          "agent_loop": "TempleOpenAIComputerUseConfig",
+          "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+          "backend": "TempleVM/QMP legacy PC devices",
+          "framebuffer": [
+            640,
+            480
+          ],
+          "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+          "execution_mode": "live_model",
+          "telemetry_enabled": false,
+          "max_actions_per_response": 4,
+          "step_definition": "actual model API attempts; Cua automatic retries disabled",
+          "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+        }
+      },
+      "review": {
+        "status": "incomplete",
+        "reviewer": "assistant trajectory review (nonhuman)",
+        "reviewed_at": "2026-10-05T01:55:41.087818+00:00",
+        "reason": "The exact cursor callback compiled, was installed once, and visibly followed pointer movement. The run exhausted its 40-call budget without opening Help Index or Command Line Overview, so the required document navigation, movement over the opened document, and final document state were not completed.",
+        "evidence": [
+          "Step 1 (0001.png; trajectory.jsonl): JIT-compiled the exact anonymous-CTask Cross callback and installed Fs->draw_it=&Cross. No visible compiler error; no later action cleared, replaced, or reinstalled the callback.",
+          "Steps 2 and 3 (0002.png, 0003.png): pointer (210,190) then (460,330); yellow cross centers (218,206) then (468,346). The cross moves by the same (+250,+140) delta, with the stock window's (+8,+16) offset.",
+          "Steps 5 and 6 (0005.png, 0006.png): right-click on the top bar reveals the Insert pulldown, then hovering Help reveals the Help pulldown. These show the menu step; they do not show document navigation.",
+          "Steps 7, 31, and 36 (0007.png, 0031.png, 0036.png): attempted Help-menu clicks return to the original shell without opening Help Index or Command Line Overview.",
+          "Steps 37 and 38 (0037.png, 0038.png): pointer (280,210) then (410,310); cross centers (288,226) then (418,326), matching the pointer's (+130,+100) delta. The callback remains visibly responsive near the end, but the shell is still the active view.",
+          "All numbered frames 0000.png through 0040.png were reviewed. No Help Index or Command Line Overview appears. Final.png shows the Help pulldown over the original shell, rather than the required document.",
+          "Recorded execution outcome: budget_exhausted, 40 API calls, 209.347 seconds. The recorded manual grade remains needs_review with score unset."
+        ],
+        "limitations": [
+          "This is an assistant review of the recorded action and screenshot trajectory, not a human review or an automatic pass score.",
+          "The evidence establishes visible callback movement and navigation outcomes; it does not inspect hidden guest state."
+        ]
+      }
     },
     {
       "id": "interactive_counter_panel",
       "title": "Live counter panel",
+      "description": "",
       "category": "Graphics",
       "difficulty": "hard",
-      "prompt": "Build a small interactive counter panel in the TempleOS shell using\nJIT-compiled HolyC and a live Fs->draw_it callback. Place three clearly\nlabeled buttons, +1, -1, and RESET, inside the 640x480 shell interior.\nDisplay COUNT= followed by the current integer, initially COUNT=0.\n\nA real left-click on +1 increments the count once, -1 decrements it once,\nand RESET sets it to zero. Clicking outside the buttons does nothing.\nHandle each mouse press once rather than repeatedly while it is held.\nKeep the drawing callback brief so the desktop remains responsive.\n\nDemonstrate the working panel with actual mouse clicks: click +1 three\ntimes and show COUNT=3; click -1 once and show COUNT=2; click RESET and\nshow COUNT=0; click outside the buttons and show that it stays zero;\nthen click +1 twice and finish with COUNT=2. Keep the same live panel\nactive throughout the demonstration and leave it visible at completion.\nObserve the intermediate states. Do not type count updates into the\nshell or replace the panel with a static picture.\n",
       "grader": {
         "type": "manual",
         "rubric": "Review the full action and screenshot trajectory. The agent must\ncompile its own HolyC implementation, install a live task drawing\ncallback, and render visible +1, -1, RESET buttons and an initial\nCOUNT=0 inside the shell window. No implementation is supplied.\n\nVerify that genuine left-clicks on the rendered buttons cause the\nobserved state sequence: three increments reach 3, one decrement\nreaches 2, reset reaches 0, an outside click leaves 0 unchanged, and\ntwo further increments reach 2. Each distinct press changes the count\nat most once. Intermediate increment states provide reviewable\nprogress even when the full sequence is incomplete.\n\nThe panel must remain live throughout, with the final COUNT=2 visible.\nCheck responsiveness and absence of callback faults or a frozen guest.\nAccept any clear layout within the shell interior; account for the\nwindow's drawing origin when assessing button hit-testing. Typed\ncount values, static screenshots, or recompiling state between the\ndemonstrated clicks do not establish interactive behavior.\n\nA final screenshot alone cannot prove the state transitions or live\ncallback. This task requires trajectory review and has no automatic\npass score.\n"
       },
-      "result": null,
-      "frames": []
+      "prompt": "Build a small interactive counter panel in the TempleOS shell using\nJIT-compiled HolyC and a live Fs->draw_it callback. Place three clearly\nlabeled buttons, +1, -1, and RESET, inside the 640x480 shell interior.\nDisplay COUNT= followed by the current integer, initially COUNT=0.\n\nA real left-click on +1 increments the count once, -1 decrements it once,\nand RESET sets it to zero. Clicking outside the buttons does nothing.\nHandle each mouse press once rather than repeatedly while it is held.\nKeep the drawing callback brief so the desktop remains responsive.\n\nDemonstrate the working panel with actual mouse clicks: click +1 three\ntimes and show COUNT=3; click -1 once and show COUNT=2; click RESET and\nshow COUNT=0; click outside the buttons and show that it stays zero;\nthen click +1 twice and finish with COUNT=2. Keep the same live panel\nactive throughout the demonstration and leave it visible at completion.\nObserve the intermediate states. Do not type count updates into the\nshell or replace the panel with a static picture.\n",
+      "result": {
+        "task_id": "interactive_counter_panel",
+        "title": "Live counter panel",
+        "status": "completed",
+        "steps": 26,
+        "elapsed_seconds": 227.455,
+        "usage": {
+          "input_tokens": 60248,
+          "output_tokens": 3107,
+          "total_tokens": 63355,
+          "estimated_cost_usd": 0.14931450000000002
+        },
+        "artifact_dir": "interactive_counter_panel",
+        "final_screenshot": "interactive_counter_panel/final.png",
+        "grade": {
+          "type": "manual",
+          "status": "needs_review",
+          "score": null,
+          "reason": "Review the full action and screenshot trajectory. The agent must\ncompile its own HolyC implementation, install a live task drawing\ncallback, and render visible +1, -1, RESET buttons and an initial\nCOUNT=0 inside the shell window. No implementation is supplied.\n\nVerify that genuine left-clicks on the rendered buttons cause the\nobserved state sequence: three increments reach 3, one decrement\nreaches 2, reset reaches 0, an outside click leaves 0 unchanged, and\ntwo further increments reach 2. Each distinct press changes the count\nat most once. Intermediate increment states provide reviewable\nprogress even when the full sequence is incomplete.\n\nThe panel must remain live throughout, with the final COUNT=2 visible.\nCheck responsiveness and absence of callback faults or a frozen guest.\nAccept any clear layout within the shell interior; account for the\nwindow's drawing origin when assessing button hit-testing. Typed\ncount values, static screenshots, or recompiling state between the\ndemonstrated clicks do not establish interactive behavior.\n\nA final screenshot alone cannot prove the state transitions or live\ncallback. This task requires trajectory review and has no automatic\npass score.\n",
+          "evidence": [
+            "Manual review required; no automatic success claim was made."
+          ]
+        },
+        "budget": {
+          "max_steps": 80,
+          "timeout_seconds": 600,
+          "max_input_actions": 640
+        },
+        "task_fingerprint": "6a4b2308bed485657e0a59c78cd38f8865d5eea98d3bdc5e5ed6864e6f93a09d",
+        "setup_seconds": 1.4052948179996747,
+        "completion_text": "The live interactive panel remains active and visible at **COUNT=2**. Verified +1, -1, RESET, and outside-click behavior through actual mouse clicks.",
+        "input_actions": 25,
+        "observations": 26
+      },
+      "frames": [
+        {
+          "step": 0,
+          "src": "assets/starter-frames/interactive_counter_panel/0000.png",
+          "note": "Before the first action.",
+          "actions": []
+        },
+        {
+          "step": 1,
+          "src": "assets/starter-frames/interactive_counter_panel/0001.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Dir(\"/Demo/Graphics\");\n"
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "src": "assets/starter-frames/interactive_counter_panel/0002.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Type(\"/Demo/Graphics/Callbacks.HC\");\n"
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "src": "assets/starter-frames/interactive_counter_panel/0003.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Type(\"/Demo/Graphics/Bounce.HC.Z\");\n"
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "src": "assets/starter-frames/interactive_counter_panel/0004.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Type(\"/Demo/Graphics/MouseDemo.HC.Z\");\n"
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "src": "assets/starter-frames/interactive_counter_panel/0005.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Find(\"draw_it\",\"/Demo/Graphics/*\");\n"
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "src": "assets/starter-frames/interactive_counter_panel/0006.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "Type(\"/Demo/Graphics/Box.HC.Z\");\n"
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "src": "assets/starter-frames/interactive_counter_panel/0007.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "type",
+              "text": "I64 CPCount=0; Bool CPDown=FALSE;\nU0 CPDraw(CTask *t,CDC *dc) { I64 x=ms.pos.x-t->pix_left,y=ms.pos.y-t->pix_top; Bool down=ms.lb; if (down && !CPDown) { if (y>=160 && y<210) { if (x>=80 && x<200) CPCount++; else if (x>=250 && x<370) CPCount--; else if (x>=420 && x<540) CPCount=0; } } CPDown=down; dc->color=LTGRAY; GrRect(dc,50,65,520,195); dc->color=BLACK; GrPrint(dc,80,85,\"LIVE COUNTER - LEFT CLICK A BUTTON\"); GrPrint(dc,80,120,\"COUNT=%d\",CPCount); GrRect(dc,80,160,120,50); GrRect(dc,250,160,120,50); GrRect(dc,420,160,120,50); dc->color=WHITE; GrRect(dc,82,162,116,46); GrRect(dc,252,162,116,46); GrRect(dc,422,162,116,46); dc->color=BLACK; GrPrint(dc,132,181,\"+1\"); GrPrint(dc,302,181,\"-1\"); GrPrint(dc,460,181,\"RESET\"); GrPrint(dc,80,235,\"One change per press. Outside clicks do nothing.\"); }\nDocClear; Fs->draw_it=&CPDraw;\n"
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "src": "assets/starter-frames/interactive_counter_panel/0008.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 148,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "src": "assets/starter-frames/interactive_counter_panel/0009.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 148,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "src": "assets/starter-frames/interactive_counter_panel/0010.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 148,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "src": "assets/starter-frames/interactive_counter_panel/0011.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 488,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "src": "assets/starter-frames/interactive_counter_panel/0012.png",
+          "note": "The live panel is at COUNT=0. I\u2019ll run the click sequence and check each requested state.\n",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 148,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "src": "assets/starter-frames/interactive_counter_panel/0013.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 148,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "src": "assets/starter-frames/interactive_counter_panel/0014.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 148,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "src": "assets/starter-frames/interactive_counter_panel/0015.png",
+          "note": "COUNT=3 is visible after the +1 clicks.\n",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 317,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "src": "assets/starter-frames/interactive_counter_panel/0016.png",
+          "note": "The -1 click changed it to COUNT=2.\n",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 487,
+              "y": 201,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "src": "assets/starter-frames/interactive_counter_panel/0017.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 322,
+              "y": 321,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 18,
+          "src": "assets/starter-frames/interactive_counter_panel/0018.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 146,
+              "y": 199,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 19,
+          "src": "assets/starter-frames/interactive_counter_panel/0019.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 146,
+              "y": 199,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 20,
+          "src": "assets/starter-frames/interactive_counter_panel/0020.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 146,
+              "y": 199,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 21,
+          "src": "assets/starter-frames/interactive_counter_panel/0021.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 318,
+              "y": 200,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 22,
+          "src": "assets/starter-frames/interactive_counter_panel/0022.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 487,
+              "y": 200,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 23,
+          "src": "assets/starter-frames/interactive_counter_panel/0023.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 322,
+              "y": 329,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 24,
+          "src": "assets/starter-frames/interactive_counter_panel/0024.png",
+          "note": "RESET returned the count to zero, and clicking outside left it at zero. I\u2019ll finish with two +1 clicks.\n",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 146,
+              "y": 200,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 25,
+          "src": "assets/starter-frames/interactive_counter_panel/0025.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "click",
+              "x": 146,
+              "y": 200,
+              "button": "left",
+              "clicks": 1
+            }
+          ]
+        },
+        {
+          "step": 26,
+          "src": "assets/starter-frames/interactive_counter_panel/0026.png",
+          "note": "The live interactive panel remains active and visible at **COUNT=2**. Verified +1, -1, RESET, and outside-click behavior through actual mouse clicks.",
+          "actions": []
+        }
+      ],
+      "run": {
+        "id": "03-cua-counter",
+        "provider": "cua",
+        "model": "openai/gpt-6.1-sol",
+        "cua_version": "0.9.0",
+        "created_at": "2026-10-05T01:51:03.918680+00:00",
+        "config": {
+          "iso": "assets/TempleOS.ISO",
+          "baseline": "assets/cli-baseline.qcow2",
+          "memory_mb": 512,
+          "max_steps_override": null,
+          "timeout_override": null,
+          "boot_wait": 1.0,
+          "model_options": {
+            "cua_version": "0.9.0",
+            "max_output_tokens": 4096,
+            "api_timeout": 90,
+            "image_history": 2
+          },
+          "baseline_identity": {
+            "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+            "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+            "memory_mb": 512,
+            "extra_args": [],
+            "device_layout_version": 1
+          },
+          "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+        },
+        "provenance": {
+          "agent_package": "cua-agent",
+          "agent_version": "0.9.0",
+          "inference": "upstream ComputerAgent and LiteLLM",
+          "agent_loop": "TempleOpenAIComputerUseConfig",
+          "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+          "backend": "TempleVM/QMP legacy PC devices",
+          "framebuffer": [
+            640,
+            480
+          ],
+          "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+          "execution_mode": "live_model",
+          "telemetry_enabled": false,
+          "max_actions_per_response": 4,
+          "step_definition": "actual model API attempts; Cua automatic retries disabled",
+          "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+        }
+      },
+      "review": {
+        "status": "passed",
+        "reviewer": "Assistant trajectory review",
+        "review_type": "Saved-action and screenshot review, not an automatic grade",
+        "task_id": "interactive_counter_panel",
+        "reason": "The model compiled its own HolyC CPDraw callback at step 7 and kept that same installation throughout all subsequent clicks. Rendered states establish actual +1, -1, RESET, and outside-click behavior. After exploratory repetitions, the final demonstration at steps 18\u201325 follows the required sequence 1,2,3,2,0,0,1,2 from zero, and the final frame remains COUNT=2. The callback uses a mouse-button rising-edge guard and performs only bounded drawing work. No callback fault or frozen guest is visible.",
+        "evidence": [
+          "trajectory.jsonl step 7: types CPCount=0, CPDown=FALSE, CPDraw(CTask *t,CDC *dc), and Fs->draw_it=&CPDraw; 0007.png renders the initial COUNT=0 and labeled buttons.",
+          "CPDraw source in step 7 updates CPCount only when down && !CPDown; task-relative button hit boxes match the rendered panel. No typed count updates or recompilation appear after step 7.",
+          "Initial exploratory states: steps 8\u201310 +1 produce 1,2,3; step 11 RESET produces 0; steps 12\u201314 +1 produce 1,2,3; steps 15\u201317 show -1=2, RESET=0, outside=0. Steps 18\u201319 reach 1,2 before an extra increment at step 20.",
+          "Final complete sequence: 0018.png COUNT=1 and 0019.png COUNT=2 after +1 clicks (146,199); 0020.png COUNT=3 after another +1 click; 0021.png COUNT=2 after -1 (318,200).",
+          "0022.png COUNT=0 after RESET (487,200); 0023.png COUNT=0 after an outside click (322,329); 0024.png COUNT=1 and 0025.png COUNT=2 after +1 (146,200).",
+          "0026.png and final.png retain the same panel at COUNT=2 after completion; consecutive button responses and the advancing status clock/frame rate show ongoing guest activity."
+        ],
+        "limitations": [
+          "This is an assistant review of saved trajectory artifacts; the harness manual grade remains needs_review with score=null.",
+          "The episode does not include a separately prolonged mouse-down action. Single-press behavior is supported by the explicit rising-edge guard and observed one-unit changes for each real click.",
+          "No live VM probes, hints, interventions, or additional model calls were used for this review."
+        ],
+        "rendered_count_by_step": [
+          {
+            "step": 1,
+            "count": null,
+            "screenshot": "0001.png"
+          },
+          {
+            "step": 2,
+            "count": null,
+            "screenshot": "0002.png"
+          },
+          {
+            "step": 3,
+            "count": null,
+            "screenshot": "0003.png"
+          },
+          {
+            "step": 4,
+            "count": null,
+            "screenshot": "0004.png"
+          },
+          {
+            "step": 5,
+            "count": null,
+            "screenshot": "0005.png"
+          },
+          {
+            "step": 6,
+            "count": null,
+            "screenshot": "0006.png"
+          },
+          {
+            "step": 7,
+            "count": 0,
+            "screenshot": "0007.png"
+          },
+          {
+            "step": 8,
+            "count": 1,
+            "screenshot": "0008.png"
+          },
+          {
+            "step": 9,
+            "count": 2,
+            "screenshot": "0009.png"
+          },
+          {
+            "step": 10,
+            "count": 3,
+            "screenshot": "0010.png"
+          },
+          {
+            "step": 11,
+            "count": 0,
+            "screenshot": "0011.png"
+          },
+          {
+            "step": 12,
+            "count": 1,
+            "screenshot": "0012.png"
+          },
+          {
+            "step": 13,
+            "count": 2,
+            "screenshot": "0013.png"
+          },
+          {
+            "step": 14,
+            "count": 3,
+            "screenshot": "0014.png"
+          },
+          {
+            "step": 15,
+            "count": 2,
+            "screenshot": "0015.png"
+          },
+          {
+            "step": 16,
+            "count": 0,
+            "screenshot": "0016.png"
+          },
+          {
+            "step": 17,
+            "count": 0,
+            "screenshot": "0017.png"
+          },
+          {
+            "step": 18,
+            "count": 1,
+            "screenshot": "0018.png"
+          },
+          {
+            "step": 19,
+            "count": 2,
+            "screenshot": "0019.png"
+          },
+          {
+            "step": 20,
+            "count": 3,
+            "screenshot": "0020.png"
+          },
+          {
+            "step": 21,
+            "count": 2,
+            "screenshot": "0021.png"
+          },
+          {
+            "step": 22,
+            "count": 0,
+            "screenshot": "0022.png"
+          },
+          {
+            "step": 23,
+            "count": 0,
+            "screenshot": "0023.png"
+          },
+          {
+            "step": 24,
+            "count": 1,
+            "screenshot": "0024.png"
+          },
+          {
+            "step": 25,
+            "count": 2,
+            "screenshot": "0025.png"
+          },
+          {
+            "step": 26,
+            "count": 2,
+            "screenshot": "0026.png"
+          }
+        ],
+        "episode": {
+          "status": "completed",
+          "steps": 26,
+          "elapsed_seconds": 227.455,
+          "input_actions": 25
+        },
+        "raw_grade_status_preserved": "needs_review"
+      }
     }
   ]
 }

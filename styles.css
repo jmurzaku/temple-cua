@@ -42,7 +42,7 @@ th:last-child, td:last-child { padding-right: 12px; text-align: right; }
 tbody tr.selected { background: var(--selected); }
 .task-selector { display: flex; align-items: center; gap: 22px; border: 0; background: transparent; color: var(--ink); text-align: left; padding: 0; font-size: 15px; line-height: 1.6; }
 .task-selector span { color: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; }
-.result-status { color: var(--muted); }
+.result-status { color: var(--muted); font-size: 13px; }
 .selected .task-selector { color: var(--accent); }
 .task-detail { padding: 52px 0 64px; scroll-margin-top: 26px; }
 .detail-heading { align-items: flex-end; margin-bottom: 28px; }
@@ -70,10 +70,17 @@ pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; line-heigh
 .replay-layout.unrecorded { grid-template-columns: 1fr 1.4fr; gap: 80px; }
 .task-result { border-top: 1px solid var(--line); padding-top: 21px; margin-top: 26px; }
 .task-result p { margin-bottom: 12px; }
+.task-result details { margin-top: 16px; }
+.task-result details pre { font-size: 11px; }
+.task-result details div { margin-top: 14px; }
+.trajectory-review { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 20px; }
+.trajectory-review ul { padding-left: 17px; margin-bottom: 0; font-size: 12px; }
+.trajectory-review li { margin: 8px 0; overflow-wrap: anywhere; }
 .small { font-size: 12px; line-height: 1.7; }
 .muted { color: var(--muted); }
 .run-section { border-top: 1px solid var(--ink); padding: 40px 0 56px; }
 .run-facts { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: 24px; margin: 32px 0; }
+.run-facts.has-reviews { grid-template-columns: 1.7fr 1fr .9fr 1fr 1.1fr; }
 .run-facts dt { font-size: 12px; margin-bottom: 5px; }
 .run-facts dd { font-size: 15px; }
 #run-model { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; overflow-wrap: anywhere; }
@@ -111,6 +118,7 @@ footer a { text-decoration: none; }
   th, td { padding-right: 12px; }
   th:first-child, td:first-child { width: auto; padding-left: 8px; }
   .task-difficulty { font-size: 11px; white-space: nowrap; }
+  .result-status { font-size: 11px; }
   .task-selector { gap: 12px; font-size: 13px; }
   table { font-size: 12px; }
   th { font-size: 9px; }
@@ -120,7 +128,7 @@ footer a { text-decoration: none; }
   .task-text { font-size: 14px; }
   .prompt { line-height: 1.7; }
   .run-section { padding: 32px 0 40px; }
-  .run-facts { grid-template-columns: 1fr 1fr; gap: 22px; margin: 26px 0; }
+  .run-facts, .run-facts.has-reviews { grid-template-columns: 1fr 1fr; gap: 22px; margin: 26px 0; }
   .setup-section { grid-template-columns: 1fr; gap: 28px; padding: 34px 0 44px; }
   .setup-command { padding-left: 18px; font-size: 12px; }
   footer { align-items: flex-start; font-size: 11px; gap: 14px; }

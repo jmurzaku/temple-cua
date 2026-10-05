@@ -1,85 +1,256 @@
 {
-  "created_at": "2026-10-05T00:27:11.588954+00:00",
-  "provider": "cua",
-  "model": "openai/gpt-6.1-sol",
-  "config": {
-    "iso": "assets/TempleOS.ISO",
-    "baseline": "assets/cli-baseline.qcow2",
-    "memory_mb": 512,
-    "max_steps_override": 24,
-    "timeout_override": 300.0,
-    "boot_wait": 1.0,
-    "model_options": {
-      "cua_version": "0.9.0",
-      "max_output_tokens": 4096,
-      "api_timeout": 90.0,
-      "image_history": 2
-    },
-    "baseline_identity": {
-      "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
-      "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
-      "memory_mb": 512,
-      "extra_args": [],
-      "device_layout_version": 1
-    },
-    "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
-  },
-  "provenance": {
-    "agent_package": "cua-agent",
-    "agent_version": "0.9.0",
-    "inference": "upstream ComputerAgent and LiteLLM",
-    "agent_loop": "TempleOpenAIComputerUseConfig",
-    "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
-    "backend": "TempleVM/QMP legacy PC devices",
-    "framebuffer": [
-      640,
-      480
-    ],
-    "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
-    "execution_mode": "live_model",
-    "telemetry_enabled": false,
-    "max_actions_per_response": 4,
-    "step_definition": "actual model API attempts; Cua automatic retries disabled",
-    "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
-  },
-  "results": [
+  "format": "templeosbench-recorded-runs",
+  "version": 1,
+  "runs": [
     {
-      "task_id": "arithmetic",
-      "title": "Evaluate an integer expression in HolyC",
-      "status": "completed",
-      "steps": 3,
-      "elapsed_seconds": 16.923,
-      "usage": {
-        "input_tokens": 4006,
-        "output_tokens": 190,
-        "total_tokens": 4196,
-        "estimated_cost_usd": 0.0079626
+      "id": "01-cua-starter",
+      "created_at": "2026-10-05T00:27:11.588954+00:00",
+      "provider": "cua",
+      "model": "openai/gpt-6.1-sol",
+      "config": {
+        "iso": "assets/TempleOS.ISO",
+        "baseline": "assets/cli-baseline.qcow2",
+        "memory_mb": 512,
+        "max_steps_override": 24,
+        "timeout_override": 300.0,
+        "boot_wait": 1.0,
+        "model_options": {
+          "cua_version": "0.9.0",
+          "max_output_tokens": 4096,
+          "api_timeout": 90.0,
+          "image_history": 2
+        },
+        "baseline_identity": {
+          "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+          "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+          "memory_mb": 512,
+          "extra_args": [],
+          "device_layout_version": 1
+        },
+        "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
       },
-      "artifact_dir": "arithmetic",
-      "final_screenshot": "arithmetic/final.png",
-      "grade": {
-        "type": "ocr",
-        "status": "passed",
-        "score": 1.0,
-        "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-        "evidence": [
-          "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-          "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
-          "grader-ocr.txt"
+      "provenance": {
+        "agent_package": "cua-agent",
+        "agent_version": "0.9.0",
+        "inference": "upstream ComputerAgent and LiteLLM",
+        "agent_loop": "TempleOpenAIComputerUseConfig",
+        "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+        "backend": "TempleVM/QMP legacy PC devices",
+        "framebuffer": [
+          640,
+          480
         ],
-        "engine": "templeos-bitmap",
-        "match_mode": "line"
+        "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+        "execution_mode": "live_model",
+        "telemetry_enabled": false,
+        "max_actions_per_response": 4,
+        "step_definition": "actual model API attempts; Cua automatic retries disabled",
+        "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
       },
-      "budget": {
-        "max_steps": 24,
-        "timeout_seconds": 300.0,
-        "max_input_actions": 192
+      "results": [
+        {
+          "task_id": "arithmetic",
+          "title": "Evaluate an integer expression in HolyC",
+          "status": "completed",
+          "steps": 3,
+          "elapsed_seconds": 16.923,
+          "usage": {
+            "input_tokens": 4006,
+            "output_tokens": 190,
+            "total_tokens": 4196,
+            "estimated_cost_usd": 0.0079626
+          },
+          "artifact_dir": "arithmetic",
+          "final_screenshot": "arithmetic/final.png",
+          "grade": {
+            "type": "ocr",
+            "status": "passed",
+            "score": 1.0,
+            "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
+            "evidence": [
+              "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
+              "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
+              "grader-ocr.txt"
+            ],
+            "engine": "templeos-bitmap",
+            "match_mode": "line"
+          },
+          "budget": {
+            "max_steps": 24,
+            "timeout_seconds": 300.0,
+            "max_input_actions": 192
+          },
+          "task_fingerprint": "0cf6cf0194d5f504bd1828e250f18b891dd885505b97fe37c1ac1a3d2c7cb0a9",
+          "setup_seconds": 1.3676322969995454,
+          "completion_text": "Executed in HolyC and verified the visible output:\n```text\nBENCH_ARITH=391\n```",
+          "input_actions": 2,
+          "observations": 3
+        }
+      ]
+    },
+    {
+      "id": "02-cua-cursor",
+      "created_at": "2026-10-05T01:51:04.018181+00:00",
+      "provider": "cua",
+      "model": "openai/gpt-6.1-sol",
+      "config": {
+        "iso": "assets/TempleOS.ISO",
+        "baseline": "assets/cli-baseline.qcow2",
+        "memory_mb": 512,
+        "max_steps_override": null,
+        "timeout_override": null,
+        "boot_wait": 1.0,
+        "model_options": {
+          "cua_version": "0.9.0",
+          "max_output_tokens": 4096,
+          "api_timeout": 90,
+          "image_history": 2
+        },
+        "baseline_identity": {
+          "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+          "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+          "memory_mb": 512,
+          "extra_args": [],
+          "device_layout_version": 1
+        },
+        "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
       },
-      "task_fingerprint": "0cf6cf0194d5f504bd1828e250f18b891dd885505b97fe37c1ac1a3d2c7cb0a9",
-      "setup_seconds": 1.3676322969995454,
-      "completion_text": "Executed in HolyC and verified the visible output:\n```text\nBENCH_ARITH=391\n```",
-      "input_actions": 2,
-      "observations": 3
+      "provenance": {
+        "agent_package": "cua-agent",
+        "agent_version": "0.9.0",
+        "inference": "upstream ComputerAgent and LiteLLM",
+        "agent_loop": "TempleOpenAIComputerUseConfig",
+        "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+        "backend": "TempleVM/QMP legacy PC devices",
+        "framebuffer": [
+          640,
+          480
+        ],
+        "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+        "execution_mode": "live_model",
+        "telemetry_enabled": false,
+        "max_actions_per_response": 4,
+        "step_definition": "actual model API attempts; Cua automatic retries disabled",
+        "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+      },
+      "results": [
+        {
+          "task_id": "cursor_callback",
+          "title": "Live cursor callback",
+          "status": "budget_exhausted",
+          "steps": 40,
+          "elapsed_seconds": 209.347,
+          "usage": {
+            "input_tokens": 69084,
+            "output_tokens": 3136,
+            "total_tokens": 72220,
+            "estimated_cost_usd": 0.16735820000000004
+          },
+          "artifact_dir": "cursor_callback",
+          "final_screenshot": "cursor_callback/final.png",
+          "grade": {
+            "type": "manual",
+            "status": "needs_review",
+            "score": null,
+            "reason": "Review the full trajectory. The exact anonymous-CTask callback must\ncompile in the live shell and be installed using Fs->draw_it=&Cross.\nA live yellow cross must appear at two pointer positions before and\nafter opening the document, moving by the same delta as the pointer.\nAllow the stock bordered fixture's measured +8,+16 rendering offset.\nThe trajectory must include a right-click over the top menu bar with\na visible pulldown, then the help index and an actual clicked link to\nCommand Line Overview. That document must remain open at completion.\nTempleOS exposes the top menu on hover; a desktop context menu is not\nrequired.\nThe callback must not be cleared, replaced, reinstalled after navigation,\nor reproduced as a static image. Menus may cover the cross where they\noverlap because they render later; this does not imply callback removal.\nA screenshot alone cannot prove the callback remains live. Review its\nmovement across the full trajectory; this task has no automatic pass score.\n",
+            "evidence": [
+              "Manual review required; no automatic success claim was made."
+            ]
+          },
+          "budget": {
+            "max_steps": 40,
+            "timeout_seconds": 240,
+            "max_input_actions": 320
+          },
+          "task_fingerprint": "fbb6efafbc015d598644e8ec85ec067706bc078d821b357989f25a8ceb0c0a69",
+          "setup_seconds": 1.3582893820002937,
+          "input_actions": 40,
+          "observations": 41,
+          "budget_reason": "Cua model call budget exhausted"
+        }
+      ]
+    },
+    {
+      "id": "03-cua-counter",
+      "created_at": "2026-10-05T01:51:03.918680+00:00",
+      "provider": "cua",
+      "model": "openai/gpt-6.1-sol",
+      "config": {
+        "iso": "assets/TempleOS.ISO",
+        "baseline": "assets/cli-baseline.qcow2",
+        "memory_mb": 512,
+        "max_steps_override": null,
+        "timeout_override": null,
+        "boot_wait": 1.0,
+        "model_options": {
+          "cua_version": "0.9.0",
+          "max_output_tokens": 4096,
+          "api_timeout": 90,
+          "image_history": 2
+        },
+        "baseline_identity": {
+          "iso_sha256": "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26",
+          "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+          "memory_mb": 512,
+          "extra_args": [],
+          "device_layout_version": 1
+        },
+        "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39"
+      },
+      "provenance": {
+        "agent_package": "cua-agent",
+        "agent_version": "0.9.0",
+        "inference": "upstream ComputerAgent and LiteLLM",
+        "agent_loop": "TempleOpenAIComputerUseConfig",
+        "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+        "backend": "TempleVM/QMP legacy PC devices",
+        "framebuffer": [
+          640,
+          480
+        ],
+        "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+        "execution_mode": "live_model",
+        "telemetry_enabled": false,
+        "max_actions_per_response": 4,
+        "step_definition": "actual model API attempts; Cua automatic retries disabled",
+        "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"
+      },
+      "results": [
+        {
+          "task_id": "interactive_counter_panel",
+          "title": "Live counter panel",
+          "status": "completed",
+          "steps": 26,
+          "elapsed_seconds": 227.455,
+          "usage": {
+            "input_tokens": 60248,
+            "output_tokens": 3107,
+            "total_tokens": 63355,
+            "estimated_cost_usd": 0.14931450000000002
+          },
+          "artifact_dir": "interactive_counter_panel",
+          "final_screenshot": "interactive_counter_panel/final.png",
+          "grade": {
+            "type": "manual",
+            "status": "needs_review",
+            "score": null,
+            "reason": "Review the full action and screenshot trajectory. The agent must\ncompile its own HolyC implementation, install a live task drawing\ncallback, and render visible +1, -1, RESET buttons and an initial\nCOUNT=0 inside the shell window. No implementation is supplied.\n\nVerify that genuine left-clicks on the rendered buttons cause the\nobserved state sequence: three increments reach 3, one decrement\nreaches 2, reset reaches 0, an outside click leaves 0 unchanged, and\ntwo further increments reach 2. Each distinct press changes the count\nat most once. Intermediate increment states provide reviewable\nprogress even when the full sequence is incomplete.\n\nThe panel must remain live throughout, with the final COUNT=2 visible.\nCheck responsiveness and absence of callback faults or a frozen guest.\nAccept any clear layout within the shell interior; account for the\nwindow's drawing origin when assessing button hit-testing. Typed\ncount values, static screenshots, or recompiling state between the\ndemonstrated clicks do not establish interactive behavior.\n\nA final screenshot alone cannot prove the state transitions or live\ncallback. This task requires trajectory review and has no automatic\npass score.\n",
+            "evidence": [
+              "Manual review required; no automatic success claim was made."
+            ]
+          },
+          "budget": {
+            "max_steps": 80,
+            "timeout_seconds": 600,
+            "max_input_actions": 640
+          },
+          "task_fingerprint": "6a4b2308bed485657e0a59c78cd38f8865d5eea98d3bdc5e5ed6864e6f93a09d",
+          "setup_seconds": 1.4052948179996747,
+          "completion_text": "The live interactive panel remains active and visible at **COUNT=2**. Verified +1, -1, RESET, and outside-click behavior through actual mouse clicks.",
+          "input_actions": 25,
+          "observations": 26
+        }
+      ]
     }
   ]
 }
