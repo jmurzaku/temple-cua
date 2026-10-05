@@ -144,7 +144,7 @@ def main(argv=None):
             if args.cua_fixture and args.provider != "cua":
                 parser.error("--cua-fixture is only valid with --provider cua")
             if args.provider == "cua":
-                from .cua_runner import CuaOptions, load_cua, run_cua_suite
+                from .cua_runner import CuaOptions, run_cua_suite
                 if not args.model:
                     parser.error("Cua requires --model with a provider prefix, e.g. openai/gpt-6.1-sol")
                 if args.cua_fixture and len(tasks) != 1:
@@ -152,7 +152,6 @@ def main(argv=None):
                 options = CuaOptions(model=args.model, api_timeout=args.api_timeout,
                                      max_output_tokens=args.max_output_tokens, image_history=args.cua_image_history,
                                      base_url=args.base_url, fixture=args.cua_fixture)
-                load_cua()
                 model = args.model
             elif args.provider == "scripted":
                 if not args.script:

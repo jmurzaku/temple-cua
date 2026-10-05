@@ -1,25 +1,19 @@
-# Research website source
+# TempleOSBench website
 
-`dist/` contains the static task catalog, prompts, screenshots and recorded
-Cua starter results. It is a replay viewer, not a live VM. It does not collect
-API keys. The current deployment is owner-private:
-https://ring-zero-temple-lab.yurpl.chatgpt.site
+`index.html`, `styles.css`, and `app.js` are the static site source. The site
+displays task prompts, screenshots, inputs, and the results of one six-task run.
 
-Preview locally from the repository root:
+Build from the repository root:
 
 ```sh
-python -m http.server 8000 --directory site/dist
+.venv/bin/python scripts/build_site.py
 ```
 
-To replace the recordings after another six-task Cua run:
+Serve the build to preview:
 
 ```sh
-.venv/bin/python scripts/export_starter_site.py runs/cua-starter site
+python -m http.server 8000 --directory build/site
 ```
 
-The six task IDs must match the starter suite shown in the root README. The
-exporter preserves run provenance and creates the source/run downloads.
-
-The live site's hosting checkout is managed separately. Its project-specific
-hosting configuration and Git credentials are not copied into this repository.
-These static files can be hosted on any static web server.
+All asset paths are relative, so the site works under a GitHub Pages project
+path. No framework, font service, or external JavaScript is required.

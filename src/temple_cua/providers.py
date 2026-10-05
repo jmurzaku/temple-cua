@@ -1,9 +1,4 @@
-"""Screenshot-only model providers for the TempleOS computer-use harness.
-
-The two API adapters deliberately expose the same small action tool. Model names
-are supplied by the caller: this module makes no claim about which models an
-account can access, and never switches providers or models after a failure.
-"""
+"""Screenshot providers for OpenAI Responses, Anthropic Messages, and JSON replay."""
 
 from __future__ import annotations
 

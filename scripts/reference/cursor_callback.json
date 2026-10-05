@@ -1,0 +1,76 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "U0 Cross(CTask *, CDC *dc) { dc->color=YELLOW; GrLine(dc,ms.pos.x-16,ms.pos.y,ms.pos.x+16,ms.pos.y); GrLine(dc,ms.pos.x,ms.pos.y-16,ms.pos.x,ms.pos.y+16); }"
+      },
+      {"kind": "key", "keys": ["enter"]}
+    ],
+    "note": "Compile the exact callback in the live shell; the unnamed CTask parameter is valid HolyC."
+  },
+  {
+    "actions": [
+      {"kind": "type", "text": "Fs->draw_it=&Cross;"},
+      {"kind": "key", "keys": ["enter"]}
+    ],
+    "note": "Install the callback once. It stays installed for the rest of this diagnostic."
+  },
+  {
+    "actions": [
+      {"kind": "move", "x": 180, "y": 180},
+      {"kind": "wait", "seconds": 0.5}
+    ],
+    "note": "Observe the first shell position; expected cross center is 188,196."
+  },
+  {
+    "actions": [
+      {"kind": "move", "x": 400, "y": 300},
+      {"kind": "wait", "seconds": 0.5}
+    ],
+    "note": "Observe a second shell position; expected cross center is 408,316."
+  },
+  {
+    "actions": [
+      {"kind": "click", "x": 23, "y": 3, "button": "right"},
+      {"kind": "wait", "seconds": 0.5}
+    ],
+    "note": "The top bar reveals its File pulldown on hover. Right-click there; this is not a body context menu."
+  },
+  {
+    "actions": [
+      {"kind": "move", "x": 300, "y": 240},
+      {"kind": "key", "keys": ["f1"]},
+      {"kind": "wait", "seconds": 1}
+    ],
+    "note": "Close the pulldown by moving away, then open the built-in HelpIndex in the same task."
+  },
+  {
+    "actions": [
+      {"kind": "click", "x": 65, "y": 75, "button": "left"},
+      {"kind": "key", "keys": ["enter"]},
+      {"kind": "wait", "seconds": 1}
+    ],
+    "note": "Select and activate the real Command Line documentation link."
+  },
+  {
+    "actions": [
+      {"kind": "move", "x": 180, "y": 180},
+      {"kind": "wait", "seconds": 0.5}
+    ],
+    "note": "Check that the original callback now draws over the opened document at 188,196."
+  },
+  {
+    "actions": [
+      {"kind": "move", "x": 400, "y": 300},
+      {"kind": "wait", "seconds": 0.5}
+    ],
+    "note": "Check movement over the document; expected cross center is 408,316."
+  },
+  {
+    "actions": [
+      {"kind": "done", "text": "Scripted diagnostic finished with the document open and callback untouched. Review the moving cross and menu/link trajectory manually."}
+    ],
+    "note": "Operator reference replay only; no model API call or automatic pass claim."
+  }
+]

@@ -1,10 +1,4 @@
-"""Bridge cua-agent 0.9.0 computer actions to OpenAI function tools.
-
-The upstream OpenAI loop already supplies the model call, tool schema, and
-usage hooks. This adapter only translates its Responses wire items into
-Cua's computer handler items, and translates the next turn back again.
-Imports of Cua remain lazy so the caller can disable telemetry first.
-"""
+"""Translate between Cua computer actions and OpenAI Responses function tools."""
 
 from copy import deepcopy
 import json

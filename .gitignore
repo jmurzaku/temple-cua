@@ -7,6 +7,7 @@ assets/*
 !assets/.gitkeep
 runs/
 dist/
+build/
 .env
 *.qcow2
 *.ppm
@@ -19,7 +20,3 @@ dist/
 !.env.example
 research-sources/
 .openai/
-!site/dist/
-!site/dist/**
-!site/dist/assets/starter-harness.zip
-!site/dist/assets/starter-run.zip

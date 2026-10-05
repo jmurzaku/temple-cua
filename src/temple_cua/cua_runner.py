@@ -1,8 +1,4 @@
-"""Optional, real cua-agent episodes over the existing TempleOS QMP backend.
-
-ComputerAgent owns prediction, dispatch, and screenshot feedback. VM lifecycle,
-budgets, evidence and grading remain outside it, as in the native harness.
-"""
+"""Run Cua ComputerAgent episodes through the TempleOS QMP backend."""
 
 from __future__ import annotations
 
@@ -441,7 +437,7 @@ def run_cua_task(task: Task, config: VMConfig, artifact_dir: Path, options: CuaO
               "task_fingerprint": hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()}
     started = time.monotonic()
     final = artifact_dir / "final.png"
-    computer = callback = None
+    computer = None
     try:
         with TempleVM(config, artifact_dir / "vm") as vm:
             if config.baseline is None:

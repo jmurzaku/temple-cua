@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f3">
+  <meta name="description" content="Computer-use tasks for TempleOS, with prompts, recorded agent runs, and a reproducible QEMU harness.">
+  <title>TempleOSBench</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23202521'/%3E%3Cpath d='M7 8h18v4h-7v14h-4V12H7z' fill='%23f7f7f3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="#main">TempleOSBench</a>
+    <nav aria-label="Main navigation"><a href="#tasks">Tasks</a><a href="#run">Recorded run</a><a href="https://github.com/jmurzaku/temple-cua">GitHub</a></nav>
+  </header>
+  <main id="main">
+    <section class="intro" aria-labelledby="intro-title">
+      <div>
+        <h1 id="intro-title">TempleOSBench</h1>
+        <p class="lead">Computer use in a ring 0 operating system.</p>
+        <p>An agent sees the screen, types HolyC, and controls the mouse. This repository provides a QEMU harness, six starter tasks, and the recordings from one Cua agent run.</p>
+      </div>
+      <dl class="environment-facts">
+        <div><dt>Guest</dt><dd>TempleOS 5.03</dd></div><div><dt>Display</dt><dd>640 × 480</dd></div><div><dt>Agent interface</dt><dd>Screenshots, keyboard, mouse</dd></div><div><dt>Execution</dt><dd>QEMU · no guest network</dd></div>
+      </dl>
+    </section>
+    <section id="tasks" class="tasks-section" aria-labelledby="tasks-title">
+      <div class="section-heading"><h2 id="tasks-title">Starter tasks</h2><span>01–06</span></div>
+      <p class="section-description">Select a task to inspect its prompt and recording.</p>
+      <div class="table-scroll"><table class="task-table">
+        <caption class="sr-only">Six starter tasks and their recorded results</caption>
+        <thead><tr><th scope="col">Task</th><th scope="col">Operation</th><th scope="col">Turns</th><th scope="col">Time</th><th scope="col">Visual check</th></tr></thead>
+        <tbody id="task-rows"><tr><td colspan="5">Loading recorded tasks…</td></tr></tbody>
+      </table></div>
+      <p id="data-error" class="load-error" role="status" hidden></p>
+    </section>
+    <section id="task-detail" class="task-detail" aria-labelledby="task-title" tabindex="-1">
+      <div class="section-heading detail-heading"><div><p id="task-number" class="task-number">Task 01</p><h2 id="task-title">Arithmetic</h2></div><a id="task-download" href="assets/tasks/arithmetic.yaml" download>Task YAML</a></div>
+      <div class="replay-layout">
+        <div class="recording">
+          <figure><img id="frame" src="assets/starter-frames/arithmetic/0000.png" alt="TempleOS desktop before the agent acts" width="640" height="480"><figcaption><span>Recorded screen</span><span id="recording-step">Step 0</span></figcaption></figure>
+          <div class="playback" aria-label="Recording controls"><button id="previous" type="button" aria-label="Previous recorded step" disabled>←</button><button id="play" type="button" disabled>Play</button><label class="sr-only" for="timeline">Recorded step</label><input id="timeline" type="range" min="0" max="1" value="0" disabled><button id="next" type="button" aria-label="Next recorded step" disabled>→</button></div>
+          <p id="step-note" class="step-note">Loading recording…</p>
+          <details class="action-details"><summary>Agent input at this step</summary><pre id="step-actions">Loading recording…</pre></details>
+        </div>
+        <div class="task-text">
+          <h3>Prompt</h3><p id="task-prompt" class="prompt">Loading task prompt…</p>
+          <div class="task-result"><h3>Result</h3><p id="task-outcome">Loading recorded result…</p><p id="task-budget" class="muted"></p></div>
+          <p class="small muted">The grader checks visible text. It does not verify the program’s implementation or hidden guest state.</p>
+        </div>
+      </div>
+    </section>
+    <section id="run" class="run-section" aria-labelledby="run-title">
+      <div class="section-heading"><h2 id="run-title">Recorded run</h2><a href="assets/starter-results.json" download>Results JSON</a></div>
+      <dl class="run-facts"><div><dt>Model</dt><dd id="run-model">—</dd></div><div><dt>Agent</dt><dd id="run-agent">—</dd></div><div><dt>Visual checks</dt><dd id="run-score">—</dd></div><div><dt>Attempts</dt><dd>One per task</dd></div></dl>
+      <p id="run-protocol">Each task starts from the same VM snapshot. Cua’s ComputerAgent drives a TempleOS computer adapter; the harness enforces the recorded time and turn limits.</p>
+      <p class="muted">This is one starter run, not an estimate of model success rates. The screenshots and executed inputs are available for inspection.</p>
+      <div class="text-links"><a href="assets/starter-run.zip" download>Download recorded run</a><a href="https://github.com/jmurzaku/temple-cua/blob/main/docs/CUA_RERUN.md">Run details</a></div>
+    </section>
+    <section id="environment" class="setup-section" aria-labelledby="setup-title">
+      <div><h2 id="setup-title">Run it locally</h2><p>TempleOS compiles HolyC at the command line. All guest code runs at ring 0 in a shared address space.</p><p>The harness handles VM resets, input, screenshots, and grading. The six starter tasks exercise the shell and filesystem.</p><p class="small muted">Requires Python 3.11+, QEMU, and a provider API key. See the repository for setup and provider options.</p><a href="https://github.com/jmurzaku/temple-cua">Source and setup instructions</a></div>
+      <pre class="setup-command"><code>pip install -e '.[cua]'
+temple-cua fetch-iso
+temple-cua prepare --output assets/baseline.qcow2
+
+temple-cua run --provider cua \
+  --model openai/gpt-6.1-sol \
+  --baseline assets/baseline.qcow2 \
+  --task arithmetic --output runs/arithmetic</code></pre>
+    </section>
+  </main>
+  <footer><span>TempleOSBench</span><div><a href="https://templeos.org">TempleOS</a><a href="https://github.com/trycua/cua">Cua</a><a href="https://github.com/jmurzaku/temple-cua/blob/main/LICENSE">MIT license</a></div></footer>
+  <noscript><p class="noscript">JavaScript is required to browse recordings. You can download the <a href="assets/starter-results.json">results</a> and <a href="assets/starter-run.zip">recorded run</a> directly.</p></noscript>
+</body>
+</html>

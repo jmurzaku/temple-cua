@@ -1,10 +1,15 @@
-"""The same constrained action vocabulary is used for every model provider."""
+"""Validated actions and tool schemas shared by the model providers."""
 
 from dataclasses import asdict, dataclass, field
 import math
 from typing import Any
 
 KINDS = ("type", "key", "click", "move", "scroll", "wait", "done")
+_FIELDS_BY_KIND = {
+    "type": ("text",), "done": ("text",), "key": ("keys",),
+    "click": ("x", "y", "button", "clicks"), "move": ("x", "y"),
+    "scroll": ("direction", "amount"), "wait": ("seconds",),
+}
 
 
 @dataclass(frozen=True)
@@ -62,13 +67,8 @@ class Action:
         return action
 
     def to_dict(self) -> dict:
-        fields_by_kind = {
-            "type": ("text",), "done": ("text",), "key": ("keys",),
-            "click": ("x", "y", "button", "clicks"), "move": ("x", "y"),
-            "scroll": ("direction", "amount"), "wait": ("seconds",),
-        }
         value = asdict(self)
-        return {key: value[key] for key in ("kind", *fields_by_kind[self.kind])}
+        return {key: value[key] for key in ("kind", *_FIELDS_BY_KIND[self.kind])}
 
 
 @dataclass
@@ -101,15 +101,10 @@ def action_json_schema() -> dict:
         "direction": {"type": "string", "enum": ["up", "down"]},
         "amount": {"type": "integer", "minimum": 1, "maximum": 20},
     }
-    fields_by_kind = {
-        "type": ("text",), "done": ("text",), "key": ("keys",),
-        "click": ("x", "y", "button", "clicks"), "move": ("x", "y"),
-        "scroll": ("direction", "amount"), "wait": ("seconds",),
-    }
     variants = []
     for kind in KINDS:
         properties = {"kind": {"type": "string", "enum": [kind]}}
-        properties.update({name: fields[name] for name in fields_by_kind[kind]})
+        properties.update({name: fields[name] for name in _FIELDS_BY_KIND[kind]})
         variants.append({
             "type": "object", "additionalProperties": False,
             "properties": properties, "required": list(properties),
