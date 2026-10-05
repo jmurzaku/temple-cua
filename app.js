@@ -205,7 +205,7 @@ async function loadTasks() {
   dataset = await response.json();
   if (!Array.isArray(dataset.tasks) || !dataset.tasks.length) throw new Error("No tasks are available.");
   byId("task-count").textContent = `${dataset.tasks.length} tasks`;
-  const count = dataset.tasks.length === 3 ? "Three" : String(dataset.tasks.length);
+  const count = ({ 3: "Three", 4: "Four" })[dataset.tasks.length] || String(dataset.tasks.length);
   byId("catalog-description").textContent = `${count} ${dataset.tasks.length === 1 ? "task" : "tasks"} in TempleOS. An agent sees screenshots, writes HolyC, and controls the mouse in a QEMU virtual machine.`;
   const rows = byId("task-rows");
   rows.replaceChildren();
