@@ -4,6 +4,8 @@ from copy import deepcopy
 import json
 import math
 
+from .vm import VMInputError, _qcode
+
 
 _registered = False
 
@@ -75,15 +77,21 @@ def _action(arguments: dict, width: int, height: int) -> dict:
             not isinstance(k, str) or not k or len(k) > 24 for k in keys
         ):
             raise CuaProtocolError("Computer keypress requires 1..5 key names")
+        try:
+            normalized = [_qcode(key) for key in keys]
+        except VMInputError as exc:
+            raise CuaProtocolError("Computer keypress contains an unsupported TempleOS key name") from exc
+        if len(set(normalized)) != len(normalized):
+            raise CuaProtocolError("Computer keypress cannot contain duplicate keys")
         result["keys"] = list(keys)
     elif name == "scroll":
         for key in ("scroll_x", "scroll_y"):
             value = arguments.get(key, 0)
-            if type(value) is not int or abs(value) > 2400:
-                raise CuaProtocolError("Computer scroll amount must be an integer within -2400..2400 pixels")
+            if type(value) is not int:
+                raise CuaProtocolError("Computer scroll amount must be an integer")
             result[key] = value
-        if result["scroll_x"] != 0 or result["scroll_y"] == 0:
-            raise CuaProtocolError("TempleOS supports nonzero vertical scrolling only")
+        if result["scroll_x"] != 0:
+            raise CuaProtocolError("TempleOS supports vertical scrolling only")
     elif name == "drag":
         start = _coordinates(arguments, width, height, "start_x", "start_y")
         end = _coordinates(arguments, width, height, "end_x", "end_y")
@@ -106,16 +114,22 @@ def _wire_history(messages: list[dict]) -> list[dict]:
             action = item.get("action")
             if not isinstance(action, dict) or not isinstance(action.get("type"), str):
                 raise CuaProtocolError("Malformed Cua computer action in history")
-            arguments = {k: v for k, v in action.items() if k != "type"}
-            arguments["action"] = action["type"]
-            if arguments["action"] == "drag":
-                path = arguments.pop("path", None)
-                if not isinstance(path, list) or len(path) < 2:
-                    raise CuaProtocolError("Malformed Cua drag in history")
-                arguments.update(start_x=path[0]["x"], start_y=path[0]["y"],
-                                 end_x=path[-1]["x"], end_y=path[-1]["y"])
+            if action["type"] == "rejected":
+                arguments = item.get("rejected_arguments")
+                if not isinstance(arguments, str) or not isinstance(item.get("validation_error"), dict):
+                    raise CuaProtocolError("Malformed rejected computer call in history")
+            else:
+                arguments = {k: v for k, v in action.items() if k != "type"}
+                arguments["action"] = action["type"]
+                if arguments["action"] == "drag":
+                    path = arguments.pop("path", None)
+                    if not isinstance(path, list) or len(path) < 2:
+                        raise CuaProtocolError("Malformed Cua drag in history")
+                    arguments.update(start_x=path[0]["x"], start_y=path[0]["y"],
+                                     end_x=path[-1]["x"], end_y=path[-1]["y"])
+                arguments = json.dumps(arguments)
             result.append({"type": "function_call", "name": "computer",
-                           "call_id": _call_id(item), "arguments": json.dumps(arguments)})
+                           "call_id": _call_id(item), "arguments": arguments})
         elif kind == "computer_call_output":
             output = item.get("output")
             if not isinstance(output, dict) or output.get("type") != "input_image":
@@ -123,20 +137,32 @@ def _wire_history(messages: list[dict]) -> list[dict]:
             image_url = output.get("image_url")
             if not isinstance(image_url, str) or not image_url.startswith("data:image/"):
                 raise CuaProtocolError("Computer screenshot requires an image data URL")
+            error = item.get("validation_error")
+            if error is not None and not isinstance(error, dict):
+                raise CuaProtocolError("Malformed computer validation error in history")
+            status = {"ok": True, "screenshot": "attached"} if error is None else {
+                "ok": False, "error": error, "input_executed": False, "screenshot": "attached"}
             result.append({"type": "function_call_output", "call_id": _call_id(item),
-                           "output": json.dumps({"ok": True, "screenshot": "attached"})})
+                           "output": json.dumps(status)})
             result.append({"role": "user", "content": [{"type": "input_image", "image_url": image_url}]})
         else:
             result.append(item)
     return result
 
 
+def _rejected_call(call_id: str, raw: str, message: str) -> dict:
+    return {"type": "computer_call", "call_id": call_id,
+            "action": {"type": "rejected"}, "rejected_arguments": raw,
+            "validation_error": {"code": "invalid_computer_action", "message": message},
+            "pending_safety_checks": [], "status": "completed"}
+
+
 def _cua_output(items: list[dict], width: int, height: int) -> list[dict]:
     if not isinstance(items, list):
         raise CuaProtocolError("OpenAI response output must be an array")
     result = []
-    terminated = False
-    actions = 0
+    calls = []
+    call_ids = set()
     for original in items:
         if not isinstance(original, dict):
             raise CuaProtocolError("OpenAI response output item must be an object")
@@ -145,31 +171,48 @@ def _cua_output(items: list[dict], width: int, height: int) -> list[dict]:
             if item.get("name") != "computer":
                 raise CuaProtocolError("Unexpected OpenAI function call")
             call_id = _call_id(item)
+            if call_id in call_ids:
+                raise CuaProtocolError("Duplicate OpenAI computer call_id")
+            call_ids.add(call_id)
             raw = item.get("arguments")
             if not isinstance(raw, str):
                 raise CuaProtocolError("OpenAI computer arguments must be a JSON string")
             try:
                 arguments = json.loads(raw)
-            except (ValueError, TypeError) as exc:
-                raise CuaProtocolError("Malformed OpenAI computer arguments") from exc
-            action = _action(arguments, width, height)
-            if action["type"] == "terminate":
-                if terminated:
-                    raise CuaProtocolError("Duplicate computer termination")
-                terminated = True
-                result.append({"type": "message", "role": "assistant", "status": "completed",
-                               "content": [{"type": "output_text", "annotations": [],
-                                            "text": f"Task complete ({action['status']})."}]})
+            except (ValueError, TypeError, RecursionError):
+                result.append(_rejected_call(call_id, raw, "Computer arguments must be valid JSON"))
             else:
-                actions += 1
-                result.append({"type": "computer_call", "call_id": call_id,
-                               "action": action, "pending_safety_checks": [], "status": "completed"})
+                try:
+                    action = _action(arguments, width, height)
+                except CuaProtocolError as exc:
+                    result.append(_rejected_call(call_id, raw, str(exc)))
+                else:
+                    result.append({"type": "computer_call", "call_id": call_id,
+                                   "action": action, "pending_safety_checks": [], "status": "completed"})
+            calls.append((result[-1], raw))
         elif item.get("type") in {"message", "reasoning"}:
             result.append(item)
         else:
             raise CuaProtocolError("Unexpected OpenAI response output type")
-    if terminated and actions:
-        raise CuaProtocolError("Computer terminate must be issued separately from input actions")
+    for call, raw in calls:
+        if call["action"]["type"] != "terminate":
+            continue
+        if len(calls) != 1:
+            call.update(_rejected_call(call["call_id"], raw,
+                                      "Computer terminate must be issued separately from other computer calls"))
+        else:
+            status = call["action"]["status"]
+            call.clear()
+            call.update({"type": "message", "role": "assistant", "status": "completed",
+                         "content": [{"type": "output_text", "annotations": [],
+                                      "text": f"Task complete ({status})."}]})
+    if any(call.get("action", {}).get("type") == "rejected" for call, _ in calls):
+        # Reject the whole batch before dispatch, so the error screenshot is
+        # current for every call and no valid input runs against stale state.
+        for call, raw in calls:
+            if call.get("action", {}).get("type") != "rejected":
+                call.update(_rejected_call(call["call_id"], raw,
+                                          "Batch contains a rejected action; retry valid actions separately"))
     return result
 
 
@@ -209,6 +252,22 @@ def register_openai_loop() -> None:
             )
             if not native:
                 response["output"] = _cua_output(response.get("output", []), width, height)
+                rejected = [item for item in response["output"]
+                            if item.get("action", {}).get("type") == "rejected"]
+                if rejected:
+                    screenshot = await computer_handler.screenshot()
+                    screenshot_hook = kwargs.get("_on_screenshot")
+                    if screenshot_hook is not None:
+                        await screenshot_hook(screenshot, "screenshot_after")
+                    # Cua skips dispatch for calls already paired with outputs.
+                    # Outputs go last so even an assistant text item cannot end
+                    # the run before the model sees and repairs the rejection.
+                    response["output"].extend({
+                        "type": "computer_call_output", "call_id": item["call_id"],
+                        "acknowledged_safety_checks": [],
+                        "validation_error": deepcopy(item["validation_error"]),
+                        "output": {"type": "input_image", "image_url": f"data:image/png;base64,{screenshot}"},
+                    } for item in rejected)
             # The upstream loop inserts zero when this model has no price entry.
             # An absent price is unknown, not a measured zero-dollar charge.
             usage = response.get("usage")

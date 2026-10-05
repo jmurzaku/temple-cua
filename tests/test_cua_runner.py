@@ -116,6 +116,21 @@ def test_cua_suite_fixture_provenance_cannot_be_mistaken_for_model_results(upstr
     assert (output / "report.html").is_file()
 
 
+@pytest.mark.parametrize("direction", ["up", "down"])
+def test_scroll_fixture_preserves_native_notches(upstream, fake_vm, tmp_path, direction):
+    result = cua_runner.run_cua_task(
+        task(), config(), tmp_path / "episode",
+        CuaOptions("openai/fixture", fixture=fixture_file(tmp_path, [
+            {"kind": "scroll", "direction": direction, "amount": 3},
+        ])),
+    )
+    assert result["status"] == "completed"
+    assert [a.to_dict() for a in fake_vm.instances[0].actions] == [
+        {"kind": "move", "x": 0, "y": 0},
+        {"kind": "scroll", "direction": direction, "amount": 3},
+    ]
+
+
 def computer(tmp_path):
     vm = FakeVM(config(), tmp_path)
     return TempleCuaComputer(vm, tmp_path, time.monotonic() + 30, max_actions=50)
@@ -124,13 +139,45 @@ def computer(tmp_path):
 def test_scroll_maps_pixels_to_bounded_ps2_wheel_notches(tmp_path):
     adapter = computer(tmp_path)
     asyncio.run(adapter.scroll(80, 120, 0, -240))
-    assert [action.kind for action in adapter.vm.actions] == ["move", "scroll"]
+    assert [action.kind for action in adapter.vm.actions] == ["move", "scroll", "scroll"]
     assert adapter.vm.actions[1].direction == "up"
-    assert adapter.vm.actions[1].amount == 2
+    assert [action.amount for action in adapter.vm.actions[1:]] == [20, 10]
     adapter.vm.actions.clear()
     with pytest.raises(VMInputError, match="vertical"):
         asyncio.run(adapter.scroll(80, 120, 20, 240))
     assert adapter.vm.actions == []
+
+
+@pytest.mark.parametrize("distance", [5000, -5000, 5001])
+def test_large_scroll_preserves_quantized_distance_in_bounded_chunks(tmp_path, distance):
+    adapter = computer(tmp_path)
+    asyncio.run(adapter.scroll(80, 120, 0, distance))
+    moves, *scrolls = adapter.vm.actions
+    assert moves.kind == "move"
+    assert all(action.kind == "scroll" and 1 <= action.amount <= 20 for action in scrolls)
+    assert sum(action.amount for action in scrolls) == (abs(distance) + 7) // 8
+    assert all(action.direction == ("up" if distance < 0 else "down") for action in scrolls)
+    assert adapter.input_actions == len(adapter.vm.actions)
+
+
+def test_scroll_zero_is_noop_and_impossible_distance_rejects_before_input(tmp_path):
+    adapter = computer(tmp_path)
+    asyncio.run(adapter.scroll(80, 120, 0, 0))
+    assert adapter.input_actions == 0 and adapter.vm.actions == []
+    with pytest.raises(VMInputError, match="shorter distance"):
+        asyncio.run(adapter.scroll(80, 120, 0, 10**100))
+    assert adapter.input_actions == 0 and adapter.vm.actions == []
+
+
+def test_repeated_mouse_down_rejects_before_moving_pointer(tmp_path):
+    adapter = computer(tmp_path)
+    asyncio.run(adapter.left_mouse_down(80, 120))
+    actions = list(adapter.vm.actions)
+    events = list(adapter.vm.events)
+    with pytest.raises(VMInputError, match="already held"):
+        asyncio.run(adapter.left_mouse_down(180, 220))
+    assert adapter.vm.actions == actions and adapter.vm.events == events
+    adapter.release()
 
 
 def test_invalid_drag_is_rejected_before_any_input(tmp_path):
@@ -211,3 +258,174 @@ def test_suite_reuses_async_loop_but_restores_each_vm(upstream, fake_vm, tmp_pat
     assert loops[0] is loops[1]
     assert len(fake_vm.instances) == 2 and all(vm.closed for vm in fake_vm.instances)
     assert len(result["results"]) == 2
+
+
+def test_real_upstream_episode_recovers_model_and_runtime_rejections_without_losing_evidence(upstream, fake_vm, tmp_path, monkeypatch):
+    import base64
+    from io import BytesIO
+    import litellm
+
+    def call(call_id, arguments):
+        return {"type": "function_call", "name": "computer", "call_id": call_id,
+                "arguments": arguments if isinstance(arguments, str) else json.dumps(arguments)}
+
+    turns = [
+        [call("malformed", "not-json"), call("batch-sibling", {"action": "type", "text": "MUST NOT EXECUTE"})],
+        [call("oversized-scroll", {"action": "scroll", "x": 80, "y": 120,
+                                  "scroll_x": 0, "scroll_y": 5000})],
+        [call("small-scroll", {"action": "scroll", "x": 80, "y": 120,
+                              "scroll_x": 0, "scroll_y": 16}),
+         call("corrected-type", {"action": "type", "text": "RECOVERED\n"})],
+        [call("finish", {"action": "terminate", "status": "success"})],
+    ]
+    requests = []
+
+    async def fake_responses(**kwargs):
+        requests.append(kwargs)
+        attempt = len(requests)
+        assert attempt <= 4, "Recovery must not make an extra API request"
+        assert kwargs["model"] == "openai/fixture-recovery"
+        messages = kwargs["input"]
+        calls = {item["call_id"]: item for item in messages if item.get("type") == "function_call"}
+        outputs = {item["call_id"]: item for item in messages if item.get("type") == "function_call_output"}
+        assert set(calls) == set(outputs), "History trimming must remove whole call/output pairs"
+        assert not any(item.get("type") in {"computer_call", "computer_call_output"} for item in messages)
+        for index, item in enumerate(messages):
+            if item.get("type") != "function_call_output":
+                continue
+            screenshot = messages[index + 1]
+            assert screenshot["role"] == "user"
+            image = screenshot["content"][0]
+            assert image["type"] == "input_image"
+            assert image["image_url"].startswith("data:image/png;base64,")
+            png = base64.b64decode(image["image_url"].split(",", 1)[1])
+            with Image.open(BytesIO(png)) as captured:
+                assert captured.size == (640, 480)
+        if attempt <= 3:
+            assert fake_vm.instances[0].actions == [], "Rejected calls must send no guest input"
+        if attempt == 2:
+            assert set(outputs) == {"malformed", "batch-sibling"}
+            for original in turns[0]:
+                call_id = original["call_id"]
+                assert calls[call_id]["arguments"] == original["arguments"]
+                rejected = json.loads(outputs[call_id]["output"])
+                assert rejected["ok"] is False and rejected["input_executed"] is False
+                assert rejected["error"]["code"] == "invalid_computer_action"
+                assert rejected["error"]["message"]
+                assert rejected["screenshot"] == "attached"
+        if attempt == 3:
+            assert "malformed" not in calls  # The oldest rejection pair exceeds image_history=2.
+            assert "oversized-scroll" in calls
+            rejected = json.loads(outputs["oversized-scroll"]["output"])
+            assert rejected["ok"] is False and rejected["input_executed"] is False
+            assert rejected["error"]["code"] == "invalid_computer_input"
+            assert "shorter distance" in rejected["error"]["message"]
+            assert json.loads(calls["oversized-scroll"]["arguments"])["scroll_y"] == 5000
+        if attempt == 4:
+            assert set(calls) == {"small-scroll", "corrected-type"}
+            assert all(json.loads(item["output"])["ok"] is True for item in outputs.values())
+        return {"id": f"fixture-response-{attempt}", "model": "fixture-response-model",
+                "output": turns[attempt - 1],
+                "usage": {"input_tokens": attempt * 10, "output_tokens": attempt,
+                          "total_tokens": attempt * 11},
+                "_hidden_params": {"response_cost": attempt * 0.001}}
+
+    monkeypatch.setattr(litellm, "aresponses", fake_responses)
+    folder = tmp_path / "episode"
+    result = cua_runner.run_cua_task(task(), config(), folder,
+                                     CuaOptions("openai/fixture-recovery", image_history=2), max_steps=4)
+    assert result["status"] == "completed" and result["steps"] == len(requests) == 4
+    assert result["budget"]["max_steps"] == 4 and result["budget"]["max_input_actions"] == 32
+    assert result["usage"] == {"input_tokens": 100, "output_tokens": 10, "total_tokens": 110,
+                               "estimated_cost_usd": pytest.approx(0.01)}
+    assert result["input_actions"] == 3
+    assert result["grade"]["status"] == "needs_review" and result["grade"]["score"] is None
+    vm = fake_vm.instances[0]
+    assert [action.to_dict() for action in vm.actions] == [
+        {"kind": "move", "x": 80, "y": 120},
+        {"kind": "scroll", "direction": "down", "amount": 2},
+        {"kind": "type", "text": "RECOVERED\n"},
+    ]
+    assert vm.events == [] and vm.closed
+    records = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines()]
+    assert [record["step"] for record in records] == [1, 2, 3, 4]
+    expected_requests = [[{key: item[key] for key in ("call_id", "name", "arguments")}
+                          for item in turn] for turn in turns]
+    assert [record["requested_calls"] for record in records] == expected_requests
+    for attempt, record in enumerate(records, start=1):
+        assert record["response_model"] == "fixture-response-model"
+        assert record["usage"]["input_tokens"] == attempt * 10
+        assert record["usage"]["output_tokens"] == attempt
+        assert record["usage"]["total_tokens"] == attempt * 11
+        assert (folder / record["screenshot_after"]).is_file()
+    assert all(records[index]["actions"] == records[index]["executed_actions"] == [] for index in (0, 1))
+    assert [error["arguments"] for error in records[0]["input_errors"]] == [item["arguments"] for item in turns[0]]
+    assert [error["call_id"] for error in records[0]["input_errors"]] == ["malformed", "batch-sibling"]
+    runtime_error = records[1]["input_errors"][0]
+    assert runtime_error["call_id"] == "oversized-scroll"
+    assert json.loads(runtime_error["arguments"]) == {"type": "scroll", "x": 80, "y": 120,
+                                                     "scroll_x": 0, "scroll_y": 5000}
+    assert runtime_error["error"]["code"] == "invalid_computer_input"
+    assert "shorter distance" in runtime_error["error"]["message"]
+    for record in records[:2]:
+        for error in record["input_errors"]:
+            assert error["input_executed"] is False
+            assert (folder / error["screenshot"]).is_file()
+            assert error["screenshot"].startswith("observations/")
+    assert "input_errors" not in records[2] and "input_errors" not in records[3]
+    assert json.loads((folder / "result.json").read_text())["usage"] == result["usage"]
+
+
+@pytest.mark.parametrize("failure", ["final-screenshot", "release"])
+def test_cleanup_infrastructure_failure_retains_flushed_calls_and_usage(upstream, fake_vm, tmp_path, monkeypatch, failure):
+    import litellm
+
+    requests = []
+
+    async def fake_responses(**kwargs):
+        requests.append(kwargs)
+        assert len(requests) <= 2
+        arguments = {"action": "type", "text": "HELLO"} if len(requests) == 1 else {
+            "action": "terminate", "status": "success"}
+        return {"model": "fixture-cleanup-model", "output": [
+            {"type": "function_call", "name": "computer", "call_id": f"cleanup-{len(requests)}",
+             "arguments": json.dumps(arguments)}],
+            "usage": {"input_tokens": 7, "output_tokens": 3, "total_tokens": 10}}
+
+    monkeypatch.setattr(litellm, "aresponses", fake_responses)
+    if failure == "final-screenshot":
+        original = fake_vm.screenshot
+        final_attempts = []
+
+        def fail_final_capture(vm, path):
+            if path.name == "final.png":
+                final_attempts.append(path)
+                if len(final_attempts) == 2:
+                    raise RuntimeError("Synthetic final screenshot failure")
+            return original(vm, path)
+
+        monkeypatch.setattr(fake_vm, "screenshot", fail_final_capture)
+    else:
+        def fail_release(computer):
+            raise RuntimeError("Synthetic release failure")
+
+        monkeypatch.setattr(TempleCuaComputer, "release", fail_release)
+    folder = tmp_path / "episode"
+    result = cua_runner.run_cua_task(task(), config(), folder, CuaOptions("openai/fixture-cleanup"))
+    assert result["status"] == "error"
+    assert result["error"].startswith("RuntimeError:")
+    assert result["steps"] == len(requests) == 2
+    assert result["usage"] == {"input_tokens": 14, "output_tokens": 6, "total_tokens": 20}
+    assert result["input_actions"] == 1
+    assert result["grade"]["status"] == "needs_review" and result["grade"]["score"] is None
+    assert fake_vm.instances[0].closed
+    assert [action.text for action in fake_vm.instances[0].actions] == ["HELLO"]
+    records = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines()]
+    assert [record["step"] for record in records] == [1, 2]
+    assert all(record["usage"]["total_tokens"] == 10 for record in records)
+    assert [record["requested_calls"][0]["call_id"] for record in records] == ["cleanup-1", "cleanup-2"]
+    assert records[1]["executed_actions"] == []
+    assert (folder / records[1]["screenshot_after"]).is_file()
+    persisted = json.loads((folder / "result.json").read_text())
+    assert persisted["status"] == "error" and persisted["steps"] == 2
+    assert persisted["usage"] == result["usage"]

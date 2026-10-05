@@ -29,6 +29,9 @@ from .tasks import Task
 from .vm import TempleVM, VMConfig, VMInputError
 
 CUA_VERSION = "0.9.0"
+COMPUTER_PROTOCOL_VERSION = 2
+SCROLL_PIXELS_PER_NOTCH = 8
+SCROLL_NOTCHES_PER_ACTION = 20
 INSTRUCTIONS = """You are operating TempleOS 5.03 through screenshots and keyboard/mouse actions.
 The actual framebuffer is 640x480: absolute pixels x=0..639, y=0..479, origin top left.
 The transport environment tag is linux only because Cua has no TempleOS tag.
@@ -37,7 +40,9 @@ There is no guest shell API, host terminal, browser, network or accessibility AP
 Type printable US ASCII, using keypress for chords such as ['ctrl','c'] or ['enter'].
 HolyC examples: Print("Hello\\n"); prints text; Dir; lists the current directory.
 Submit command lines with Enter or a trailing newline. Use screenshots to confirm effects.
-Scroll uses vertical pixel distances (positive down, negative up), translated to PS/2 wheel notches.
+Scroll uses vertical pixel distances (positive down, negative up). TempleOS document rows
+are 8 pixels high; one PS/2 wheel notch scrolls one row. Distances round up to whole rows.
+Invalid computer input returns a tool error and the current screenshot. Correct it and continue.
 Use at most four computer actions in each response. Wait only when needed.
 After completing the task, verify the visible result, then give a short final text answer.
 Your final answer does not decide the grade; an independent host grader evaluates the task.
@@ -176,10 +181,18 @@ class TempleCuaComputer:
         Action("move", x=x, y=y)  # Validate before sending any partial input.
         if type(scroll_x) is not int or type(scroll_y) is not int or scroll_x != 0:
             raise VMInputError("TempleOS supports integer vertical wheel scrolling only")
-        if not 0 < abs(scroll_y) <= 2400:
-            raise VMInputError("Vertical scroll must be nonzero and within +/-2400 pixels")
+        self._check()
+        if scroll_y == 0:
+            return
+        notches = (abs(scroll_y) + SCROLL_PIXELS_PER_NOTCH - 1) // SCROLL_PIXELS_PER_NOTCH
+        chunks = (notches + SCROLL_NOTCHES_PER_ACTION - 1) // SCROLL_NOTCHES_PER_ACTION
+        if 1 + chunks > self.max_actions - self.input_actions:
+            raise VMInputError("Scroll exceeds the remaining input action budget; request a shorter distance")
         self._execute(Action("move", x=x, y=y))
-        self._execute(Action("scroll", direction="down" if scroll_y > 0 else "up", amount=math.ceil(abs(scroll_y) / 120)))
+        while notches:
+            amount = min(notches, SCROLL_NOTCHES_PER_ACTION)
+            self._execute(Action("scroll", direction="down" if scroll_y > 0 else "up", amount=amount))
+            notches -= amount
 
     async def wait(self, ms=1000):
         if not isinstance(ms, (int, float)) or isinstance(ms, bool) or not math.isfinite(ms) or not 0 <= ms <= 10000:
@@ -190,9 +203,9 @@ class TempleCuaComputer:
         self._check()
         if x is None or y is None:
             raise VMInputError("Mouse down requires explicit screenshot coordinates")
-        self._execute(Action("move", x=x, y=y))
         if self.left_held:
             raise VMInputError("Left mouse button is already held")
+        self._execute(Action("move", x=x, y=y))
         self.left_held = True
         self.vm._events([{"type": "btn", "data": {"button": "left", "down": True}}], self.deadline)
         self._log_button(True)
@@ -307,11 +320,43 @@ class EpisodeCallback:
         calls = [item for item in output if item.get("type") in {"computer_call", "function_call"}]
         if len(calls) > 4:
             raise CuaBudgetExceeded("Cua response exceeds four computer actions")
+        rejected_outputs = {item.get("call_id"): item for item in output
+                            if item.get("type") == "computer_call_output" and item.get("validation_error")}
         allowed = {"click", "double_click", "type", "keypress", "move", "scroll", "drag", "screenshot", "wait", "left_mouse_down", "left_mouse_up"}
         for item in calls:
+            if item.get("type") == "computer_call" and item.get("action") == {"type": "rejected"}:
+                paired = rejected_outputs.get(item.get("call_id"))
+                error = item.get("validation_error")
+                if (not isinstance(item.get("rejected_arguments"), str) or not isinstance(error, dict)
+                        or not isinstance(error.get("code"), str) or not isinstance(error.get("message"), str)
+                        or not paired or paired.get("validation_error") != error):
+                    raise CuaProtocolError("Malformed rejected computer call")
+                self.record_input_error(item, error, item["rejected_arguments"])
+                continue
             if item.get("type") != "computer_call" or item.get("action", {}).get("type") not in allowed:
                 raise VMInputError("Cua response requested an unsupported action or function")
         return output
+
+    def record_input_error(self, item, error, arguments=None):
+        if self.current is not None:
+            self.current.setdefault("input_errors", []).append({
+                "call_id": item.get("call_id"), "arguments": arguments,
+                "error": deepcopy(error), "input_executed": False,
+                "screenshot": self.computer.last_screenshot,
+            })
+
+    async def on_api_end(self, kwargs, response):
+        del kwargs  # Request kwargs can contain credentials.
+        if self.current is None:
+            return
+        response = response if isinstance(response, dict) else response.model_dump()
+        self.current["requested_calls"] = [
+            {key: item.get(key) for key in ("call_id", "name", "arguments")}
+            for item in response.get("output", [])
+            if isinstance(item, dict) and item.get("type") == "function_call"
+        ]
+        if isinstance(response.get("model"), str):
+            self.current["response_model"] = response["model"]
 
     async def on_usage(self, usage):
         if self.current is not None:
@@ -381,7 +426,9 @@ def fixture_responses(path: Path | None):
                 # Cua0.9.0's standard wait action has a fixed one-second delay.
                 args.pop("seconds")
             elif kind == "scroll":
-                args.update(x=0, y=0, scroll_x=0, scroll_y=args.pop("amount") * (120 if args.pop("direction") == "down" else -120))
+                pixels = args.pop("amount") * SCROLL_PIXELS_PER_NOTCH
+                args.update(x=0, y=0, scroll_x=0,
+                            scroll_y=pixels if args.pop("direction") == "down" else -pixels)
             output.append({"type": "function_call", "id": f"fc_fixture_{index}_{n}", "call_id": f"call_fixture_{index}_{n}", "name": "computer", "arguments": json.dumps(args)})
         return {"id": f"resp_fixture_{index}", "model": "deterministic-fixture", "status": "completed", "output": output,
                 "usage": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}}
@@ -395,6 +442,23 @@ def fixture_responses(path: Path | None):
 
 async def _episode(computer: TempleCuaComputer, callback: EpisodeCallback, task: Task, options: CuaOptions):
     ComputerAgent, CustomComputerHandler = load_cua()
+
+    class RecoverableComputerAgent(ComputerAgent):
+        async def _handle_item(self, item, computer=None, ignore_call_ids=None):
+            try:
+                return await super()._handle_item(item, computer, ignore_call_ids)
+            except VMInputError as exc:
+                if item.get("type") != "computer_call":
+                    raise
+                # Only controlled, pre-input validation failures are recoverable.
+                # Deadlines, spent budgets, and VM failures still terminate the run.
+                screenshot = await computer.screenshot()
+                error = {"code": "invalid_computer_input", "message": str(exc)}
+                callback.record_input_error(item, error, json.dumps(item.get("action", {})))
+                return [{"type": "computer_call_output", "call_id": item.get("call_id"),
+                         "validation_error": error,
+                         "output": {"type": "input_image", "image_url": f"data:image/png;base64,{screenshot}"}}]
+
     handler = CustomComputerHandler(computer.tools())
     generation = {"request_timeout": options.api_timeout}
     if options.model.startswith("openai/"):
@@ -402,7 +466,7 @@ async def _episode(computer: TempleCuaComputer, callback: EpisodeCallback, task:
         generation["parallel_tool_calls"] = False
     else:
         generation["max_tokens"] = options.max_output_tokens
-    agent = ComputerAgent(
+    agent = RecoverableComputerAgent(
         model=options.model, tools=[handler], callbacks=[callback], instructions=INSTRUCTIONS,
         only_n_most_recent_images=options.image_history, telemetry_enabled=False,
         max_retries=0, screenshot_delay=0.25, api_base=options.base_url, **generation,
@@ -460,13 +524,19 @@ def run_cua_task(task: Task, config: VMConfig, artifact_dir: Path, options: CuaO
                 if callback.completion_text:
                     result["completion_text"] = callback.completion_text
             finally:
-                computer.release()
-                vm.screenshot(final)
-                callback.flush()
-                result["steps"] = callback.calls
-                result["usage"] = callback.usage
-                result["input_actions"] = computer.input_actions
-                result["observations"] = computer.screenshots
+                try:
+                    computer.release()
+                finally:
+                    try:
+                        vm.screenshot(final)
+                    finally:
+                        try:
+                            callback.flush()
+                        finally:
+                            result["steps"] = callback.calls
+                            result["usage"] = callback.usage
+                            result["input_actions"] = computer.input_actions
+                            result["observations"] = computer.screenshots
     except CuaBudgetExceeded as exc:
         result["status"] = "budget_exhausted"
         result["budget_reason"] = str(exc)
@@ -501,13 +571,17 @@ def run_cua_suite(tasks: list[Task], config: VMConfig, output: Path, options: Cu
                            "model_options": {"cua_version": version("cua-agent"), "max_output_tokens": options.max_output_tokens, "api_timeout": options.api_timeout,
                                              "image_history": options.image_history}},
                 "provenance": {"agent_package": "cua-agent", "agent_version": version("cua-agent"),
-                               "inference": "upstream ComputerAgent and LiteLLM",
+                               "inference": "upstream ComputerAgent with TempleOS input recovery; LiteLLM",
                                "agent_loop": agent_config.agent_class.__name__ if agent_config else "unresolved",
                                "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
                                "backend": "TempleVM/QMP legacy PC devices", "framebuffer": [640, 480],
                                "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
                                "execution_mode": "deterministic_fixture" if options.fixture else "live_model",
                                "telemetry_enabled": False, "max_actions_per_response": 4,
+                               "computer_protocol_version": COMPUTER_PROTOCOL_VERSION,
+                               "instructions_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
+                               "scroll_pixels_per_notch": SCROLL_PIXELS_PER_NOTCH,
+                               "input_error_handling": "recoverable tool output with screenshot",
                                "step_definition": "deterministic fixture prediction turns; no API requests" if options.fixture else "actual model API attempts; Cua automatic retries disabled",
                                "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted"},
                 "results": []}
