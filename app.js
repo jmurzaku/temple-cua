@@ -94,7 +94,7 @@ function selectTask(id, moveFocus = false) {
   if (!task) return;
   stopPlayback();
   selectedTask = task;
-  byId("task-number").textContent = `Task ${String(dataset.tasks.indexOf(task) + 1).padStart(2, "0")}`;
+  byId("task-number").textContent = `Task ${String(dataset.tasks.indexOf(task) + 1).padStart(2, "0")} · ${difficultyLabel(task)}`;
   byId("task-title").textContent = task.title;
   showPrompt(task.prompt);
   byId("task-download").href = `assets/tasks/${task.id}.yaml`;
@@ -139,12 +139,19 @@ function cell(text, className) {
   return node;
 }
 
+function difficultyLabel(task) {
+  const labels = { easy: "Trivial", trivial: "Trivial", medium: "Intermediate", intermediate: "Intermediate", hard: "Hard" };
+  return labels[String(task.difficulty || "").toLowerCase()] || task.difficulty || task.category || "—";
+}
+
 async function loadTasks() {
   const response = await fetch("assets/starter-data.json");
   if (!response.ok) throw new Error("Task data could not load.");
   dataset = await response.json();
   if (!Array.isArray(dataset.tasks) || !dataset.tasks.length) throw new Error("No tasks are available.");
   byId("task-count").textContent = `${dataset.tasks.length} tasks`;
+  const count = dataset.tasks.length === 3 ? "Three" : String(dataset.tasks.length);
+  byId("catalog-description").textContent = `${count} ${dataset.tasks.length === 1 ? "task" : "tasks"} in TempleOS. An agent sees screenshots, writes HolyC, and controls the mouse in a QEMU virtual machine.`;
   const rows = byId("task-rows");
   rows.replaceChildren();
   dataset.tasks.forEach((task, index) => {
@@ -162,19 +169,23 @@ async function loadTasks() {
     button.addEventListener("click", () => selectTask(task.id, true));
     first.append(button);
     const result = task.result;
-    const status = !result ? "Not run" : result.status === "error" ? "error" : result.grade.status.replaceAll("_", " ");
-    row.append(first, cell(task.category), cell(result ? String(result.steps) : "—"), cell(result ? `${Number(result.elapsed_seconds).toFixed(1)}s` : "—"), cell(status, "result-status"));
+    const status = !result ? "Not run" : "Recorded";
+    row.append(first, cell(difficultyLabel(task), "task-difficulty"), cell(status, "result-status"));
     rows.append(row);
   });
-  byId("run-model").textContent = dataset.run.model;
-  byId("run-agent").textContent = `cua-agent ${dataset.run.cua_version}`;
   const recordedTasks = dataset.tasks.filter(task => task.result);
-  byId("run-score").textContent = `${recordedTasks.filter(task => task.result.status !== "error" && task.result.grade.status === "passed").length} / ${recordedTasks.length} passed`;
+  byId("run-model").textContent = recordedTasks.length ? dataset.run.model : "—";
+  byId("run-agent").textContent = recordedTasks.length ? `cua-agent ${dataset.run.cua_version}` : "—";
+  byId("run-task").textContent = `${recordedTasks.length} / ${dataset.tasks.length}`;
+  const passed = recordedTasks.filter(task => task.result.status !== "error" && task.result.grade.status === "passed").length;
+  byId("run-score").textContent = recordedTasks.length ? `${passed} / ${recordedTasks.length} passed` : "Pending";
+  const unrecordedCount = dataset.tasks.length - recordedTasks.length;
+  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : recordedTasks.length === 1 ? `One recorded attempt on ${recordedTasks[0].title.toLowerCase()}. ${unrecordedCount} other tasks have no recorded model run.` : `One recorded attempt per measured task. ${unrecordedCount} other tasks have no recorded model run.`;
   const budgets = recordedTasks.map(task => task.result.budget);
-  const sharedBudget = budgets.every(budget => budget.max_steps === budgets[0].max_steps && budget.timeout_seconds === budgets[0].timeout_seconds);
-  const limits = sharedBudget ? `The harness enforces a limit of ${budgets[0].max_steps} model turns and ${budgets[0].timeout_seconds} seconds per task.` : "The harness enforces the time and turn limits recorded for each task.";
-  const bridge = dataset.run.model.startsWith("openai/") ? " through an OpenAI Responses compatibility bridge" : "";
-  byId("run-protocol").textContent = `Each task starts from the same VM snapshot. ${limits} Cua’s ComputerAgent drives a TempleOS computer adapter${bridge}.`;
+  const sharedBudget = budgets.length && budgets.every(budget => budget.max_steps === budgets[0].max_steps && budget.timeout_seconds === budgets[0].timeout_seconds);
+  const limits = !budgets.length ? "" : sharedBudget ? `The recorded limit is ${budgets[0].max_steps} model turns and ${budgets[0].timeout_seconds} seconds per task. ` : "The harness enforces the time and turn limits recorded for each task. ";
+  const bridge = recordedTasks.length && dataset.run.model.startsWith("openai/") ? " through an OpenAI Responses compatibility bridge" : "";
+  byId("run-protocol").textContent = `${limits}Cua’s ComputerAgent drives a TempleOS computer adapter${bridge}.`;
   selectTask(dataset.tasks[0].id);
 }
 
@@ -182,7 +193,7 @@ loadTasks().catch(() => {
   byId("task-rows").replaceChildren();
   const row = document.createElement("tr");
   const message = cell("Task data could not load.");
-  message.colSpan = 5;
+  message.colSpan = 3;
   row.append(message);
   byId("task-rows").append(row);
   byId("data-error").hidden = false;

@@ -11,6 +11,21 @@
       "title": "Arithmetic",
       "description": "Evaluate an integer expression.",
       "category": "Shell",
+      "difficulty": "easy",
+      "grader": {
+        "type": "ocr",
+        "crop": [
+          8,
+          16,
+          624,
+          456
+        ],
+        "case_sensitive": true,
+        "match_mode": "line",
+        "all": [
+          "BENCH_ARITH=391"
+        ]
+      },
       "prompt": "Use the TempleOS command line to evaluate (37 * 19) - (24 * 13) in HolyC.\nPrint the result with the exact label BENCH_ARITH= followed immediately by\nthe decimal integer and a newline. Leave that output visible and finish.\nExecute the calculation in TempleOS; do not just type a precomputed answer.\n",
       "result": {
         "task_id": "arithmetic",
@@ -90,409 +105,27 @@
       ]
     },
     {
-      "id": "sum_of_squares",
-      "title": "Sum of squares",
-      "description": "Sum twelve squares with a HolyC loop.",
-      "category": "Loops",
-      "prompt": "In the TempleOS command line, write and execute HolyC code that uses a loop\nto sum n*n for every integer n from 1 through 12, inclusive.\nPrint BENCH_SUM= followed immediately by the decimal result and a newline.\nLeave the output visible and finish. Use a loop rather than a closed formula.\n",
-      "result": {
-        "task_id": "sum_of_squares",
-        "title": "Sum the first twelve squares with a loop",
-        "status": "completed",
-        "steps": 3,
-        "elapsed_seconds": 15.924,
-        "usage": {
-          "input_tokens": 4009,
-          "output_tokens": 206,
-          "total_tokens": 4215,
-          "estimated_cost_usd": 0.010078
-        },
-        "artifact_dir": "sum_of_squares",
-        "final_screenshot": "sum_of_squares/final.png",
-        "grade": {
-          "type": "ocr",
-          "status": "passed",
-          "score": 1.0,
-          "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-          "evidence": [
-            "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-            "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
-            "grader-ocr.txt"
-          ],
-          "engine": "templeos-bitmap",
-          "match_mode": "line"
-        },
-        "budget": {
-          "max_steps": 24,
-          "timeout_seconds": 300.0,
-          "max_input_actions": 192
-        },
-        "task_fingerprint": "bde95b3ee9cf441680a9e52d35f5cc314b5c3d21dad682ef05d9fdb5b4d19058",
-        "setup_seconds": 1.314997817999938,
-        "completion_text": "Executed the HolyC loop for n=1 through 12. The output remains visible:\n\n```text\nBENCH_SUM=650\n```",
-        "input_actions": 2,
-        "observations": 3
-      },
-      "frames": [
-        {
-          "step": 0,
-          "src": "assets/starter-frames/sum_of_squares/0000.png",
-          "note": "Before the first action.",
-          "actions": []
-        },
-        {
-          "step": 1,
-          "src": "assets/starter-frames/sum_of_squares/0001.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "I64 n,sum=0; for(n=1;n<=12;n++) sum+=n*n; Print(\"BENCH_SUM=%d\\n\",sum);"
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "src": "assets/starter-frames/sum_of_squares/0002.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 3,
-          "src": "assets/starter-frames/sum_of_squares/0003.png",
-          "note": "Executed the HolyC loop for n=1 through 12. The output remains visible:\n\n```text\nBENCH_SUM=650\n```",
-          "actions": []
-        }
-      ]
-    },
-    {
-      "id": "triangular_function",
-      "title": "Triangular function",
-      "description": "Define a function and call it.",
-      "category": "Functions",
-      "prompt": "Define a HolyC function named BenchTri that accepts an I64 n and returns\nthe sum of the integers from 1 through n. Call your function with n=25.\nPrint its return value as BENCH_TRI= followed immediately by the decimal\ninteger and a newline. Leave the output visible and finish.\nThe result must come from calling the function you defined in TempleOS.\n",
-      "result": {
-        "task_id": "triangular_function",
-        "title": "Define and call a HolyC function",
-        "status": "completed",
-        "steps": 3,
-        "elapsed_seconds": 19.279,
-        "usage": {
-          "input_tokens": 4059,
-          "output_tokens": 220,
-          "total_tokens": 4279,
-          "estimated_cost_usd": 0.0083572
-        },
-        "artifact_dir": "triangular_function",
-        "final_screenshot": "triangular_function/final.png",
-        "grade": {
-          "type": "ocr",
-          "status": "passed",
-          "score": 1.0,
-          "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-          "evidence": [
-            "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-            "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
-            "grader-ocr.txt"
-          ],
-          "engine": "templeos-bitmap",
-          "match_mode": "line"
-        },
-        "budget": {
-          "max_steps": 24,
-          "timeout_seconds": 300.0,
-          "max_input_actions": 192
-        },
-        "task_fingerprint": "e2f29b98f33285fddd464654a9d723209aec47f86b6d9f79969cd25cbcad755e",
-        "setup_seconds": 1.330731623000247,
-        "completion_text": "Defined and called `BenchTri(25)`. Verified the visible output:\n\n```text\nBENCH_TRI=325\n```",
-        "input_actions": 2,
-        "observations": 3
-      },
-      "frames": [
-        {
-          "step": 0,
-          "src": "assets/starter-frames/triangular_function/0000.png",
-          "note": "Before the first action.",
-          "actions": []
-        },
-        {
-          "step": 1,
-          "src": "assets/starter-frames/triangular_function/0001.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "I64 BenchTri(I64 n) { I64 i,s=0; for(i=1;i<=n;i++) s+=i; return s; }\n"
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "src": "assets/starter-frames/triangular_function/0002.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Print(\"BENCH_TRI=%d\\n\",BenchTri(25));\n"
-            }
-          ]
-        },
-        {
-          "step": 3,
-          "src": "assets/starter-frames/triangular_function/0003.png",
-          "note": "Defined and called `BenchTri(25)`. Verified the visible output:\n\n```text\nBENCH_TRI=325\n```",
-          "actions": []
-        }
-      ]
-    },
-    {
-      "id": "string_statistics",
-      "title": "String statistics",
-      "description": "Measure a string and count a character.",
-      "category": "Strings",
-      "prompt": "Store the exact ASCII string TEMPLEOS TEMPLEOS in TempleOS.\nUse HolyC string routines or a loop to measure its length and count its\nuppercase E characters. Print two separate lines:\nBENCH_LENGTH=<decimal length>\nBENCH_E_COUNT=<decimal count>\nLeave both output lines visible and finish. Measure the stored string in\nTempleOS rather than inserting constants for the answers.\n",
-      "result": {
-        "task_id": "string_statistics",
-        "title": "Measure a string using TempleOS routines",
-        "status": "completed",
-        "steps": 2,
-        "elapsed_seconds": 25.624,
-        "usage": {
-          "input_tokens": 2575,
-          "output_tokens": 197,
-          "total_tokens": 2772,
-          "estimated_cost_usd": 0.0051554
-        },
-        "artifact_dir": "string_statistics",
-        "final_screenshot": "string_statistics/final.png",
-        "grade": {
-          "type": "ocr",
-          "status": "passed",
-          "score": 1.0,
-          "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-          "evidence": [
-            "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-            "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
-            "grader-ocr.txt"
-          ],
-          "engine": "templeos-bitmap",
-          "match_mode": "line"
-        },
-        "budget": {
-          "max_steps": 24,
-          "timeout_seconds": 300.0,
-          "max_input_actions": 192
-        },
-        "task_fingerprint": "42378f448476df2ea33cdde2ff34009da4017d6aa11e0c8c6df32c94eaf1bc5f",
-        "setup_seconds": 1.3057410270002947,
-        "completion_text": "Stored and measured the string in TempleOS. Both output lines are visible:\n\n```text\nBENCH_LENGTH=17\nBENCH_E_COUNT=4\n```",
-        "input_actions": 1,
-        "observations": 2
-      },
-      "frames": [
-        {
-          "step": 0,
-          "src": "assets/starter-frames/string_statistics/0000.png",
-          "note": "Before the first action.",
-          "actions": []
-        },
-        {
-          "step": 1,
-          "src": "assets/starter-frames/string_statistics/0001.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "U8 *bench_s=\"TEMPLEOS TEMPLEOS\";\nI64 bench_len=StrLen(bench_s),bench_e=0,bench_i;\nfor(bench_i=0;bench_i<bench_len;bench_i++) if(bench_s[bench_i]=='E') bench_e++;\nPrint(\"BENCH_LENGTH=%d\\nBENCH_E_COUNT=%d\\n\",bench_len,bench_e);\n"
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "src": "assets/starter-frames/string_statistics/0002.png",
-          "note": "Stored and measured the string in TempleOS. Both output lines are visible:\n\n```text\nBENCH_LENGTH=17\nBENCH_E_COUNT=4\n```",
-          "actions": []
-        }
-      ]
-    },
-    {
-      "id": "directory_navigation",
-      "title": "Directory navigation",
-      "description": "Find the graphics examples.",
-      "category": "Filesystem",
-      "prompt": "Change the current directory to /Demo/Graphics on the TempleOS boot drive.\nShow a directory listing that includes the HolyC graphics example files.\nLeave the listing visible, including Blot.HC (possibly with the .Z suffix),\nand finish while that directory remains the current directory.\nUse the boot-drive path notation; its letter may vary across installations.\n",
-      "result": {
-        "task_id": "directory_navigation",
-        "title": "Navigate to the graphics examples",
-        "status": "completed",
-        "steps": 3,
-        "elapsed_seconds": 13.911,
-        "usage": {
-          "input_tokens": 3981,
-          "output_tokens": 193,
-          "total_tokens": 4174,
-          "estimated_cost_usd": 0.0079426
-        },
-        "artifact_dir": "directory_navigation",
-        "final_screenshot": "directory_navigation/final.png",
-        "grade": {
-          "type": "ocr",
-          "status": "passed",
-          "score": 1.0,
-          "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-          "evidence": [
-            "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-            "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
-            "grader-ocr.txt"
-          ],
-          "engine": "templeos-bitmap",
-          "match_mode": "substring"
-        },
-        "budget": {
-          "max_steps": 24,
-          "timeout_seconds": 300.0,
-          "max_input_actions": 192
-        },
-        "task_fingerprint": "fd7e0f0f1a5277c46e6d2d5016f0eb061895c3b3a6b4c62306935e7ede598806",
-        "setup_seconds": 1.3421203880006942,
-        "completion_text": "Changed to the boot drive\u2019s `::/Demo/Graphics` directory and displayed its listing. `Blot.HC.Z` is visible, and the directory remains current.",
-        "input_actions": 2,
-        "observations": 3
-      },
-      "frames": [
-        {
-          "step": 0,
-          "src": "assets/starter-frames/directory_navigation/0000.png",
-          "note": "Before the first action.",
-          "actions": []
-        },
-        {
-          "step": 1,
-          "src": "assets/starter-frames/directory_navigation/0001.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Cd(\"::/Demo/Graphics\");\n"
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "src": "assets/starter-frames/directory_navigation/0002.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Dir;\n"
-            }
-          ]
-        },
-        {
-          "step": 3,
-          "src": "assets/starter-frames/directory_navigation/0003.png",
-          "note": "Changed to the boot drive\u2019s `::/Demo/Graphics` directory and displayed its listing. `Blot.HC.Z` is visible, and the directory remains current.",
-          "actions": []
-        }
-      ]
-    },
-    {
-      "id": "file_roundtrip",
-      "title": "File round trip",
-      "description": "Write three lines and read them back.",
-      "category": "Filesystem",
-      "prompt": "Use the writable B: RAM drive. Create /Bench if necessary and save a file\nB:/Bench/Notes.TXT containing exactly these three lowercase lines, each\nterminated by an LF newline:\nalpha\nbeta\ngamma\nRead the file back from the drive. Print its byte count, as obtained from\nthe file read, as BENCH_FILE_BYTES=<decimal count> on its own line. Then\ndisplay the file's actual text. Leave the count and all three lines visible\nand finish. TempleOS boot media is read-only, so use B: for this task.\n",
-      "result": {
-        "task_id": "file_roundtrip",
-        "title": "Write and read a file on a RAM drive",
-        "status": "completed",
-        "steps": 3,
-        "elapsed_seconds": 31.988,
-        "usage": {
-          "input_tokens": 4268,
-          "output_tokens": 316,
-          "total_tokens": 4584,
-          "estimated_cost_usd": 0.009657299999999999
-        },
-        "artifact_dir": "file_roundtrip",
-        "final_screenshot": "file_roundtrip/final.png",
-        "grade": {
-          "type": "ocr",
-          "status": "passed",
-          "score": 1.0,
-          "reason": "Required visual text matched. Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-          "evidence": [
-            "Heuristic visual evidence only: printed constants, source text or a fake listing can satisfy text checks; guest state is not verified.",
-            "Exact stock TempleOS 8x8 glyph decoding; unknown cells remain U+FFFD.",
-            "grader-ocr.txt"
-          ],
-          "engine": "templeos-bitmap",
-          "match_mode": "line"
-        },
-        "budget": {
-          "max_steps": 24,
-          "timeout_seconds": 300.0,
-          "max_input_actions": 192
-        },
-        "task_fingerprint": "2c8f7774262f3175beef7470ea563dacecef3ebacc0784450f1dbb3046f7aca7",
-        "setup_seconds": 1.3049215019991607,
-        "completion_text": "Created and read back `B:/Bench/Notes.TXT`. The visible output shows:\n\n```text\nBENCH_FILE_BYTES=17\nalpha\nbeta\ngamma\n```",
-        "input_actions": 2,
-        "observations": 3
-      },
-      "frames": [
-        {
-          "step": 0,
-          "src": "assets/starter-frames/file_roundtrip/0000.png",
-          "note": "Before the first action.",
-          "actions": []
-        },
-        {
-          "step": 1,
-          "src": "assets/starter-frames/file_roundtrip/0001.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "DirMk(\"B:/Bench\");\nFileWrite(\"B:/Bench/Notes.TXT\",\"alpha\\nbeta\\ngamma\\n\",17);\n"
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "src": "assets/starter-frames/file_roundtrip/0002.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "I64 bench_size;\nU8 *bench_text=FileRead(\"B:/Bench/Notes.TXT\",&bench_size);\nPrint(\"BENCH_FILE_BYTES=%d\\n\",bench_size); Print(\"%s\",bench_text);\n"
-            }
-          ]
-        },
-        {
-          "step": 3,
-          "src": "assets/starter-frames/file_roundtrip/0003.png",
-          "note": "Created and read back `B:/Bench/Notes.TXT`. The visible output shows:\n\n```text\nBENCH_FILE_BYTES=17\nalpha\nbeta\ngamma\n```",
-          "actions": []
-        }
-      ]
-    },
-    {
       "id": "cursor_callback",
       "title": "Live cursor callback",
       "category": "Graphics",
+      "difficulty": "medium",
       "prompt": "At the TempleOS shell, JIT-compile this exact callback:\n\nU0 Cross(CTask *, CDC *dc) {\n  dc->color=YELLOW;\n  GrLine(dc,ms.pos.x-16,ms.pos.y,ms.pos.x+16,ms.pos.y);\n  GrLine(dc,ms.pos.x,ms.pos.y-16,ms.pos.x,ms.pos.y+16);\n}\n\nInstall it with Fs->draw_it=&Cross;. Move the pointer to at least two\ndistinct positions and observe the live yellow cross following it.\nRight-click in the top menu bar, open the built-in help index, and click\nits Command Line documentation link. Keep the same callback installed\nthroughout; do not clear, replace, or reinstall it.\nMove the pointer to two distinct positions over the opened document.\nFinish with Command Line Overview open and the cross still following\nthe pointer over the document.\n",
       "grader": {
         "type": "manual",
         "rubric": "Review the full trajectory. The exact anonymous-CTask callback must\ncompile in the live shell and be installed using Fs->draw_it=&Cross.\nA live yellow cross must appear at two pointer positions before and\nafter opening the document, moving by the same delta as the pointer.\nAllow the stock bordered fixture's measured +8,+16 rendering offset.\nThe trajectory must include a right-click over the top menu bar with\na visible pulldown, then the help index and an actual clicked link to\nCommand Line Overview. That document must remain open at completion.\nTempleOS exposes the top menu on hover; a desktop context menu is not\nrequired.\nThe callback must not be cleared, replaced, reinstalled after navigation,\nor reproduced as a static image. Menus may cover the cross where they\noverlap because they render later; this does not imply callback removal.\nA screenshot alone cannot prove the callback remains live. Review its\nmovement across the full trajectory; this task has no automatic pass score.\n"
+      },
+      "result": null,
+      "frames": []
+    },
+    {
+      "id": "interactive_counter_panel",
+      "title": "Live counter panel",
+      "category": "Graphics",
+      "difficulty": "hard",
+      "prompt": "Build a small interactive counter panel in the TempleOS shell using\nJIT-compiled HolyC and a live Fs->draw_it callback. Place three clearly\nlabeled buttons, +1, -1, and RESET, inside the 640x480 shell interior.\nDisplay COUNT= followed by the current integer, initially COUNT=0.\n\nA real left-click on +1 increments the count once, -1 decrements it once,\nand RESET sets it to zero. Clicking outside the buttons does nothing.\nHandle each mouse press once rather than repeatedly while it is held.\nKeep the drawing callback brief so the desktop remains responsive.\n\nDemonstrate the working panel with actual mouse clicks: click +1 three\ntimes and show COUNT=3; click -1 once and show COUNT=2; click RESET and\nshow COUNT=0; click outside the buttons and show that it stays zero;\nthen click +1 twice and finish with COUNT=2. Keep the same live panel\nactive throughout the demonstration and leave it visible at completion.\nObserve the intermediate states. Do not type count updates into the\nshell or replace the panel with a static picture.\n",
+      "grader": {
+        "type": "manual",
+        "rubric": "Review the full action and screenshot trajectory. The agent must\ncompile its own HolyC implementation, install a live task drawing\ncallback, and render visible +1, -1, RESET buttons and an initial\nCOUNT=0 inside the shell window. No implementation is supplied.\n\nVerify that genuine left-clicks on the rendered buttons cause the\nobserved state sequence: three increments reach 3, one decrement\nreaches 2, reset reaches 0, an outside click leaves 0 unchanged, and\ntwo further increments reach 2. Each distinct press changes the count\nat most once. Intermediate increment states provide reviewable\nprogress even when the full sequence is incomplete.\n\nThe panel must remain live throughout, with the final COUNT=2 visible.\nCheck responsiveness and absence of callback faults or a frozen guest.\nAccept any clear layout within the shell interior; account for the\nwindow's drawing origin when assessing button hit-testing. Typed\ncount values, static screenshots, or recompiling state between the\ndemonstrated clicks do not establish interactive behavior.\n\nA final screenshot alone cannot prove the state transitions or live\ncallback. This task requires trajectory review and has no automatic\npass score.\n"
       },
       "result": null,
       "frames": []
