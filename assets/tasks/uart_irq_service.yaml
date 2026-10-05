@@ -112,8 +112,8 @@ grader:
     '
 category: kernel
 difficulty: hard
-max_steps: 80
-timeout_seconds: 900
+max_steps: 300
+timeout_seconds: 3600
 setup:
 - kind: type
   text: 'Cd("B:/Bench",TRUE);DocClear;

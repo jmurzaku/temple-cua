@@ -278,7 +278,7 @@ function selectTask(id, moveFocus = false) {
   showHostEvaluation(task);
   if (result) {
     byId("task-outcome").textContent = taskOutcomeText(task);
-    byId("task-budget").textContent = `Limit: ${result.budget.max_steps} turns · ${result.budget.timeout_seconds} seconds.`;
+    byId("task-budget").textContent = `Budget: ${result.budget.max_steps} model calls · ${result.budget.timeout_seconds} seconds of policy time.`;
     const metadata = runMetadata(task);
     const started = metadata.created_at ? new Date(metadata.created_at).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }) : "Start time not recorded";
     setText("task-provenance", `${metadata.model || "Model not recorded"} · cua-agent ${metadata.cua_version || "—"} · ${started}`);

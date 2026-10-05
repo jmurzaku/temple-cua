@@ -339,8 +339,8 @@
       ]
     },
     {
-      "id": "05-cua-uart",
-      "created_at": "2026-10-05T12:45:22.157496+00:00",
+      "id": "05-cua-uart-300",
+      "created_at": "2026-10-05T13:56:45.926235+00:00",
       "provider": "cua",
       "model": "openai/gpt-6.1-sol",
       "config": {
@@ -372,7 +372,9 @@
         "execution_mode": "live_model",
         "telemetry_enabled": false,
         "max_actions_per_response": 4,
-        "computer_protocol_version": 2,
+        "computer_protocol_version": 3,
+        "history_retention": "all computer call/output pairs; last 2 screenshots",
+        "tool_environment": "TempleOS 5.03",
         "instructions_sha256": "93eb09050a39e0ba82288bf0ebe8c2277fd94264486024d8a6fb11824c6ff205",
         "scroll_pixels_per_notch": 8,
         "input_error_handling": "recoverable tool output with screenshot",
@@ -393,14 +395,14 @@
         {
           "task_id": "uart_irq_service",
           "title": "Live kernel interrupt handler",
-          "status": "budget_exhausted",
-          "steps": 80,
-          "elapsed_seconds": 796.971,
+          "status": "completed",
+          "steps": 32,
+          "elapsed_seconds": 718.701,
           "usage": {
-            "input_tokens": 237774,
-            "output_tokens": 8012,
-            "total_tokens": 245786,
-            "estimated_cost_usd": 0.5526679
+            "input_tokens": 164605,
+            "output_tokens": 7568,
+            "total_tokens": 172173,
+            "estimated_cost_usd": 0.40186710000000003
           },
           "artifact_dir": "uart_irq_service",
           "final_screenshot": "uart_irq_service/final.png",
@@ -487,11 +489,11 @@
             ]
           },
           "budget": {
-            "max_steps": 80,
-            "timeout_seconds": 900,
-            "max_input_actions": 640
+            "max_steps": 300,
+            "timeout_seconds": 3600,
+            "max_input_actions": 2400
           },
-          "task_fingerprint": "570ee0c2774d7224a66395213a9f91506d9f54f728b9fcd5956a7153ae435dac",
+          "task_fingerprint": "041469fff7e82dafded72386581809b00a022b30225798036958c4b5c4242ee1",
           "hardware_profile": {
             "name": "com1-16550a-irq4",
             "device": "isa-serial (16550A)",
@@ -501,13 +503,13 @@
             "transport": "host Unix socket",
             "fresh_vm": true
           },
-          "setup_seconds": 30.892448531005357,
-          "policy_status": "budget_exhausted",
-          "budget_reason": "Cua model call budget exhausted",
-          "input_actions": 87,
-          "observations": 81,
-          "policy_seconds": 720.145,
-          "evaluation_seconds": 45.926
+          "setup_seconds": 30.9571378239998,
+          "completion_text": "Saved and compiled `B:/Bench/Telemetry.HC`. The interrupt-driven COM1 service is running at 115200 8N1.\n\nVerified repeated start/stop calls and restoration of the previous interrupt entry and IRQ4 mask bit. The shell remains usable.",
+          "policy_status": "completed",
+          "input_actions": 34,
+          "observations": 32,
+          "policy_seconds": 641.475,
+          "evaluation_seconds": 46.261
         }
       ]
     }

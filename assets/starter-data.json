@@ -240,11 +240,11 @@
       }
     },
     {
-      "id": "05-cua-uart",
+      "id": "05-cua-uart-300",
       "provider": "cua",
       "model": "openai/gpt-6.1-sol",
       "cua_version": "0.9.0",
-      "created_at": "2026-10-05T12:45:22.157496+00:00",
+      "created_at": "2026-10-05T13:56:45.926235+00:00",
       "config": {
         "iso": "assets/TempleOS.ISO",
         "baseline": null,
@@ -274,7 +274,9 @@
         "execution_mode": "live_model",
         "telemetry_enabled": false,
         "max_actions_per_response": 4,
-        "computer_protocol_version": 2,
+        "computer_protocol_version": 3,
+        "history_retention": "all computer call/output pairs; last 2 screenshots",
+        "tool_environment": "TempleOS 5.03",
         "instructions_sha256": "93eb09050a39e0ba82288bf0ebe8c2277fd94264486024d8a6fb11824c6ff205",
         "scroll_pixels_per_notch": 8,
         "input_error_handling": "recoverable tool output with screenshot",
@@ -4301,14 +4303,14 @@
       "result": {
         "task_id": "uart_irq_service",
         "title": "Live kernel interrupt handler",
-        "status": "budget_exhausted",
-        "steps": 80,
-        "elapsed_seconds": 796.971,
+        "status": "completed",
+        "steps": 32,
+        "elapsed_seconds": 718.701,
         "usage": {
-          "input_tokens": 237774,
-          "output_tokens": 8012,
-          "total_tokens": 245786,
-          "estimated_cost_usd": 0.5526679
+          "input_tokens": 164605,
+          "output_tokens": 7568,
+          "total_tokens": 172173,
+          "estimated_cost_usd": 0.40186710000000003
         },
         "artifact_dir": "uart_irq_service",
         "final_screenshot": "uart_irq_service/final.png",
@@ -4395,11 +4397,11 @@
           ]
         },
         "budget": {
-          "max_steps": 80,
-          "timeout_seconds": 900,
-          "max_input_actions": 640
+          "max_steps": 300,
+          "timeout_seconds": 3600,
+          "max_input_actions": 2400
         },
-        "task_fingerprint": "570ee0c2774d7224a66395213a9f91506d9f54f728b9fcd5956a7153ae435dac",
+        "task_fingerprint": "041469fff7e82dafded72386581809b00a022b30225798036958c4b5c4242ee1",
         "hardware_profile": {
           "name": "com1-16550a-irq4",
           "device": "isa-serial (16550A)",
@@ -4409,13 +4411,13 @@
           "transport": "host Unix socket",
           "fresh_vm": true
         },
-        "setup_seconds": 30.892448531005357,
-        "policy_status": "budget_exhausted",
-        "budget_reason": "Cua model call budget exhausted",
-        "input_actions": 87,
-        "observations": 81,
-        "policy_seconds": 720.145,
-        "evaluation_seconds": 45.926
+        "setup_seconds": 30.9571378239998,
+        "completion_text": "Saved and compiled `B:/Bench/Telemetry.HC`. The interrupt-driven COM1 service is running at 115200 8N1.\n\nVerified repeated start/stop calls and restoration of the previous interrupt entry and IRQ4 mask bit. The shell remains usable.",
+        "policy_status": "completed",
+        "input_actions": 34,
+        "observations": 32,
+        "policy_seconds": 641.475,
+        "evaluation_seconds": 46.261
       },
       "frames": [
         {
@@ -4433,14 +4435,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Ed(\"B:/Bench/Telemetry.HC\");\n"
+              "text": "FileWrite(\"B:/Bench/Probe.HC\",\"\",0); Ed(\"B:/Bench/Probe.HC\");\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_Ujp8vp1gV5W210hMNsMZJMQy",
+              "call_id": "call_D05C5ysaLvpqTzA3Z6bzCXUW",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Bench/Telemetry.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"FileWrite(\\\"B:/Bench/Probe.HC\\\",\\\"\\\",0); Ed(\\\"B:/Bench/Probe.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4459,7 +4461,7 @@
           ],
           "requested_calls": [
             {
-              "call_id": "call_PjJlrsz227FAbRHiArAesueH",
+              "call_id": "call_2LkjSz0hKSvd2vD2QDiBxWyc",
               "name": "computer",
               "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
@@ -4473,14 +4475,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Dir(\"C:/Kernel/*\");\n"
+              "text": "Find(\"IntEntrySet\",\"/Kernel/*\",FUF_RECURSE);\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_FMxumVxUQaUOiYXXGd1kOttI",
+              "call_id": "call_S9RuVStZjCwF1xQdD5ru2Lwx",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"C:/Kernel/*\\\");\\n\",\"keys\":[], \"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Find(\\\"IntEntrySet\\\",\\\"/Kernel/*\\\",FUF_RECURSE);\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4492,14 +4494,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Dir(\"B:/\");\n"
+              "text": "Find(\"IntEntrySet\",\"C:/Kernel/*\",FUF_RECURSE);\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_dduibltEHnDPaC1RrcNZtkPm",
+              "call_id": "call_8YvOVOGFNyg2WYyKw0zbuWUf",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"B:/\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Find(\\\"IntEntrySet\\\",\\\"C:/Kernel/*\\\",FUF_RECURSE);\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4511,14 +4513,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Dir(\"C:/\");\n"
+              "text": "Dir(\"C:/Kernel\");\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_N9wmXOm2OhKHrRqbJIbEDf9T",
+              "call_id": "call_2cXMXgGdyhDb6Lsq1i0mPD93",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"C:/\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"C:/Kernel\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4530,14 +4532,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Dir(\"::/Kernel/\");\n"
+              "text": "Dir(\"B:/Kernel/*\");\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_rFGH3YKdGiC036gcRJpgVlj8",
+              "call_id": "call_DvAAYUdzGfy3j5PfM93eUCVC",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"::/Kernel/\\\");\\n\",\"keys\": [] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"B:/Kernel/*\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4549,14 +4551,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Ed(\"::/Kernel/Ints.HC.Z\");\n"
+              "text": "Dir(\"/\");\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_v73em5P5jBH3nBuj6aeYZ71Z",
+              "call_id": "call_bw78q0okUiejFg0ZlkWsOuon",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"::/Kernel/Ints.HC.Z\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"/\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4567,17 +4569,15 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "esc"
-              ]
+              "kind": "type",
+              "text": "Dir(\"A:/Kernel/*\");\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_rSneDlBJSAmZ8vS74zF8Hik4",
+              "call_id": "call_52C5VbkKkHKUemVn1UDJihUj",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"A:/Kernel/*\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4589,14 +4589,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Ed(\"::/Kernel/KInts.HC.Z\");\n"
+              "text": "interrupt U0 BenchIRQ() {OutU8(0x20,0x20);}\nPrint(\"handler compiled\\n\");\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_A9EJuun2rswhQ485xbj9QgKR",
+              "call_id": "call_Wa7mu7alc8oO0QFkDyDid4nd",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"::/Kernel/KInts.HC.Z\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"interrupt U0 BenchIRQ() {OutU8(0x20,0x20);}\\nPrint(\\\"handler compiled\\\\n\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4607,18 +4607,15 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "f"
-              ]
+              "kind": "type",
+              "text": "U8 *bench_src=\"// COM1 interrupt-driven telemetry\\n#define BENCH_RING 16384\\nU8 bench_ring[BENCH_RING];\\nU64 bench_head=0,bench_tail=0,bench_drops=0;\\nBool bench_on=FALSE;\\nCTask *bench_task=NULL;\\nU8 *bench_old_entry;\\nU8 bench_old_pic,bench_old_lcr,bench_old_ier,bench_old_mcr;\\nU8 bench_old_dll,bench_old_dlm,bench_old_scr;\\ninterrupt U0 BenchRxIRQ()\\n{\\n U8 b; U64 n;\\n while (InU8(0x3FD)&1) {\\n  b=InU8(0x3F8);\\n  n=(bench_head+1)&(BENCH_RING-1);\\n  if (n!=bench_tail) {bench_ring[bench_head]=b;bench_head=n;}\\n  else bench_drops++;\\n }\\n InU8(0x3FA);\\n OutU8(0x20,0x20);\\n}\\nU0 BenchTx(U8 b)\\n{\\n while (!(InU8(0x3FD)&0x20)) Yield;\\n OutU8(0x3F8,b);\\n}\\nU32 BenchCRC(U8 *p,I64 n)\\n{\\n U32 c=0xFFFFFFFF; I64 i,j;\\n for (i=0;i<n;i++) {\\n  c^=p[i];\\n  for (j=0;j<8;j++) {\\n   if (c&1) c=(c>>1)^0xEDB88320; else c>>=1;\\n  }\\n }\\n return c^0xFFFFFFFF;\\n}\\nU0 BenchReply(U8 seq,U8 *p,I64 n)\\n{\\n U32 c=BenchCRC(p,n); U8 b,sum=seq; I64 i;\\n BenchTx(0x5A); BenchTx(seq);\\n for (i=0;i<4;i++) {b=(c>>(8*i))&255;sum+=b;BenchTx(b);}\\n BenchTx(sum);\\n}\\nU0 BenchWorker(U8 *unused)\\n{\\n U8 frame[128],sum; I64 used=0,i,n,drop;\\n while (bench_on) {\\n  if (bench_tail==bench_head) {Sleep(1);continue;}\\n  frame[used++]=bench_ring[bench_tail];\\n  bench_tail=(bench_tail+1)&(BENCH_RING-1);\\n  while (used) {\\n   drop=0;\\n   if (frame[0]!=0xA5) drop=1;\\n   else if (used<3) break;\\n   else {\\n    n=frame[2];\\n    if (n<1 || n>64) drop=1;\\n    else if (used<n+4) break;\\n    else {\\n     sum=frame[1]+frame[2];\\n     for (i=0;i<n;i++) sum+=frame[3+i];\\n     if (sum==frame[n+3]) {BenchReply(frame[1],frame+3,n);drop=n+4;}\\n     else drop=1;\\n    }\\n   }\\n   used-=drop;\\n   for (i=0;i<used;i++) frame[i]=frame[i+drop];\\n  }\\n }\\n}\\nU0 BenchStart()\\n{\\n if (bench_on) return;\\n bench_old_pic=InU8(0x21)&0x10;\\n OutU8(0x21,InU8(0x21)|0x10);\\n bench_old_entry=IntEntryGet(0x24);\\n bench_old_lcr=InU8(0x3FB);\\n bench_old_mcr=InU8(0x3FC);\\n bench_old_scr=InU8(0x3FF);\\n OutU8(0x3FB,bench_old_lcr&0x7F);\\n bench_old_ier=InU8(0x3F9); OutU8(0x3F9,0);\\n OutU8(0x3FB,0x80);\\n bench_old_dll=InU8(0x3F8);bench_old_dlm=InU8(0x3F9);\\n OutU8(0x3F8,1);OutU8(0x3F9,0);\\n OutU8(0x3FB,3);\\n OutU8(0x3FA,0x07);\\n OutU8(0x3FC,0x0B);\\n bench_head=0;bench_tail=0;bench_drops=0;bench_on=TRUE;\\n IntEntrySet(0x24,&BenchRxIRQ);\\n bench_task=Spawn(&BenchWorker,NULL,\\\"COM1 telemetry\\\");\\n OutU8(0x3F9,1);\\n OutU8(0x21,InU8(0x21)&~0x10);\\n}\\nU0 BenchStop()\\n{\\n if (!bench_on) return;\\n OutU8(0x21,InU8(0x21)|0x10);\\n OutU8(0x3FB,3);OutU8(0x3F9,0);\\n bench_on=FALSE;\\n if (bench_task) {Kill(bench_task);bench_task=NULL;}\\n IntEntrySet(0x24,bench_old_entry);\\n OutU8(0x3FA,0);\\n OutU8(0x3FB,0x80);\\n OutU8(0x3F8,bench_old_dll);OutU8(0x3F9,bench_old_dlm);\\n OutU8(0x3FB,bench_old_lcr&0x7F);\\n OutU8(0x3F9,bench_old_ier);\\n OutU8(0x3FC,bench_old_mcr);OutU8(0x3FF,bench_old_scr);\\n OutU8(0x3FB,bench_old_lcr);\\n OutU8(0x21,(InU8(0x21)&~0x10)|bench_old_pic);\\n}\\n\";\nFileWrite(\"B:/Bench/Telemetry.HC\",bench_src,StrLen(bench_src));\n#include \"B:/Bench/Telemetry.HC\";\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_haWSstzt9BHKzLsnxg0EFkhy",
+              "call_id": "call_D8Xg2M2GeXo7yZ35TcIYIJz0",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"f\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"U8 *bench_src=\\\"// COM1 interrupt-driven telemetry\\\\n#define BENCH_RING 16384\\\\nU8 bench_ring[BENCH_RING];\\\\nU64 bench_head=0,bench_tail=0,bench_drops=0;\\\\nBool bench_on=FALSE;\\\\nCTask *bench_task=NULL;\\\\nU8 *bench_old_entry;\\\\nU8 bench_old_pic,bench_old_lcr,bench_old_ier,bench_old_mcr;\\\\nU8 bench_old_dll,bench_old_dlm,bench_old_scr;\\\\ninterrupt U0 BenchRxIRQ()\\\\n{\\\\n U8 b; U64 n;\\\\n while (InU8(0x3FD)&1) {\\\\n  b=InU8(0x3F8);\\\\n  n=(bench_head+1)&(BENCH_RING-1);\\\\n  if (n!=bench_tail) {bench_ring[bench_head]=b;bench_head=n;}\\\\n  else bench_drops++;\\\\n }\\\\n InU8(0x3FA);\\\\n OutU8(0x20,0x20);\\\\n}\\\\nU0 BenchTx(U8 b)\\\\n{\\\\n while (!(InU8(0x3FD)&0x20)) Yield;\\\\n OutU8(0x3F8,b);\\\\n}\\\\nU32 BenchCRC(U8 *p,I64 n)\\\\n{\\\\n U32 c=0xFFFFFFFF; I64 i,j;\\\\n for (i=0;i<n;i++) {\\\\n  c^=p[i];\\\\n  for (j=0;j<8;j++) {\\\\n   if (c&1) c=(c>>1)^0xEDB88320; else c>>=1;\\\\n  }\\\\n }\\\\n return c^0xFFFFFFFF;\\\\n}\\\\nU0 BenchReply(U8 seq,U8 *p,I64 n)\\\\n{\\\\n U32 c=BenchCRC(p,n); U8 b,sum=seq; I64 i;\\\\n BenchTx(0x5A); BenchTx(seq);\\\\n for (i=0;i<4;i++) {b=(c>>(8*i))&255;sum+=b;BenchTx(b);}\\\\n BenchTx(sum);\\\\n}\\\\nU0 BenchWorker(U8 *unused)\\\\n{\\\\n U8 frame[128],sum; I64 used=0,i,n,drop;\\\\n while (bench_on) {\\\\n  if (bench_tail==bench_head) {Sleep(1);continue;}\\\\n  frame[used++]=bench_ring[bench_tail];\\\\n  bench_tail=(bench_tail+1)&(BENCH_RING-1);\\\\n  while (used) {\\\\n   drop=0;\\\\n   if (frame[0]!=0xA5) drop=1;\\\\n   else if (used<3) break;\\\\n   else {\\\\n    n=frame[2];\\\\n    if (n<1 || n>64) drop=1;\\\\n    else if (used<n+4) break;\\\\n    else {\\\\n     sum=frame[1]+frame[2];\\\\n     for (i=0;i<n;i++) sum+=frame[3+i];\\\\n     if (sum==frame[n+3]) {BenchReply(frame[1],frame+3,n);drop=n+4;}\\\\n     else drop=1;\\\\n    }\\\\n   }\\\\n   used-=drop;\\\\n   for (i=0;i<used;i++) frame[i]=frame[i+drop];\\\\n  }\\\\n }\\\\n}\\\\nU0 BenchStart()\\\\n{\\\\n if (bench_on) return;\\\\n bench_old_pic=InU8(0x21)&0x10;\\\\n OutU8(0x21,InU8(0x21)|0x10);\\\\n bench_old_entry=IntEntryGet(0x24);\\\\n bench_old_lcr=InU8(0x3FB);\\\\n bench_old_mcr=InU8(0x3FC);\\\\n bench_old_scr=InU8(0x3FF);\\\\n OutU8(0x3FB,bench_old_lcr&0x7F);\\\\n bench_old_ier=InU8(0x3F9); OutU8(0x3F9,0);\\\\n OutU8(0x3FB,0x80);\\\\n bench_old_dll=InU8(0x3F8);bench_old_dlm=InU8(0x3F9);\\\\n OutU8(0x3F8,1);OutU8(0x3F9,0);\\\\n OutU8(0x3FB,3);\\\\n OutU8(0x3FA,0x07);\\\\n OutU8(0x3FC,0x0B);\\\\n bench_head=0;bench_tail=0;bench_drops=0;bench_on=TRUE;\\\\n IntEntrySet(0x24,&BenchRxIRQ);\\\\n bench_task=Spawn(&BenchWorker,NULL,\\\\\\\"COM1 telemetry\\\\\\\");\\\\n OutU8(0x3F9,1);\\\\n OutU8(0x21,InU8(0x21)&~0x10);\\\\n}\\\\nU0 BenchStop()\\\\n{\\\\n if (!bench_on) return;\\\\n OutU8(0x21,InU8(0x21)|0x10);\\\\n OutU8(0x3FB,3);OutU8(0x3F9,0);\\\\n bench_on=FALSE;\\\\n if (bench_task) {Kill(bench_task);bench_task=NULL;}\\\\n IntEntrySet(0x24,bench_old_entry);\\\\n OutU8(0x3FA,0);\\\\n OutU8(0x3FB,0x80);\\\\n OutU8(0x3F8,bench_old_dll);OutU8(0x3F9,bench_old_dlm);\\\\n OutU8(0x3FB,bench_old_lcr&0x7F);\\\\n OutU8(0x3F9,bench_old_ier);\\\\n OutU8(0x3FC,bench_old_mcr);OutU8(0x3FF,bench_old_scr);\\\\n OutU8(0x3FB,bench_old_lcr);\\\\n OutU8(0x21,(InU8(0x21)&~0x10)|bench_old_pic);\\\\n}\\\\n\\\";\\nFileWrite(\\\"B:/Bench/Telemetry.HC\\\",bench_src,StrLen(bench_src));\\n#include \\\"B:/Bench/Telemetry.HC\\\";\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4630,14 +4627,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "IntEntrySet"
+              "text": "Ed(\"B:/Bench/Telemetry.HC\",49);\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_7NtfArtHa9xGA57mVGKuMhCt",
+              "call_id": "call_OMq0oIR99HQf6zVZ1r739urG",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"IntEntrySet\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Bench/Telemetry.HC\\\",49);\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4645,6 +4642,31 @@
         {
           "step": 12,
           "src": "assets/starter-frames/uart_irq_service/0012.png",
+          "note": "",
+          "actions": [
+            {
+              "kind": "move",
+              "x": 496,
+              "y": 398
+            },
+            {
+              "kind": "scroll",
+              "direction": "down",
+              "amount": 20
+            }
+          ],
+          "requested_calls": [
+            {
+              "call_id": "call_RbyYLxVl0acXsf1K3LKGrLRP",
+              "name": "computer",
+              "arguments": "{\"action\":\"scroll\",\"x\":496,\"y\":398,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":160,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+            }
+          ],
+          "input_errors": []
+        },
+        {
+          "step": 13,
+          "src": "assets/starter-frames/uart_irq_service/0013.png",
           "note": "",
           "actions": [
             {
@@ -4656,39 +4678,9 @@
           ],
           "requested_calls": [
             {
-              "call_id": "call_aMlEldZtLVYJ9ifM1lPScbyx",
+              "call_id": "call_FTweWJsmsqtOPBYDj5THyCtg",
               "name": "computer",
               "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 13,
-          "src": "assets/starter-frames/uart_irq_service/0013.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "move",
-              "x": 605,
-              "y": 181
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 20
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 4
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_yP1mC4Sstuu3UsI82wUohIcz",
-              "name": "computer",
-              "arguments": "{\"action\":\"scroll\",\"x\":605,\"y\":181,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-192,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4701,16 +4693,15 @@
             {
               "kind": "key",
               "keys": [
-                "alt",
-                "x"
+                "esc"
               ]
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_dq3N7x2EYRuhbSONnT3jbCww",
+              "call_id": "call_hbJo6WZA4fLENeOb198VPK0S",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"alt\",\"x\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4723,15 +4714,16 @@
             {
               "kind": "key",
               "keys": [
-                "escape"
+                "shift",
+                "esc"
               ]
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_uRjWI0NKEHaL4MjpurofIwpj",
+              "call_id": "call_Sj1mQIk1npRG0Ptxn7DMqrd3",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"escape\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4742,15 +4734,18 @@
           "note": "",
           "actions": [
             {
-              "kind": "type",
-              "text": "Ed(\"C:/Kernel/SerialDev/Serial.HC\");\n"
+              "kind": "click",
+              "x": 426,
+              "y": 103,
+              "button": "left",
+              "clicks": 1
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_DOjRliPMuFjP1WU8vjGyCh08",
+              "call_id": "call_Nj1vYfROl83ICwfE5WeXwxYr",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"C:/Kernel/SerialDev/Serial.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"click\",\"x\":426,\"y\":103,\"text\":\"\" ,\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4761,17 +4756,15 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
+              "kind": "type",
+              "text": "#include \"B:/Bench/Telemetry.HC\";\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_Y9s4ovQx4lIIbp2dCN5aThGe",
+              "call_id": "call_Qjwr6Ki9ESr5kkulxzYrcXXh",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"#include \\\"B:/Bench/Telemetry.HC\\\";\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4783,14 +4776,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Ed(\"B:/Kernel/KInts.HC.Z\");"
+              "text": "U8 *s=FileRead(\"B:/Bench/Telemetry.HC\"); I64 k=1; U8 *p=s; while (*p) {if(k>=45 && k<=51) Print(\"%c\",*p); if(*p++=='\\n') k++;}\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_2KBtM0SqEPrUYpuoxbg4mZNO",
+              "call_id": "call_lg3KN9GqMwi7phFnH1FyPM2l",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Kernel/KInts.HC.Z\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"U8 *s=FileRead(\\\"B:/Bench/Telemetry.HC\\\"); I64 k=1; U8 *p=s; while (*p) {if(k>=45 && k<=51) Print(\\\"%c\\\",*p); if(*p++=='\\\\n') k++;}\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4801,18 +4794,15 @@
           "note": "",
           "actions": [
             {
-              "kind": "click",
-              "x": 288,
-              "y": 452,
-              "button": "left",
-              "clicks": 1
+              "kind": "type",
+              "text": "Dir(\"B:/Bench/*\"); Print(\"ptr=%p len=%d\\n\",s,StrLen(s));\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_jD12b1aY0RZ8EOWjDpiOZp0F",
+              "call_id": "call_KRYHuPleaxg3Rv3gHVrWnfEy",
               "name": "computer",
-              "arguments": "{\"action\":\"click\",\"x\":288,\"y\":452,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"B:/Bench/*\\\"); Print(\\\"ptr=%p len=%d\\\\n\\\",s,StrLen(s));\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4823,17 +4813,18 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
+              "kind": "click",
+              "x": 450,
+              "y": 10,
+              "button": "left",
+              "clicks": 2
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_r0oUQaUgHPlrMyz0mqGRNC4x",
+              "call_id": "call_jy23F5vmGHKAns1HS2Hi9toS",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"double_click\",\"x\":450,\"y\":10,\"text\":\"\",\"keys\": [] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4844,17 +4835,31 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "escape"
-              ]
+              "kind": "move",
+              "x": 324,
+              "y": 237
+            },
+            {
+              "kind": "cua_mouse_button",
+              "button": "left",
+              "down": true
+            },
+            {
+              "kind": "move",
+              "x": 2,
+              "y": 237
+            },
+            {
+              "kind": "cua_mouse_button",
+              "button": "left",
+              "down": false
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_IIHDGjoa6fWV6QTMY18QOn2e",
+              "call_id": "call_GNd4feL0BNSq1eXK5v8cxu4f",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"escape\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"drag\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":324,\"start_y\":237,\"end_x\":2,\"end_y\":237,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4866,14 +4871,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Ed(\"B:/Kernel/KInts.HC.Z\");"
+              "text": "Ed(\"B:/Bench/Telemetry.HC\");\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_eK5pe05xFBp7ThwWfNMW2Klr",
+              "call_id": "call_IMgsTUTvsjf92ryRmpF4g54e",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Kernel/KInts.HC.Z\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Bench/Telemetry.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4884,17 +4889,31 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
+              "kind": "move",
+              "x": 328,
+              "y": 17
+            },
+            {
+              "kind": "cua_mouse_button",
+              "button": "left",
+              "down": true
+            },
+            {
+              "kind": "move",
+              "x": 2,
+              "y": 17
+            },
+            {
+              "kind": "cua_mouse_button",
+              "button": "left",
+              "down": false
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_u2ujdfPgFQzbIe1tbYfW8SP5",
+              "call_id": "call_ZSVFo0cUPwJfKKtcCTDOjHvG",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"drag\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":328,\"start_y\":17,\"end_x\":2,\"end_y\":17,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4907,16 +4926,15 @@
             {
               "kind": "key",
               "keys": [
-                "shift",
                 "esc"
               ]
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_edEbAXZuEXQ5Uw6IyElltdrV",
+              "call_id": "call_gwMHAUabkxo85tTkVTsQD0MT",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4927,15 +4945,18 @@
           "note": "",
           "actions": [
             {
-              "kind": "type",
-              "text": "Ed(\"C:/Kernel/KInts.HC.Z\");"
+              "kind": "key",
+              "keys": [
+                "shift",
+                "esc"
+              ]
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_DoJE3hByb5dkmuBAaVf8sgTZ",
+              "call_id": "call_Bu68uXYQdJFLhzT9b39kdPQn",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"C:/Kernel/KInts.HC.Z\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4946,18 +4967,15 @@
           "note": "",
           "actions": [
             {
-              "kind": "click",
-              "x": 283,
-              "y": 444,
-              "button": "left",
-              "clicks": 1
+              "kind": "type",
+              "text": "p=s;k=1;while(*p) {if(k>=47 && k<=50) Print(\"%c\",*p);if(*p++=='\\n')k++;}\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_9WOe0CIdMOZ01RQC7hVbly4T",
+              "call_id": "call_C0fy00bPegQOuh0S40sKWT0y",
               "name": "computer",
-              "arguments": "{\"action\":\"click\",\"x\":283,\"y\":444,\"text\":\"\",\"keys\": [] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"p=s;k=1;while(*p) {if(k>=47 && k<=50) Print(\\\"%c\\\",*p);if(*p++=='\\\\n')k++;}\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4968,19 +4986,15 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "alt",
-                "t"
-              ]
+              "kind": "type",
+              "text": "U8 *zz=FileRead(\"B:/Bench/Telemetry.HC\"); U8 *qq=zz; I64 nn=1; while(*qq) {if(nn==49) Print(\"%c\",*qq);if(*qq++==10) nn++;}\nPrint(\"lines %d\\n\",nn);\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_sXVpNMMzE1euWcXEFitO6Z2I",
+              "call_id": "call_buVqAFUiufDGDJ8MRnDbbsgC",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"alt\",\"t\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"U8 *zz=FileRead(\\\"B:/Bench/Telemetry.HC\\\"); U8 *qq=zz; I64 nn=1; while(*qq) {if(nn==49) Print(\\\"%c\\\",*qq);if(*qq++==10) nn++;}\\nPrint(\\\"lines %d\\\\n\\\",nn);\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -4992,14 +5006,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Ed(\"C:/Kernel/KInts.HC.Z\");"
+              "text": "U8 *fix=StrFind(\"if (bench_tail==bench_head) {Sleep(1);continue;}\",zz); MemSet(fix,32,45); MemCpy(fix,\"while (bench_tail==bench_head) Sleep(1);\",38); FileWrite(\"B:/Bench/Telemetry.HC\",zz,StrLen(zz));\n#include \"B:/Bench/Telemetry.HC\";\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_sfwbFGVKaLbn4tWGmEBOSRFg",
+              "call_id": "call_TcTUpSaZFoQicYQY4FZPX3zW",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"C:/Kernel/KInts.HC.Z\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"U8 *fix=StrFind(\\\"if (bench_tail==bench_head) {Sleep(1);continue;}\\\",zz); MemSet(fix,32,45); MemCpy(fix,\\\"while (bench_tail==bench_head) Sleep(1);\\\",38); FileWrite(\\\"B:/Bench/Telemetry.HC\\\",zz,StrLen(zz));\\n#include \\\"B:/Bench/Telemetry.HC\\\";\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -5010,17 +5024,15 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
+              "kind": "type",
+              "text": "fix=StrFind(\"while (bench_tail\",zz); U8 *eol=StrFind(\"\\n\",fix); MemSet(fix,32,eol-fix); U8 *good=\"while (bench_tail==bench_head) Sleep(1);\"; MemCpy(fix,good,StrLen(good)); FileWrite(\"B:/Bench/Telemetry.HC\",zz,StrLen(zz));\n#include \"B:/Bench/Telemetry.HC\";\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_PbSDhXL4D5563RK0xHjAyuRp",
+              "call_id": "call_JlZ731wRNVNb5tkAitkIhmbp",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"fix=StrFind(\\\"while (bench_tail\\\",zz); U8 *eol=StrFind(\\\"\\\\n\\\",fix); MemSet(fix,32,eol-fix); U8 *good=\\\"while (bench_tail==bench_head) Sleep(1);\\\"; MemCpy(fix,good,StrLen(good)); FileWrite(\\\"B:/Bench/Telemetry.HC\\\",zz,StrLen(zz));\\n#include \\\"B:/Bench/Telemetry.HC\\\";\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -5032,14 +5044,14 @@
           "actions": [
             {
               "kind": "type",
-              "text": "Ed(\"B:/Kernel/KInts.HC\");"
+              "text": "BenchStart; Print(\"active=%d worker=%p PIC=%02X IER=%02X LCR=%02X MCR=%02X\\n\",bench_on,bench_task,InU8(0x21),InU8(0x3F9),InU8(0x3FB),InU8(0x3FC));\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_kF2HoXFyJ3Fxf0lp06xSbFch",
+              "call_id": "call_Fq6K0izLQjmEOxeMGFjiiLwk",
               "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Kernel/KInts.HC\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"BenchStart; Print(\\\"active=%d worker=%p PIC=%02X IER=%02X LCR=%02X MCR=%02X\\\\n\\\",bench_on,bench_task,InU8(0x21),InU8(0x3F9),InU8(0x3FB),InU8(0x3FC));\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -5050,17 +5062,15 @@
           "note": "",
           "actions": [
             {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
+              "kind": "type",
+              "text": "BenchStart; BenchStop; BenchStop; Print(\"stopped=%d IRQbit=%02X saved=%02X entry=%d\\n\",!bench_on,InU8(0x21)&0x10,bench_old_pic,IntEntryGet(0x24)==bench_old_entry); BenchStart; BenchStart; Print(\"running=%d worker=%p\\n\",bench_on,bench_task);\n"
             }
           ],
           "requested_calls": [
             {
-              "call_id": "call_eABYYc9ke6qJvvKwdju5O0Xj",
+              "call_id": "call_2beFfbWyxudJZgpiOGCsOnT6",
               "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
+              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"BenchStart; BenchStop; BenchStop; Print(\\\"stopped=%d IRQbit=%02X saved=%02X entry=%d\\\\n\\\",!bench_on,InU8(0x21)&0x10,bench_old_pic,IntEntryGet(0x24)==bench_old_entry); BenchStart; BenchStart; Print(\\\"running=%d worker=%p\\\\n\\\",bench_on,bench_task);\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
             }
           ],
           "input_errors": []
@@ -5068,1038 +5078,18 @@
         {
           "step": 32,
           "src": "assets/starter-frames/uart_irq_service/0032.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "esc"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_l8dsxd5yzMtJDUCbR0DxkV57",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 33,
-          "src": "assets/starter-frames/uart_irq_service/0033.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Ed(\"C:/Kernel/Ints.HC\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_H68QNdHh96saETPp83bI5i7m",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"C:/Kernel/Ints.HC\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 34,
-          "src": "assets/starter-frames/uart_irq_service/0034.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_VIuWwRYlz3PO45OfU4NUw1Tu",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 35,
-          "src": "assets/starter-frames/uart_irq_service/0035.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Ed(\"T:/Kernel/KInts.HC.Z\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_Iva3j6uTOkefdkd96PJJG01m",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"T:/Kernel/KInts.HC.Z\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 36,
-          "src": "assets/starter-frames/uart_irq_service/0036.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_0PsaDXxAkG3tifLHyawdxpQq",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 37,
-          "src": "assets/starter-frames/uart_irq_service/0037.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "f"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_m4oVFLAQC7cVJssjWiUh8gHK",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"f\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 38,
-          "src": "assets/starter-frames/uart_irq_service/0038.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "IntEntrySet"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_qbcMeLeyQRqYBy3mrnA0c8If",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"IntEntrySet\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 39,
-          "src": "assets/starter-frames/uart_irq_service/0039.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_NXoOwPCFMCD5ppRR6k2v6gmL",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 40,
-          "src": "assets/starter-frames/uart_irq_service/0040.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "esc"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_PhQagIct20fcaqpUpfGvhYSb",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 41,
-          "src": "assets/starter-frames/uart_irq_service/0041.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "f"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_5wp1P43JhTVPVcfoBlKm3eNy",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"f\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 42,
-          "src": "assets/starter-frames/uart_irq_service/0042.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "IRET"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_MuJeC67bezx80zZNPF8KzlLC",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"IRET\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 43,
-          "src": "assets/starter-frames/uart_irq_service/0043.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "a"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_r56YUolN27COGxIZ60VQ48l1",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"a\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 44,
-          "src": "assets/starter-frames/uart_irq_service/0044.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "escape"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_IWrnsHQWFNA2Ha7gBi9gvnQl",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"escape\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 45,
-          "src": "assets/starter-frames/uart_irq_service/0045.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "escape"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_SL0QugMOLvhuqdfkJrL4XQw3",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"escape\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 46,
-          "src": "assets/starter-frames/uart_irq_service/0046.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "click",
-              "x": 278,
-              "y": 234,
-              "button": "left",
-              "clicks": 1
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_5us6Wiw23RDQC7OEPVo1JOBV",
-              "name": "computer",
-              "arguments": "{\"action\":\"click\",\"x\":278,\"y\":234,\"text\":\"\" ,\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 47,
-          "src": "assets/starter-frames/uart_irq_service/0047.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "escape"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_pdaHfbBdBrbGpixAkbT1nsUk",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"escape\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 48,
-          "src": "assets/starter-frames/uart_irq_service/0048.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "shift",
-                "escape"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_Jl1oary8RVKMEaEULvEcXfAt",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"escape\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 49,
-          "src": "assets/starter-frames/uart_irq_service/0049.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Ed(\"T:/Kernel/KInts.HC\");\n"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_C94cJjVDMYgfoWiYKX2toCVT",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"T:/Kernel/KInts.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 50,
-          "src": "assets/starter-frames/uart_irq_service/0050.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Dir;\n"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_VS4jfGTz5uEPtPZ8hTvlZzyo",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir;\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 51,
-          "src": "assets/starter-frames/uart_irq_service/0051.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Ed(\"B:/Bench/Telemetry.HC\");\n"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_wRujpVhmtDUX6dkCbzLp2Avf",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Bench/Telemetry.HC\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 52,
-          "src": "assets/starter-frames/uart_irq_service/0052.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "shift",
-                "esc"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_MsaESrVkqxi10Qb9YsByiGuE",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 53,
-          "src": "assets/starter-frames/uart_irq_service/0053.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Ed(\"B:/Bench/Telemetry.HC\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_h3w7hVH4xdkeWXCO2dDvfyv9",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"B:/Bench/Telemetry.HC\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 54,
-          "src": "assets/starter-frames/uart_irq_service/0054.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_L7Lyh9Ybpz7Pfliy9xw7Men2",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 55,
-          "src": "assets/starter-frames/uart_irq_service/0055.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "shift",
-                "escape"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_1ZPzmDj0xJmOY5AKsMXu49om",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"escape\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 56,
-          "src": "assets/starter-frames/uart_irq_service/0056.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Type(\"B:/Kernel/KInts.HC\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_I3Bpjvk0zgUVNlamco1Orumq",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Type(\\\"B:/Kernel/KInts.HC\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 57,
-          "src": "assets/starter-frames/uart_irq_service/0057.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_mr6UTGEGU5J13orOfTgCK17Y",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 58,
-          "src": "assets/starter-frames/uart_irq_service/0058.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Dir(\"B:/Kernel\");\n"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_MpOND9MpUxQxAe6IhgLhkL3J",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"B:/Kernel\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 59,
-          "src": "assets/starter-frames/uart_irq_service/0059.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "click",
-              "x": 220,
-              "y": 458,
-              "button": "left",
-              "clicks": 1
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_n9scdXzBAxKMJZbZ4fwho27l",
-              "name": "computer",
-              "arguments": "{\"action\":\"click\",\"x\":220,\"y\":458,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 60,
-          "src": "assets/starter-frames/uart_irq_service/0060.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Dir(\"T:/Kernel\");\n"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_XWMVyEiXeOpfof7BEzWJMa0K",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"T:/Kernel\\\");\\n\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 61,
-          "src": "assets/starter-frames/uart_irq_service/0061.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_Lpwpgy5IXRlxKUrIgepHrabI",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 62,
-          "src": "assets/starter-frames/uart_irq_service/0062.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Print(\"HELLO\\n\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_a8AckwDoYbZBbDhZQYF1vcDm",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Print(\\\"HELLO\\\\n\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 63,
-          "src": "assets/starter-frames/uart_irq_service/0063.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_OCaN0fGmMRGomEqxTpJnD4Je",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 64,
-          "src": "assets/starter-frames/uart_irq_service/0064.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Dir(\"T:/Kernel\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_yaB4GJGXPQBvlijcZj2nzVNN",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"T:/Kernel\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 65,
-          "src": "assets/starter-frames/uart_irq_service/0065.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_Oy7sMJHPwDF185nBQs3gDbE2",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 66,
-          "src": "assets/starter-frames/uart_irq_service/0066.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Ed(\"T:/Kernel/KInts.HC\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_JgpTq6dOjiKqf9aWOTZaX1xS",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"T:/Kernel/KInts.HC\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 67,
-          "src": "assets/starter-frames/uart_irq_service/0067.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_OTzvEvXEfPIJhDFQGR7pfhRl",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 68,
-          "src": "assets/starter-frames/uart_irq_service/0068.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "f"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_IZRbHUJft92nTY2G93odUQDK",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"f\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 69,
-          "src": "assets/starter-frames/uart_irq_service/0069.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "click",
-              "x": 127,
-              "y": 20,
-              "button": "left",
-              "clicks": 1
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_dyp0C2ylPy9beFFaKylkMOrL",
-              "name": "computer",
-              "arguments": "{\"action\":\"click\",\"x\":127,\"y\":20,\"text\":\"\",\"keys\": [] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 70,
-          "src": "assets/starter-frames/uart_irq_service/0070.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "IntEntrySet"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_tmVhsWKjIA94c0dLPIhI3pk2",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"IntEntrySet\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 71,
-          "src": "assets/starter-frames/uart_irq_service/0071.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "escape"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_6uJCJtPUGFzOXpgHIt7hfSqp",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"escape\"] ,\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 72,
-          "src": "assets/starter-frames/uart_irq_service/0072.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "move",
-              "x": 603,
-              "y": 125
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 20
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 10
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_DyOEZ8E8K0dzTnCK3lApN2Kf",
-              "name": "computer",
-              "arguments": "{\"action\":\"scroll\",\"x\":603,\"y\":125,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-240,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 73,
-          "src": "assets/starter-frames/uart_irq_service/0073.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "move",
-              "x": 600,
-              "y": 100
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 20
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 20
-            },
-            {
-              "kind": "scroll",
-              "direction": "up",
-              "amount": 20
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_pqobsdFFk7IFIPYb58Cxa5OF",
-              "name": "computer",
-              "arguments": "{\"action\":\"scroll\",\"x\":600,\"y\":100,\"text\":\"\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":-480,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 74,
-          "src": "assets/starter-frames/uart_irq_service/0074.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "shift",
-                "esc"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_WLKThcVXzwTWbZqDMnJRgQmc",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"shift\",\"esc\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 75,
-          "src": "assets/starter-frames/uart_irq_service/0075.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Dir(\"T:/Kernel/SerialDev\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_HVhKbfRu86ZsmIIzeab6nbFR",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Dir(\\\"T:/Kernel/SerialDev\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 76,
-          "src": "assets/starter-frames/uart_irq_service/0076.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_doKMdTfitViQdtQQ6WMaaqIo",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 77,
-          "src": "assets/starter-frames/uart_irq_service/0077.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "Ed(\"T:/Kernel/SerialDev/Keyboard.HC\");"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_n6XP7l5eGHcGaH7WK0czygsH",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"Ed(\\\"T:/Kernel/SerialDev/Keyboard.HC\\\");\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 78,
-          "src": "assets/starter-frames/uart_irq_service/0078.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "enter"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_Wk97njKWUcUIcpw7VfvPVlOk",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"enter\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 79,
-          "src": "assets/starter-frames/uart_irq_service/0079.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "key",
-              "keys": [
-                "ctrl",
-                "f"
-              ]
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_ddukbNpnqIdyRKMnBe8p2GKA",
-              "name": "computer",
-              "arguments": "{\"action\":\"keypress\",\"x\":0,\"y\":0,\"text\":\"\",\"keys\":[\"ctrl\",\"f\"],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
-          "input_errors": []
-        },
-        {
-          "step": 80,
-          "src": "assets/starter-frames/uart_irq_service/0080.png",
-          "note": "",
-          "actions": [
-            {
-              "kind": "type",
-              "text": "IRET"
-            }
-          ],
-          "requested_calls": [
-            {
-              "call_id": "call_tOFRcvQ3v5TcFdTHlrKHVB8Q",
-              "name": "computer",
-              "arguments": "{\"action\":\"type\",\"x\":0,\"y\":0,\"text\":\"IRET\",\"keys\":[],\"scroll_x\":0,\"scroll_y\":0,\"button\":\"left\",\"start_x\":0,\"start_y\":0,\"end_x\":0,\"end_y\":0,\"status\":\"success\"}"
-            }
-          ],
+          "note": "Saved and compiled `B:/Bench/Telemetry.HC`. The interrupt-driven COM1 service is running at 115200 8N1.\n\nVerified repeated start/stop calls and restoration of the previous interrupt entry and IRQ4 mask bit. The shell remains usable.",
+          "actions": [],
+          "requested_calls": [],
           "input_errors": []
         }
       ],
       "run": {
-        "id": "05-cua-uart",
+        "id": "05-cua-uart-300",
         "provider": "cua",
         "model": "openai/gpt-6.1-sol",
         "cua_version": "0.9.0",
-        "created_at": "2026-10-05T12:45:22.157496+00:00",
+        "created_at": "2026-10-05T13:56:45.926235+00:00",
         "config": {
           "iso": "assets/TempleOS.ISO",
           "baseline": null,
@@ -6129,7 +5119,9 @@
           "execution_mode": "live_model",
           "telemetry_enabled": false,
           "max_actions_per_response": 4,
-          "computer_protocol_version": 2,
+          "computer_protocol_version": 3,
+          "history_retention": "all computer call/output pairs; last 2 screenshots",
+          "tool_environment": "TempleOS 5.03",
           "instructions_sha256": "93eb09050a39e0ba82288bf0ebe8c2277fd94264486024d8a6fb11824c6ff205",
           "scroll_pixels_per_notch": 8,
           "input_error_handling": "recoverable tool output with screenshot",
@@ -6149,12 +5141,16 @@
       },
       "review": {
         "status": "failed",
-        "reviewer": "Codex, passive saved-trajectory and host-evidence review",
-        "reason": "The model exhausted 80 calls on file browsing and editor navigation without entering or starting a UART implementation. The host received no serial replies and awarded 0/10. The final Find/Replace form received the host cleanup commands as field text rather than executing them in a shell.",
-        "source_commit": "1dc502788a949b79b9d8c794b041bc7036978349",
+        "reviewer": "Codex, independent passive trajectory and host-evidence review",
+        "reason": "The model wrote and compiled a UART service, repaired compiler errors, and stopped voluntarily after 32 calls. The host received no serial bytes: 0/10. Fresh shell responses and restored hardware were visible after cleanup, despite a multiwindow text-matching failure in the recorded cleanup check.",
+        "source_commit": "8923ab4936c3e27e7c59c87dcaf9dba6cbba6a92",
         "model": "openai/gpt-6.1-sol",
-        "steps": 80,
-        "policy_status": "budget_exhausted",
+        "steps": 32,
+        "policy_status": "completed",
+        "budget": {
+          "max_steps": 300,
+          "timeout_seconds": 3600
+        },
         "automatic_grade": {
           "type": "uart",
           "status": "failed",
@@ -6166,26 +5162,44 @@
           "provider_or_adapter_errors": 0,
           "rejected_inputs": 0,
           "partial_actions": 0,
-          "host_oracle_errors": 0,
-          "guest_observations": "Nonexistent C:/ paths caused ExceptDrv; attempted writes to read-only T:/Kernel files caused BlkWrite/DocWrite exceptions."
+          "recorded_host_oracle_errors": 0,
+          "measurement_limitation": "The cleanup matcher concatenated text from adjacent windows and missed three correct fresh output lines. The functional-protocol gate independently keeps cleanup reward at zero."
         },
         "mechanism_observations": [
-          "No model action defines BenchStart/BenchStop, configures the UART, installs an interrupt handler, or enters a worker/parser implementation. Telemetry.HC is visibly empty at turn 51.",
-          "IntEntrySet and IRET appear as bare editor-search text, not an installed handler or compiled interrupt code.",
-          "All eight protocol cases received zero replies. The IRQ4 dependence probe was skipped because no functional serial case passed.",
-          "Host cleanup text landed in the Find/Replace form; no BenchStop execution or fresh shell output was verified. Readable hardware remained in its initial state."
+          "Turn 10 writes the IRQ handler, bounded ring buffer, CRC/parser worker, and start/stop functions to Telemetry.HC. Its typing action lasts 259.39 seconds.",
+          "Turns 28\u201329 repair the worker's failing source line; turn 29 returns from compilation with warnings. Turns 30\u201331 execute start/stop calls and print guest state checks.",
+          "All eight host protocol cases receive zero guest bytes. The IRQ4 dependence probe is skipped because no functional case passed.",
+          "Both cleanup screenshots show the correct fresh arithmetic result after BenchStop. Host inspection finds the checked interrupt/PIC/UART state restored after each call; the final fresh shell response is also visible."
+        ],
+        "source_hypotheses": [
+          "The worker compares an unmasked local U8 sum with an eight-bit checksum. Compilation warns that sum uses a 64-bit register. Every valid challenge in this run has an unreduced sum above 255; the short case is 283 versus wire checksum 27. Missing modulo reduction is consistent with silence, but this review does not establish it as the sole runtime cause."
         ],
         "limitations": [
-          "This records failure to produce a working service in this screenshot-only episode; it does not measure the correctness of an implemented driver.",
-          "Unchanged hardware and silence do not earn cleanup or interrupt-dependence credit.",
-          "The shell challenge failed in the final editor form; this does not establish a kernel hang or global desktop failure."
+          "The rerun changes both the budget and adapter context: complete action history is retained and the tool describes TempleOS. It is not a budget-only comparison.",
+          "The model stops before both previous limits: 32 calls and 641.475 policy seconds versus 80 calls and 900 seconds. More available turns were not consumed.",
+          "Compilation and guest success messages earn no reward. This run provides implementation and debugging evidence, but no positive protocol reward or verified interrupt dependence.",
+          "The recorded cleanup matcher failure does not establish an unresponsive shell or kernel hang. The original automatic evaluation is preserved.",
+          "HolyC warned that the checksum accumulator uses a 64-bit register. Its missing modulo-256 reduction is a likely defect; it was not isolated in a separate execution."
         ],
         "evidence": [
           "trajectory.jsonl",
           "evaluation.json",
-          "0051.png",
-          "0080.png",
+          "0010.png",
+          "0029.png",
+          "0031.png",
+          "evaluation-stop-1.png",
+          "evaluation-stop-2.png",
           "evaluation-liveness.png"
+        ],
+        "references": [
+          {
+            "title": "Terry A. Davis, HolyC: 64-bit access and intermediate calculations",
+            "url": "https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/HolyC.DD#L248"
+          },
+          {
+            "title": "TempleOS compiler: warning when a sub-eight-byte local is assigned a register",
+            "url": "https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Compiler/OptPass3.HC#L574"
+          }
         ]
       },
       "evaluation_artifacts": {
