@@ -1,0 +1,27 @@
+{
+  "id": "uart_irq_service",
+  "title": "Live kernel interrupt handler",
+  "prompt": "Build a live COM1 telemetry service in TempleOS using HolyC through this\ndesktop. COM1 is a QEMU 16550 UART at ports 0x3F8..0x3FF, IRQ4, interrupt\nvector 0x24, with a host serial connection. Configure 115200 baud and\n8 data bits, no parity, one stop bit. Preserve the keyboard, mouse,\ntimer, scheduler, and a usable shell.\n\nSave your source as B:/Bench/Telemetry.HC; this writable directory is\nalready prepared. Compile it using #include \"B:/Bench/Telemetry.HC\";\nwith the semicolon. Implement BenchStart() and BenchStop(), both safe\nto call repeatedly. Start the service and leave it active when you finish.\n\nReceive bytes through a real interrupt U0 handler installed with\nIntEntrySet(0x24,&YourHandler). Drain RX into a bounded buffer and use\na background worker to parse requests and send replies. Do not poll RX\nfrom a foreground or background loop. Polling transmitter readiness is\nallowed. Keep the interrupt handler brief and do not sleep inside it.\n\nTempleOS provides InU8, OutU8, IntEntryGet, IntEntrySet, Spawn, Sleep,\nYield, and Kill. The master PIC IRQ4 mask is bit 4 at port 0x21;\npreserve the other mask bits. Acknowledge serviced IRQ4 interrupts\nwith OutU8(0x20,0x20). The UART modem-control OUT2 bit enables its IRQ\noutput. BenchStop must stop the worker and restore the previous\ninterrupt entry, IRQ4 mask bit, and UART state as far as readable\nhardware state permits.\n\nWire protocol (each field is a byte unless stated otherwise):\nRequest = A5, sequence, length, payload[length], checksum.\nLength is 1..64. Checksum is (sequence+length+sum(payload)) modulo 256.\nPayloads may contain any byte, including A5 and zero.\nReply = 5A, sequence, FOUR little-endian CRC32(payload) bytes, checksum.\nReply checksum is (sequence+sum(the four CRC bytes)) modulo 256.\nCRC32 is IEEE reflected CRC32: polynomial 0xEDB88320, initial value\n0xFFFFFFFF, final XOR 0xFFFFFFFF, compatible with zlib.crc32.\n\nReject corrupt checksums and lengths outside 1..64 without a reply;\nrecover to accept the next valid frame. Handle fragmented requests,\nidle gaps, and bursts. Emit no serial banner or other unsolicited bytes;\nlocal shell diagnostics are fine.\n\nAfter you finish, the host sends fresh binary challenges, temporarily\nmasks and unmasks IRQ4 to check interrupt dependence, and calls\nBenchStop twice to check cleanup and state restoration. Leave the\nservice running for those checks. Printed success markers earn no reward.\n",
+  "grader": {
+    "type": "uart",
+    "rubric": "Grade actual host-observed serial bytes using fresh hidden requests.\nEight protocol checks cover valid packets, binary payloads,\nfragmentation, bursts, malformed-request recovery, and embedded\nheaders. A causal IRQ4 mask/unmask probe checks interrupt dependence.\nCleanup checks repeated BenchStop calls, restored interrupt/PIC/UART\nstate, and a responsive guest. Keep challenge seeds and transcripts\nprivate until model actions end. Require genuine live responses before\nawarding intervention or cleanup credit; silence alone is not success.\n\nSerial behavior and IRQ masking strengthen the signal but do not\nconclusively prove an interrupt-only implementation against an\nadversarial all-ring-0 policy. Source and trajectory review remain\nnecessary for that stronger mechanism claim.\n"
+  },
+  "category": "kernel",
+  "difficulty": "hard",
+  "max_steps": 300,
+  "timeout_seconds": 3600,
+  "setup": [
+    {
+      "kind": "type",
+      "text": "Cd(\"B:/Bench\",TRUE);DocClear;\n",
+      "keys": null,
+      "x": null,
+      "y": null,
+      "button": "left",
+      "clicks": 1,
+      "seconds": 0.5,
+      "direction": null,
+      "amount": 1
+    }
+  ]
+}

@@ -42,8 +42,8 @@ uv run temple-cua run --provider cua --model openai/gpt-6.1-sol \
 Budgets count model API attempts, with up to four input actions per response;
 boot and host grading run outside the policy time limit. For context,
 [original OSWorld](https://arxiv.org/html/2404.07972v1#A3.SS1) used 15 interaction
-steps, [OSWorld-Verified evaluations](https://www.anthropic.com/news/claude-sonnet-4-5)
-use 100, and [OSWorld 2.0](https://arxiv.org/html/2606.29537v1#S3.SS1) uses 500.
+steps, [Anthropic's OSWorld-Verified evaluation](https://www.anthropic.com/news/claude-sonnet-4-5)
+uses 100, and [OSWorld 2.0](https://arxiv.org/html/2606.29537v1#S3.SS1) uses 500.
 Their steps can batch actions; these are not equivalent budgets or scores.
 
 ## Tasks
@@ -100,10 +100,19 @@ exhausted 100 calls (769 seconds) without creating a sprite or launching the
 modified game. These GUI results have separate assistant trajectory reviews;
 their raw manual grades remain unscored.
 
-The [UART attempt](examples/cua-uart/) exhausted 80 calls (720 seconds of
-model time). Host evaluation took 46 seconds and returned reward 0/1
-(0/10 checks passed). The model stayed in file browsing and left a
-Find/Replace form open without installing the service.
+The [UART rerun](examples/cua-uart-300/) used a 300-call, one-hour budget and
+retained all action history. It compiled and started a driver, then stopped
+voluntarily after 32 calls (641 seconds). Host evaluation returned **0/10**:
+no serial replies. The source omitted checksum reduction despite HolyC's
+64-bit register warning; this is a likely cause, not a verified diagnosis.
+Cleanup restored hardware and printed fresh shell responses, which the
+recorded text matcher missed across adjacent windows. That matcher is fixed
+for future runs; the original grade is preserved.
+
+The [earlier UART attempt](examples/cua-uart/) exhausted 80 calls while
+browsing, also scoring 0/10. The rerun fixed action-history retention and the
+tool's OS description as well as raising the budget. It stayed below both
+old limits, so this does not demonstrate a benefit from extra turns.
 
 The [original sprite attempt](examples/cua-sprite/) stopped after 24 calls
 (159 seconds) when the adapter rejected a scroll request. The rerun used
@@ -116,7 +125,7 @@ one featured attempt per task; earlier recordings remain in `examples/`.
 uv run pytest
 uv run python scripts/build_site.py --run examples/cua-cursor \
   --run examples/cua-counter --run examples/cua-sprite-rerun \
-  --run examples/cua-uart
+  --run examples/cua-uart-300
 ```
 
 TempleOS is public domain; this harness is [MIT licensed](LICENSE). The ISO is

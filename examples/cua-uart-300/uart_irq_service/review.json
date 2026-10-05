@@ -1,0 +1,63 @@
+{
+  "status": "failed",
+  "reviewer": "Codex, independent passive trajectory and host-evidence review",
+  "reason": "The model wrote and compiled a UART service, repaired compiler errors, and stopped voluntarily after 32 calls. The host received no serial bytes: 0/10. Fresh shell responses and restored hardware were visible after cleanup, despite a multiwindow text-matching failure in the recorded cleanup check.",
+  "source_commit": "8923ab4936c3e27e7c59c87dcaf9dba6cbba6a92",
+  "model": "openai/gpt-6.1-sol",
+  "steps": 32,
+  "policy_status": "completed",
+  "budget": {
+    "max_steps": 300,
+    "timeout_seconds": 3600
+  },
+  "automatic_grade": {
+    "type": "uart",
+    "status": "failed",
+    "score": 0.0,
+    "passed_cases": 0,
+    "total_cases": 10
+  },
+  "errors": {
+    "provider_or_adapter_errors": 0,
+    "rejected_inputs": 0,
+    "partial_actions": 0,
+    "recorded_host_oracle_errors": 0,
+    "measurement_limitation": "The cleanup matcher concatenated text from adjacent windows and missed three correct fresh output lines. The functional-protocol gate independently keeps cleanup reward at zero."
+  },
+  "mechanism_observations": [
+    "Turn 10 writes the IRQ handler, bounded ring buffer, CRC/parser worker, and start/stop functions to Telemetry.HC. Its typing action lasts 259.39 seconds.",
+    "Turns 28\u201329 repair the worker's failing source line; turn 29 returns from compilation with warnings. Turns 30\u201331 execute start/stop calls and print guest state checks.",
+    "All eight host protocol cases receive zero guest bytes. The IRQ4 dependence probe is skipped because no functional case passed.",
+    "Both cleanup screenshots show the correct fresh arithmetic result after BenchStop. Host inspection finds the checked interrupt/PIC/UART state restored after each call; the final fresh shell response is also visible."
+  ],
+  "source_hypotheses": [
+    "The worker compares an unmasked local U8 sum with an eight-bit checksum. Compilation warns that sum uses a 64-bit register. Every valid challenge in this run has an unreduced sum above 255; the short case is 283 versus wire checksum 27. Missing modulo reduction is consistent with silence, but this review does not establish it as the sole runtime cause."
+  ],
+  "limitations": [
+    "The rerun changes both the budget and adapter context: complete action history is retained and the tool describes TempleOS. It is not a budget-only comparison.",
+    "The model stops before both previous limits: 32 calls and 641.475 policy seconds versus 80 calls and 900 seconds. More available turns were not consumed.",
+    "Compilation and guest success messages earn no reward. This run provides implementation and debugging evidence, but no positive protocol reward or verified interrupt dependence.",
+    "The recorded cleanup matcher failure does not establish an unresponsive shell or kernel hang. The original automatic evaluation is preserved.",
+    "HolyC warned that the checksum accumulator uses a 64-bit register. Its missing modulo-256 reduction is a likely defect; it was not isolated in a separate execution."
+  ],
+  "evidence": [
+    "trajectory.jsonl",
+    "evaluation.json",
+    "0010.png",
+    "0029.png",
+    "0031.png",
+    "evaluation-stop-1.png",
+    "evaluation-stop-2.png",
+    "evaluation-liveness.png"
+  ],
+  "references": [
+    {
+      "title": "Terry A. Davis, HolyC: 64-bit access and intermediate calculations",
+      "url": "https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/HolyC.DD#L248"
+    },
+    {
+      "title": "TempleOS compiler: warning when a sub-eight-byte local is assigned a register",
+      "url": "https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Compiler/OptPass3.HC#L574"
+    }
+  ]
+}

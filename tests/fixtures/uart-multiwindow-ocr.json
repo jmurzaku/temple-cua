@@ -1,0 +1,23 @@
+{
+  "source": "runs/cua-gpt-6.1-sol-uart-300/uart_irq_service/evaluation.json",
+  "cases": [
+    {
+      "purpose": "STOP1",
+      "command": "{DocClear;BenchStop();\"\\n  UA_STOP1_860da0c1ecfc4f23=%d\\n\",33*24+24;};\n",
+      "expected_line": "UA_STOP1_860da0c1ecfc4f23=816",
+      "observed_text": "�RROR: ~/Tmp.DD.Z,1                    T\n�xcept:Compiler:&LexExcept+0x00A6:PrsSte  UA_STOP1_860da0c1ecfc4f23=816\nERROR: Task:15E62A28 Missing ')' at    r0.019176s\nERROR: B:/Bench/Telemetry.HC,49        mT:/Home>\nExcept:Compiler:&LexExcept+0x00A6:PrsFu�\nERROR: Task:15E62A28 Compiler Parse Err�\nERROR: B:/Bench/Telemetry.HC,49        �\nExcept:Compiler:&LexExcept+0x00A6:PrsEx�\n ___Description____ #__Task__ UnusedStk�\nPU00 12% ContextSwaps/s:      153      �\n Window Mgr         #16122C28 000004013�\n   &WallPaper+0x02B2  &GrUpdateTa+0x00D�\n {DocClear;BenchSto #15E62A28 000003FE0�\n   &GetKey+0x00FB     &DocGetKey+0x003A�\n Adam Task CPU00    #00100300 000004038�\n   &SrvTaskCon+0x0081 KMain+0x0332     �\nrogressBars:0000000000000000 0000000000�\n___CodeData_Heap____ ___Lines___ ___Rea�"
+    },
+    {
+      "purpose": "STOP2",
+      "command": "{DocClear;BenchStop();\"\\n  UA_STOP2_faa61fc5a2360485=%d\\n\",86*51+48;};\n",
+      "expected_line": "UA_STOP2_faa61fc5a2360485=4434",
+      "observed_text": "�RROR: ~/Tmp.DD.Z,1                    T\n�xcept:Compiler:&LexExcept+0x00A6:PrsSte  UA_STOP2_faa61fc5a2360485=4434\nERROR: Task:15E62A28 Missing ')' at    r0.000773s\nERROR: B:/Bench/Telemetry.HC,49        mT:/Home>\nExcept:Compiler:&LexExcept+0x00A6:PrsFu�\nERROR: Task:15E62A28 Compiler Parse Err�\nERROR: B:/Bench/Telemetry.HC,49        �\nExcept:Compiler:&LexExcept+0x00A6:PrsEx�\n ___Description____ #__Task__ UnusedStk�\nPU00 15% ContextSwaps/s:      176      �\n Window Mgr         #16122C28 000004013�\n   &WallPaper+0x02B2  &GrUpdateTa+0x00D�\n {DocClear;BenchSto #15E62A28 000003FE0�\n   &GetKey+0x00FB     &DocGetKey+0x003A�\n Adam Task CPU00    #00100300 000004038�\n   &SrvTaskCon+0x0081 KMain+0x0332     �\nrogressBars:0000000000000000 0000000000�\n___CodeData_Heap____ ___Lines___ ___Rea�"
+    },
+    {
+      "purpose": "ALIVE",
+      "command": "{DocClear;\"\\n  UA_ALIVE_e07d75a53281b5dd=%d\\n\",45*93+10;};\n",
+      "expected_line": "UA_ALIVE_e07d75a53281b5dd=4195",
+      "observed_text": "�RROR: ~/Tmp.DD.Z,1                    T\n�xcept:Compiler:&LexExcept+0x00A6:PrsSte  UA_ALIVE_e07d75a53281b5dd=4195\nERROR: Task:15E62A28 Missing ')' at    r0.000681s\nERROR: B:/Bench/Telemetry.HC,49        mT:/Home>\nExcept:Compiler:&LexExcept+0x00A6:PrsFu�\nERROR: Task:15E62A28 Compiler Parse Err�\nERROR: B:/Bench/Telemetry.HC,49        �\nExcept:Compiler:&LexExcept+0x00A6:PrsEx�\n ___Description____ #__Task__ UnusedStk�\nPU00 12% ContextSwaps/s:      149      �\n Window Mgr         #16122C28 000004013�\n   &WallPaper+0x02B2  &GrUpdateTa+0x00D�\n {DocClear;\"\\n  UA_ #15E62A28 000003FE0�\n   &GetKey+0x00FB     &DocGetKey+0x003A�\n Adam Task CPU00    #00100300 000004038�\n   &SrvTaskCon+0x0081 KMain+0x0332     �\nrogressBars:0000000000000000 0000000000�\n___CodeData_Heap____ ___Lines___ ___Rea�"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "interrupt_vector": {
+    "number": 36,
+    "idt_base": 468200488,
+    "idt_limit": 4095,
+    "bytes_hex": "8afc4000008e00000000000000000000"
+  },
+  "pic": {
+    "master_mask": 248,
+    "irq4_masked": true
+  },
+  "uart": {
+    "lcr": 0,
+    "mcr": 8,
+    "fifo_enabled": false,
+    "scratch": 0,
+    "ier": 0,
+    "divisor_low": 12,
+    "divisor_high": 0
+  },
+  "host_commands": [
+    {
+      "command": "info registers",
+      "output": "\r\nCPU#0\r\nRAX=0000000000000088 RBX=0000000000000000 RCX=000000001605d9e8 RDX=0000000016127c28\r\nRSI=0000000000000000 RDI=0000000015e6a7c0 RBP=000000001611c630 RSP=000000001611c618\r\nR8 =0000000016122c28 R9 =0f0f000000000f0f R10=0000000000000000 R11=0000000000000000\r\nR12=0000000000000000 R13=0000000000000001 R14=00000000000076a2 R15=0000000000000000\r\nRIP=000000000000d690 RFL=00000006 [-----P-] CPL=0 II=0 A20=1 SMM=0 HLT=0\r\nES =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nCS =0040 0000000000000000 00000000 00209a00 DPL=0 CS64 [-R-]\r\nSS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nDS =0060 0000000000000000 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nFS =0060 0000000016122c28 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nGS =0060 000000001bf8c028 ffffffff 00cf9300 DPL=0 DS   [-WA]\r\nLDT=0000 0000000000000000 0000ffff 00008200 DPL=0 LDT\r\nTR =0080 000000001bf44a28 ffffffff 008f8900 DPL=0 TSS64-avl\r\nGDT=     0000000000008020 0000107f\r\nIDT=     000000001be82c28 00000fff\r\nCR0=80000031 CR2=0000000000000000 CR3=0000000000509000 CR4=000000b0\r\nDR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 \r\nDR6=00000000ffff0ff0 DR7=0000000000000400\r\nEFER=0000000000000500\r\nFCW=037f FSW=0020 [ST=0] FTW=00 MXCSR=00001f80\r\nFPR0=0000000000000000 0000 FPR1=0000000000000000 0000\r\nFPR2=0000000000000000 0000 FPR3=0000000000000000 0000\r\nFPR4=0000000000000000 0000 FPR5=0000000000000000 0000\r\nFPR6=c4ec4ec4ec4ec800 4002 FPR7=f598738eedef0800 4009\r\nXMM00=0000000000000000 0000000000000000 XMM01=0000000000000000 0000000000000000\r\nXMM02=0000000000000000 0000000000000000 XMM03=0000000000000000 0000000000000000\r\nXMM04=0000000000000000 0000000000000000 XMM05=0000000000000000 0000000000000000\r\nXMM06=0000000000000000 0000000000000000 XMM07=0000000000000000 0000000000000000\r\nXMM08=0000000000000000 0000000000000000 XMM09=0000000000000000 0000000000000000\r\nXMM10=0000000000000000 0000000000000000 XMM11=0000000000000000 0000000000000000\r\nXMM12=0000000000000000 0000000000000000 XMM13=0000000000000000 0000000000000000\r\nXMM14=0000000000000000 0000000000000000 XMM15=0000000000000000 0000000000000000\r\n"
+    },
+    {
+      "command": "xp /16bx 0x1be82e68",
+      "output": "000000001be82e68: 0x8a 0xfc 0x40 0x00 0x00 0x8e 0x00 0x00\r\n000000001be82e70: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\r\n"
+    },
+    {
+      "command": "i /b 0x21",
+      "output": "portb[0x0021] = 0xf8\r\n"
+    },
+    {
+      "command": "i /b 0x3fb",
+      "output": "portb[0x03fb] = 0x00\r\n"
+    },
+    {
+      "command": "i /b 0x3fc",
+      "output": "portb[0x03fc] = 0x08\r\n"
+    },
+    {
+      "command": "i /b 0x3fa",
+      "output": "portb[0x03fa] = 0x01\r\n"
+    },
+    {
+      "command": "i /b 0x3ff",
+      "output": "portb[0x03ff] = 0x00\r\n"
+    },
+    {
+      "command": "o /b 0x3fb 0x0",
+      "output": ""
+    },
+    {
+      "command": "i /b 0x3f9",
+      "output": "portb[0x03f9] = 0x00\r\n"
+    },
+    {
+      "command": "o /b 0x3fb 0x80",
+      "output": ""
+    },
+    {
+      "command": "i /b 0x3f8",
+      "output": "portb[0x03f8] = 0x0c\r\n"
+    },
+    {
+      "command": "i /b 0x3f9",
+      "output": "portb[0x03f9] = 0x00\r\n"
+    },
+    {
+      "command": "o /b 0x3fb 0x0",
+      "output": ""
+    }
+  ],
+  "limitations": [
+    "TempleOS identity mapping is assumed when reading the IDT through physical memory.",
+    "FIFO contents, RX trigger selection, and other write-only/transient state cannot be compared.",
+    "IIR is read only for FIFO-enable bits; its transient interrupt reason is not graded."
+  ]
+}

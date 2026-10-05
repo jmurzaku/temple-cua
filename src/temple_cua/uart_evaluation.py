@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import re
 import time
 
 from PIL import Image
@@ -44,8 +45,13 @@ def _error(exc: Exception) -> str:
     return f"{type(exc).__name__}: {exc}"
 
 
+def _output_token_matches(text: str, expected: str) -> int:
+    """Count intact nonce/value tokens, including output beside another pane."""
+    return len(re.findall(r"(?<!\S)" + re.escape(expected) + r"(?!\S)", text))
+
+
 def _challenge(vm, purpose: str, path: Path, deadline: float, *, stop=False) -> dict:
-    """Require an exact new output line whose value is absent from its echo."""
+    """Require a unique new nonce/value token whose value is absent from its echo."""
     nonce = os.urandom(8).hex()
     values = os.urandom(3)
     a, b, c = (1 + value % 97 for value in values)
@@ -63,7 +69,8 @@ def _challenge(vm, purpose: str, path: Path, deadline: float, *, stop=False) -> 
     command = "{DocClear;" + ("BenchStop();" if stop else "") + print_statement + "};\n"
     started = time.monotonic()
     record = {"purpose": purpose, "command": command, "expected_line": expected,
-              "screenshot": path.name, "status": "failed", "observed_text": "", "observations": []}
+              "screenshot": path.name, "status": "failed", "observed_text": "", "observations": [],
+              "output_matcher": "unique_whitespace_delimited_nonce_value"}
     try:
         vm.execute(Action("type", text=command), deadline=min(deadline, started + 15.0))
         observation_deadline = min(deadline, time.monotonic() + CHALLENGE_OBSERVATION_SECONDS)
@@ -82,18 +89,18 @@ def _challenge(vm, purpose: str, path: Path, deadline: float, *, stop=False) -> 
                     recognized = raw_text
             record["observed_text"] = recognized
             record["observed_full_frame_text"] = raw_text
-            # Remove border cells only, never damage inside the fresh label.
-            lines = [line.strip().strip("\ufffd").strip() for line in recognized.splitlines()]
-            matches = lines.count(expected)
+            # Adjacent panes share an OCR row. Match the complete output token
+            # without accepting an attached prefix, suffix, or damaged glyph.
+            matches = _output_token_matches(recognized, expected)
             record["observations"].append({"at_ms": round((time.monotonic() - started) * 1000, 3),
-                                            "exact_line_matches": matches, "observed_text": recognized,
+                                            "exact_token_matches": matches, "observed_text": recognized,
                                             "observed_full_frame_text": raw_text})
             if matches == 1:
                 record["status"] = "passed"
-                record["reason"] = "Exact fresh arithmetic output line observed"
+                record["reason"] = "Exact fresh arithmetic output token observed"
                 break
             if matches > 1 or time.monotonic() >= observation_deadline:
-                record["reason"] = "Fresh output line missing or ambiguous; command echo is insufficient"
+                record["reason"] = "Fresh output token missing or ambiguous; command echo is insufficient"
                 break
             remaining = max(0.0, min(0.1, observation_deadline - time.monotonic()))
             vm.execute(Action("wait", seconds=remaining), deadline=deadline)

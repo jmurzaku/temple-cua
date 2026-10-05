@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 import json
+from pathlib import Path
 import re
 
 from PIL import Image
@@ -125,6 +126,64 @@ def backend(monkeypatch):
 
 
 INITIAL = {"idt_gate_hex": "old", "pic_irq4": True}
+
+
+def test_saved_multiwindow_ocr_contains_unique_fresh_outputs_and_no_computed_echo():
+    fixture = json.loads((Path(__file__).parent / "fixtures" / "uart-multiwindow-ocr.json").read_text())
+    assert [case["purpose"] for case in fixture["cases"]] == ["STOP1", "STOP2", "ALIVE"]
+    for case in fixture["cases"]:
+        expected = case["expected_line"]
+        assert not any(line.strip() == expected for line in case["observed_text"].splitlines())
+        assert evaluation._output_token_matches(case["observed_text"], expected) == 1
+        assert evaluation._output_token_matches(case["command"], expected) == 0
+
+
+@pytest.mark.parametrize("surrounding", [
+    "{token}", "  {token}  ", "OTHER PANE  {token}", "{token}  OTHER PANE",
+    "\ufffd damaged pane  {token}\n", "\n\t{token}\t\n",
+])
+def test_output_token_accepts_complete_whitespace_bounded_output(surrounding):
+    token = "UA_ALIVE_0123456789abcdef=42"
+    assert evaluation._output_token_matches(surrounding.format(token=token), token) == 1
+
+
+@pytest.mark.parametrize("surrounding", [
+    "X{token}", "_{token}", '"{token}"', "[{token}]", "{token}0", "{token}x",
+    "{token}_", "{token};", "{token}.5", "{token}\ufffd", "\ufffd{token}",
+    'Print("{token}");',
+])
+def test_output_token_rejects_attached_prefixes_suffixes_and_literal_echoes(surrounding):
+    token = "UA_ALIVE_0123456789abcdef=42"
+    assert evaluation._output_token_matches(surrounding.format(token=token), token) == 0
+
+
+def test_output_token_keeps_exact_nonce_value_and_counts_duplicates_on_one_row():
+    token = "UA_ALIVE_0123456789abcdef=42"
+    for incorrect in (token.replace("0123", "0124"), token.replace("=42", "=41"),
+                      token.replace("=42", "= 42"), token.replace("ALIVE", "AL\ufffdVE"),
+                      token.replace("=42", "=%d")):
+        assert evaluation._output_token_matches(incorrect, token) == 0
+    assert evaluation._output_token_matches(f"{token}  {token}", token) == 2
+    assert evaluation._output_token_matches(f"{token}\n{token}", token) == 2
+
+
+def test_cleanup_accepts_output_beside_another_pane_without_changing_reward_checks(tmp_path, backend):
+    class MultiWindowVM(FakeVM):
+        def execute(self, action, *, deadline=None):
+            super().execute(action, deadline=deadline)
+            if action.kind == "type":
+                self.lines[-1] = "OTHER PANE CONTENT" + self.lines[-1]
+
+    vm = MultiWindowVM()
+    backend(vm)
+    grade = evaluation.evaluate_uart(vm, FakeJudge(), INITIAL, tmp_path)
+    assert grade["score"] == 1 and grade["passed_cases"] == 10
+    report = json.loads((tmp_path / "evaluation.json").read_text())
+    assert report["cleanup"]["status"] == "passed"
+    for command in report["cleanup"]["host_commands"]:
+        assert command["output_matcher"] == "unique_whitespace_delimited_nonce_value"
+        assert command["observations"][-1]["exact_token_matches"] == 1
+        assert not any(line.strip() == command["expected_line"] for line in command["observed_text"].splitlines())
 
 
 def test_all_ten_checks_pass_and_host_actions_remain_separate(tmp_path, backend):
