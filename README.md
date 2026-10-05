@@ -33,13 +33,20 @@ snapshot; results, screenshots, and actions go into `runs/`.
 
 ## Tasks
 
-The site features three tasks: arithmetic, a live cursor callback, and a
-[live counter panel](tasks/08_interactive_counter_panel.yaml). The panel requires
-building clickable controls, then using them
-to increment, decrement, and reset shared state while its draw callback runs.
+The site features four tasks: arithmetic, a live cursor callback, a
+[live counter panel](tasks/08_interactive_counter_panel.yaml), and a game sprite.
+The panel requires clickable controls that increment, decrement, and reset
+shared state while its draw callback runs.
 [Cursor callback](tasks/07_cursor_callback.yaml) asks the agent to compile a draw
 function, install `Fs->draw_it=&Cross`, and follow a document link while its cross
 keeps tracking the pointer. The hook runs on the guest's refresh path.[²](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Graphics/WinZBuf.HC)
+
+[Add a sprite to Tic-Tac-Toe](tasks/09_tictactoe_sprite.yaml) asks the agent to
+create a robot sprite, integrate it into the [bundled game](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Games/TicTacToe.HC),
+play it with real clicks, and relaunch the saved version. Select it with
+`--task tictactoe_sprite`. TempleOS supports both [sprite editing](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/Sprite.DD)
+and [sprites built in HolyC](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Graphics/SpriteRaw.HC).
+It has no recorded model attempt yet.
 
 ```sh
 uv run temple-cua list-tasks

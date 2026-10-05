@@ -1,0 +1,245 @@
+[
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "DirMk(\"B:/Home\"); CDC *SPCanvas=DCNew(32,32); DCFill(SPCanvas,TRANSPARENT); SPCanvas->color=BLACK; GrRect(SPCanvas,2,2,28,28); SPCanvas->color=YELLOW; GrRect(SPCanvas,4,4,24,24); SPCanvas->color=BLACK; GrRect(SPCanvas,8,9,5,5); GrRect(SPCanvas,19,9,5,5); GrRect(SPCanvas,9,21,14,4); U8 *SPRaw=DC2Sprite(SPCanvas); FileWrite(\"B:/Home/RobotSprite.SP\",SPRaw,SpriteSize(SPRaw)); DCDel(SPCanvas); Free(SPRaw);\n"
+      }
+    ],
+    "note": "Create and save a native 32x32 transparent bitmap sprite with a yellow robot face."
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "U8 *SPSource=FileRead(\"::/Demo/Games/TicTacToe.HC.Z\"); U8 *SPOriginal=StrNew(SPSource); U8 *SPBegin=StrFind(\"U0 DrawX\",SPSource); U8 *SPEnd=StrFind(\"U0 DrawO\",SPBegin); *SPBegin=0; U8 *SPOutput=MStrPrint(\"%s%s%s\\nFree(RobotSprite);\\n\",SPSource, \"U8 *RobotSprite=FileRead(\\\"B:/Home/RobotSprite.SP\\\");\\n\" \"U0 DrawX(CDC *dc,I64 x,I64 y) { Sprite3(dc,x-16,y-16,0,RobotSprite); }\\n\\n\", SPEnd); FileWrite(\"B:/Home/RobotTicTacToe.HC\",SPOutput,StrLen(SPOutput)); U8 *SPAgain=FileRead(\"::/Demo/Games/TicTacToe.HC.Z\"); Print(\"ORIGINAL_UNCHANGED=%d\\n\",!StrCmp(SPOriginal,SPAgain)); Free(SPAgain); Free(SPOriginal); Free(SPSource); Free(SPOutput);\n"
+      }
+    ],
+    "note": "Read the bundled game and replace only DrawX in a saved copy; load the native asset with FileRead and render it with Sprite3."
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "U8 *SPProof=FileRead(\"B:/Home/RobotSprite.SP\");DocClear;Print(\"NATIVE_SPRITE_BYTES=%d\\n\",SpriteSize(SPProof));Sprite(SPProof);Free(SPProof);\n"
+      }
+    ],
+    "note": "Inspect the saved native sprite asset in the shell."
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "#include \"B:/Home/RobotTicTacToe.HC\"\n"
+      },
+      {
+        "kind": "move",
+        "x": 158,
+        "y": 166
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Launch the saved game and inspect player1 robot preview in an empty upper-left square."
+  },
+  {
+    "actions": [
+      {
+        "kind": "move",
+        "x": 358,
+        "y": 166
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Move to the empty upper-right square and observe the same robot placement preview following the pointer."
+  },
+  {
+    "actions": [
+      {
+        "kind": "click",
+        "x": 158,
+        "y": 166,
+        "button": "left"
+      },
+      {
+        "kind": "move",
+        "x": 508,
+        "y": 436
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Place player1 robot upper-left and move offboard to reveal the fixed mark and player2 O preview."
+  },
+  {
+    "actions": [
+      {
+        "kind": "click",
+        "x": 158,
+        "y": 166,
+        "button": "left"
+      },
+      {
+        "kind": "move",
+        "x": 508,
+        "y": 436
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Click the occupied upper-left cell; reveal unchanged fixed robot and player2 preview after moving offboard."
+  },
+  {
+    "actions": [
+      {
+        "kind": "click",
+        "x": 258,
+        "y": 266,
+        "button": "left"
+      },
+      {
+        "kind": "move",
+        "x": 508,
+        "y": 436
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Place player2 O in the center; rejection did not advance the turn."
+  },
+  {
+    "actions": [
+      {
+        "kind": "click",
+        "x": 358,
+        "y": 166,
+        "button": "left"
+      },
+      {
+        "kind": "move",
+        "x": 508,
+        "y": 436
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Place a second robot upper-right and reveal two fixed robot marks plus center O."
+  },
+  {
+    "actions": [
+      {
+        "kind": "key",
+        "keys": [
+          "ctrl",
+          "alt",
+          "c"
+        ]
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.8
+      }
+    ],
+    "note": "Use the stock Ctrl-Alt-C exit and observe the shell."
+  },
+  {
+    "actions": [
+      {
+        "kind": "type",
+        "text": "#include \"B:/Home/RobotTicTacToe.HC\"\n"
+      },
+      {
+        "kind": "move",
+        "x": 508,
+        "y": 436
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Relaunch the saved source and persisted native sprite; observe a fresh empty board."
+  },
+  {
+    "actions": [
+      {
+        "kind": "click",
+        "x": 158,
+        "y": 166,
+        "button": "left"
+      },
+      {
+        "kind": "move",
+        "x": 508,
+        "y": 436
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Repeat player1 upper-left robot placement after reload."
+  },
+  {
+    "actions": [
+      {
+        "kind": "click",
+        "x": 258,
+        "y": 266,
+        "button": "left"
+      },
+      {
+        "kind": "move",
+        "x": 508,
+        "y": 436
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Repeat player2 center O placement after reload."
+  },
+  {
+    "actions": [
+      {
+        "kind": "click",
+        "x": 358,
+        "y": 166,
+        "button": "left"
+      },
+      {
+        "kind": "move",
+        "x": 508,
+        "y": 436
+      },
+      {
+        "kind": "wait",
+        "seconds": 0.4
+      }
+    ],
+    "note": "Repeat player1 upper-right robot placement; final live game retains two robots and center O."
+  },
+  {
+    "actions": [
+      {
+        "kind": "done",
+        "text": "The saved game and native robot sprite reload correctly. Real clicks preserve turn order and reject an occupied square; the final board shows two robots and center O."
+      }
+    ],
+    "note": "Finish with the saved modified game active. This reference is a scripted diagnostic, not a model trial."
+  }
+]

@@ -17,7 +17,7 @@ from temple_cua.tasks import load_tasks
 
 ROOT = Path(__file__).resolve().parents[1]
 RUN = ROOT / "examples/cua-starter"
-CURATED = ["arithmetic", "cursor_callback", "interactive_counter_panel"]
+CURATED = ["arithmetic", "cursor_callback", "interactive_counter_panel", "tictactoe_sprite"]
 spec = importlib.util.spec_from_file_location("build_site", ROOT / "scripts/build_site.py")
 builder = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(builder)
@@ -118,8 +118,8 @@ def test_default_catalog_uses_curated_tasks_and_preserves_real_task_snapshot(tmp
     catalog = read_json(tmp_path / "assets/starter-data.json")
     tasks = catalog["tasks"]
     assert [task["id"] for task in tasks] == CURATED
-    assert [task["difficulty"] for task in tasks] == ["easy", "medium", "hard"]
-    assert summary["tasks"] == 3
+    assert [task["difficulty"] for task in tasks] == ["easy", "medium", "hard", "hard"]
+    assert summary["tasks"] == 4
     assert catalog["run"]["model"] == read_json(RUN / "results.json")["model"]
     assert tasks[0]["result"] == source_results["arithmetic"]
     snapshot = read_json(RUN / "arithmetic/task.json")
@@ -141,6 +141,28 @@ def test_default_catalog_uses_curated_tasks_and_preserves_real_task_snapshot(tmp
     for frame in frames:
         image = tmp_path / frame["src"]
         assert image.read_bytes() == (RUN / "arithmetic" / image.name).read_bytes()
+
+
+def test_four_task_catalog_preserves_three_recordings_and_leaves_sprite_unrun(tmp_path):
+    sources = [RUN, ROOT / "examples/cua-cursor", ROOT / "examples/cua-counter"]
+    summary = builder.build(sources[0], tmp_path, additional_runs=sources[1:])
+    tasks = read_json(tmp_path / "assets/starter-data.json")["tasks"]
+    assert [task["id"] for task in tasks] == CURATED
+    assert summary["tasks"] == 4
+    assert sum(task["result"] is not None for task in tasks) == 3
+    for task, source in zip(tasks[:3], sources):
+        original = next(result for result in read_json(source / "results.json")["results"]
+                        if result["task_id"] == task["id"])
+        assert task["result"] == original
+    sprite = tasks[3]
+    assert sprite["result"] is None and sprite["frames"] == []
+    assert sprite.get("run") is None and sprite.get("review") is None
+    definition = load_tasks(ROOT / "tasks", selected=[sprite["id"]])[0]
+    assert sprite["prompt"] == definition.prompt
+    assert sprite["grader"] == definition.grader
+    downloads = read_json(tmp_path / "assets/starter-results.json")
+    assert [record["task_id"] for run in downloads["runs"] for record in run["results"]] == CURATED[:3]
+    assert not any("tictactoe_sprite" in Path(name).parts for name in archive_files(tmp_path))
 
 
 def test_downloads_contain_only_curated_recorded_result_and_its_artifacts(tmp_path, source_results):
@@ -308,7 +330,7 @@ def test_supplementary_runs_preserve_task_provenance_and_separate_download_envel
     assert catalog["run"]["model"] == read_json(RUN / "results.json")["model"]
     assert len(catalog["runs"]) == 2
     original, supplementary = read_json(RUN / "results.json"), read_json(supplemental_run / "results.json")
-    arithmetic, callback, panel = catalog["tasks"]
+    arithmetic, callback, panel, sprite = catalog["tasks"]
     for task, source in ((arithmetic, original), (callback, supplementary)):
         metadata = task["run"]
         for key in ("provider", "model", "created_at", "config", "provenance"):
@@ -320,6 +342,7 @@ def test_supplementary_runs_preserve_task_provenance_and_separate_download_envel
     assert arithmetic["run"]["created_at"] != callback["run"]["created_at"]
     assert arithmetic["run"]["config"] != callback["run"]["config"]
     assert panel["result"] is None and panel["frames"] == []
+    assert sprite["result"] is None and sprite["frames"] == []
     assert callback["prompt"] == read_json(supplemental_run / "cursor_callback/task.json")["prompt"]
     download = read_json(output / "assets/starter-results.json")
     assert download["format"] == "templeosbench-recorded-runs" and download["version"] == 1
@@ -434,10 +457,11 @@ def test_cli_repeated_run_argument_routes_supplementary_sources(tmp_path, supple
     monkeypatch.setattr(sys, "argv", ["build_site", str(RUN), "--run", str(supplemental_run),
                                      "--run", str(panel_run), "--output", str(output)])
     builder.main()
-    assert json.loads(capsys.readouterr().out)["tasks"] == 3
+    assert json.loads(capsys.readouterr().out)["tasks"] == 4
     catalog = read_json(output / "assets/starter-data.json")
     assert catalog["tasks"][1]["run"]["model"] == read_json(supplemental_run / "results.json")["model"]
     assert catalog["tasks"][2]["run"]["model"] == panel_envelope["model"]
+    assert catalog["tasks"][3]["result"] is None and catalog["tasks"][3]["frames"] == []
     assert len(read_json(output / "assets/starter-results.json")["runs"]) == 3
 
 
