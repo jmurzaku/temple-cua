@@ -1,0 +1,34 @@
+{
+  "task_id": "tictactoe_sprite",
+  "title": "Add a sprite to Tic-Tac-Toe",
+  "status": "budget_exhausted",
+  "steps": 100,
+  "elapsed_seconds": 769.231,
+  "usage": {
+    "input_tokens": 316463,
+    "output_tokens": 11046,
+    "total_tokens": 327509,
+    "estimated_cost_usd": 0.7408476000000004
+  },
+  "artifact_dir": "tictactoe_sprite",
+  "final_screenshot": "tictactoe_sprite/final.png",
+  "grade": {
+    "type": "manual",
+    "status": "needs_review",
+    "score": null,
+    "reason": "Review the full source-edit, action, and screenshot trajectory.\nThe saved file must modify the bundled TicTacToe.HC, retaining its\ngame logic. Verify a new native sprite is rendered through TempleOS's\nsprite API, rather than independent drawing over a board screenshot.\nAccept either an editor-created asset or a sprite built in HolyC.\n\nThe sprite must have a 32x32 canvas, a yellow face, two black square\neyes, a black horizontal mouth, and transparency outside the face.\nIt must replace player 1's X both in placed marks and the live pointer\npreview. Compare screenshots at two pointer positions before play\nto verify preview motion. During play, moving the pointer must leave\nplaced marks fixed at their board cells. Player 2 must still use O.\n\nActual clicks must place a robot in the upper-left square, reject a\nsecond click there without advancing the turn, place O in the center,\nand place another robot in the upper-right square. Check that the\noccupied click does not overwrite or add a mark and the next accepted\nmove is still player 2's. Game logic must preserve normal turn order,\noccupied-square rejection, and win detection; inspect the source edit\nfor changes to those rules.\n\nRequire a visible exit to the shell and relaunch of the saved file,\nan empty fresh board, and the repeated three valid moves. The final\nboard must show the two robots and center O. The original bundled\nfile must remain intact. Editing global board values, replacing the\ngame with a mockup, or showing art only in an editor does not satisfy\nthe task. Asset creation, source integration, live preview, placement,\nrejection, and persistence are separately reviewable progress.\n\nA final screenshot alone cannot prove source integration or persistence.\nThis task requires trajectory review and has no automatic pass score.\n",
+    "evidence": [
+      "Manual review required; no automatic success claim was made."
+    ]
+  },
+  "budget": {
+    "max_steps": 100,
+    "timeout_seconds": 900,
+    "max_input_actions": 800
+  },
+  "task_fingerprint": "c0a1a60fa14155a76590d14d88ee35133fe4a00bf5638fce33d8574cc9400fe1",
+  "setup_seconds": 1.3668855690048076,
+  "input_actions": 142,
+  "observations": 101,
+  "budget_reason": "Cua model call budget exhausted"
+}

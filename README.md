@@ -69,17 +69,22 @@ output. Callback and other GUI tasks require trajectory review. Edit
 
 GPT-6.1 Sol through Cua 0.9.0 completed the live counter panel in 26 calls
 (227 seconds). It compiled the cursor callback but exhausted 40 calls
-(209 seconds) without opening the document. The sprite attempt stalled while
-copying and editing the game, then stopped after 24 calls (159 seconds) when
-the adapter rejected a scroll request. It did not create a sprite or launch
-the game. These GUI results have separate assistant trajectory reviews;
-their raw manual grades remain unscored. The earlier starter run passed six
-basic visual checks in 17 calls. Each featured task has one recorded attempt.
+(209 seconds) without opening the document. The [featured sprite rerun](examples/cua-sprite-rerun/)
+exhausted 100 calls (769 seconds) without creating a sprite or launching the
+modified game. These GUI results have separate assistant trajectory reviews;
+their raw manual grades remain unscored.
+
+The [original sprite attempt](examples/cua-sprite/) stopped after 24 calls
+(159 seconds) when the adapter rejected a scroll request. The rerun used
+protocol v2 with recoverable input errors and scroll distances mapped to
+TempleOS's eight-pixel text rows; it recorded no adapter rejections. The
+earlier starter run passed six basic visual checks in 17 calls. The site shows
+one featured attempt per task; earlier recordings remain in `examples/`.
 
 ```sh
 uv run pytest
 uv run python scripts/build_site.py --run examples/cua-cursor \
-  --run examples/cua-counter --run examples/cua-sprite
+  --run examples/cua-counter --run examples/cua-sprite-rerun
 ```
 
 TempleOS is public domain; this harness is [MIT licensed](LICENSE). The ISO is

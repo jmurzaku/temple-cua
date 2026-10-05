@@ -1,0 +1,101 @@
+{
+  "status": "incomplete",
+  "reviewer": "Assistant trajectory review",
+  "review_type": "Passive saved-action and screenshot review; not an automatic grade",
+  "task_id": "tictactoe_sprite",
+  "reason": "The model exhausted all 100 calls after copying and inspecting the stock game. No native robot sprite, DrawX replacement, game launch, required mouse play, or exit-and-relaunch sequence is evidenced. The last calls inspect sprite-related kernel source and list the kernel directory; the final image is a directory listing, not the required game board. The rerun completed without an episode error or recorded input errors.",
+  "evidence": [
+    "Step 18 / 0018.png: Copy(\"::/Demo/Games/TicTacToe.HC.Z\",\"B:/Home/RobotTicTacToe.HC.Z\") visibly succeeds (Copying... and ans=1), after exact uncompressed Copy attempts failed.",
+    "Step 19 / 0019.png: the writable copy opens with populated stock game source, unlike the earlier empty target editor in 0011.png.",
+    "Step 22 / 0022.png: FileRead of the stock .HC.Z followed by FileWrite to B:/Home/RobotTicTacToe.HC executes; subsequent editor frames show stock source.",
+    "Steps 39 and 61 / 0039.png and 0061.png: DrawX remains the original two GrLine3 diagonals; DrawO, DrawBoard, and TakeTurn are stock source. No robot asset or sprite integration is visible.",
+    "Step 43 / trajectory.jsonl: a native scroll_y=-2000 pixel request executes as 13 bounded wheel chunks totaling 250 notches. There is no rejected-input record. This does not reproduce the original attempt's unknown rejected payload.",
+    "Step 48 / 0048.png: exiting the boot-drive SpriteMain.HC editor produces a guest BlkDev/BlkWrite exception. Earlier and later frames also contain guest compiler/navigation errors; these are separate from adapter input rejection.",
+    "Step 61 / 0061.png and step 68 / 0068.png: the interface is split between tasks and then a PersonalMenu. Its existing decorative game sprites are stock menu art, not a newly created robot.",
+    "Step 81 / 0081.png: the model has returned to a full-screen shell after the split-window/navigation detour.",
+    "Steps 97-98 / 0097.png and 0098.png: FileRead/StrNCmp/Print inspects sprite-related source; visible output includes Code2Sprite and rect=12. This is API exploration, not sprite construction.",
+    "Steps 99-100 / 0099.png, 0100.png, and final.png: Dir(\"::/Kernel\") produces the kernel directory listing. No game board, robot, or O placement appears.",
+    "All 100 saved executed-action records: there is no native sprite construction or asset write, DrawX replacement, game invocation, or real game click sequence. The five clicks and two drags concern window/menu navigation, not a rendered Tic-Tac-Toe board."
+  ],
+  "rubric_progress": {
+    "saved_game_copy": {
+      "status": "observed",
+      "detail": "Successful writable stock copies are evidenced, including the requested uncompressed B:/Home/RobotTicTacToe.HC path."
+    },
+    "native_robot_asset": {
+      "status": "not_observed",
+      "detail": "No 32x32 robot asset is built, edited, saved, or rendered."
+    },
+    "stock_game_integration": {
+      "status": "not_observed",
+      "detail": "Visible DrawX remains stock; no native sprite API integration is evidenced."
+    },
+    "rule_preservation": {
+      "status": "unverified",
+      "detail": "Stock rules are visible in copied source, but no modified game runs, so preservation in a working submitted version cannot be assessed."
+    },
+    "preview_at_two_empty_squares": {
+      "status": "not_observed"
+    },
+    "required_clicks_and_occupied_rejection": {
+      "status": "not_observed"
+    },
+    "exit_relaunch_persistence": {
+      "status": "not_observed",
+      "detail": "Ctrl-Alt-C actions occur during source/menu exploration, with no prior game launch; they do not establish game exit or relaunch."
+    },
+    "required_final_board": {
+      "status": "not_observed",
+      "detail": "Final screenshot is a kernel directory listing."
+    },
+    "original_game_intact": {
+      "status": "unverified",
+      "detail": "No successful original-game edit is evidenced. The boot drive is read-only, and boot-source save attempts visibly error. The reviewer did not independently read or hash guest files."
+    }
+  },
+  "recovery_evidence": [
+    "The compressed source filename is discovered and copied successfully after initial empty-editor/Copy failures.",
+    "The model recovers from the split task/menu layout to a full-screen shell.",
+    "The protocol-2 rerun reaches the unchanged 100-call limit without the prior abrupt adapter error. Zero recorded input errors means recoverable invalid-input handling was not exercised in this trajectory."
+  ],
+  "episode": {
+    "status": "budget_exhausted",
+    "budget_reason": "Cua model call budget exhausted",
+    "model": "openai/gpt-6.1-sol",
+    "response_models": [
+      "gpt-6.1-sol"
+    ],
+    "steps": 100,
+    "elapsed_seconds": 769.231,
+    "input_actions": 142,
+    "observations": 101,
+    "episode_error": null,
+    "recorded_input_errors": 0,
+    "budget": {
+      "max_steps": 100,
+      "timeout_seconds": 900,
+      "max_input_actions": 800
+    },
+    "usage": {
+      "input_tokens": 316463,
+      "output_tokens": 11046,
+      "total_tokens": 327509,
+      "estimated_cost_usd": 0.7408476000000004
+    },
+    "estimated_cost_source": "LiteLLM estimate; not a billed invoice"
+  },
+  "adapter_source_commit": "c35682b3b6cbb36e15ea3bee8d64785fd26fb388",
+  "computer_protocol_version": 2,
+  "scroll_pixels_per_notch": 8,
+  "task_fingerprint": "c0a1a60fa14155a76590d14d88ee35133fe4a00bf5638fce33d8574cc9400fe1",
+  "baseline_sha256": "41495fa9238479c1f2f28ede5f5df1599aed91018122194d6f357aa0114b1d39",
+  "raw_grade_status_preserved": "needs_review",
+  "raw_score_preserved": null,
+  "limitations": [
+    "This is an assistant review of the full saved action trajectory and selected relevant screenshots, not an automatic score or independent human review.",
+    "Review was passive: no model calls, hints, guest inputs, task changes, source edits, or baseline modifications were made.",
+    "Guest files were not probed independently; copied-file presence is supported by visible commands/editor output, not a filesystem hash or post-run extraction.",
+    "No gameplay occurred, so preview, native rendering, occupied-square behavior, rule preservation, and persistence could not be validated.",
+    "The raw manual grade remains needs_review with score null. The first attempt and its published artifacts remain unchanged."
+  ]
+}
