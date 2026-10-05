@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; base-uri 'none'">
+<title>TempleOS CUA report</title><style>
+:root{color-scheme:light dark;font-family:system-ui,sans-serif}body{max-width:1100px;margin:2rem auto;padding:0 1rem;line-height:1.5}
+h1,h2{line-height:1.2}.muted{opacity:.7}.summary{display:flex;flex-wrap:wrap;gap:1rem;margin:1.5rem 0}
+.metric{border:1px solid #8886;border-radius:.5rem;padding:1rem;min-width:8rem}.metric strong{display:block;font-size:1.7rem}
+article{border-top:1px solid #8886;padding:1.5rem 0;overflow-wrap:anywhere}.badge{border:1px solid #8886;border-radius:.3rem;padding:.2rem .5rem}
+.passed{background:#228b2233}.failed,.error{background:#dc143c22}.needs_review{background:#e0a00022}
+img{max-width:100%;height:auto;border:1px solid #8886;image-rendering:pixelated}a{color:#6699ff}li{margin:.3rem 0}
+</style></head><body><h1>TempleOS CUA report</h1>
+<p><strong>cua / openai/gpt-6.1-sol</strong><br>
+Created 2026-10-05T02:30:09.418924+00:00</p>
+<div class="summary"><div class="metric"><strong>0</strong><span>Passed</span></div><div class="metric"><strong>0</strong><span>Failed</span></div><div class="metric"><strong>1</strong><span>Needs review</span></div><div class="metric"><strong>0</strong><span>Grader errors</span></div></div><p>Execution outcomes: 1 error.</p>
+<p class="muted">OCR grades are heuristic visual evidence. Command echo or source text can satisfy a match; guest state is not verified.
+Manual tasks require a reviewer. An execution outcome and a grade describe separate facts.</p>
+<article><h2>Add a sprite to Tic-Tac-Toe</h2><p class="muted">Task tictactoe_sprite</p><p><span class="badge needs_review">Grade: needs review</span> Execution: error · Steps: 24 · Elapsed: 158.807 s · Score: —</p><p>Review the full source-edit, action, and screenshot trajectory.
+The saved file must modify the bundled TicTacToe.HC, retaining its
+game logic. Verify a new native sprite is rendered through TempleOS&#x27;s
+sprite API, rather than independent drawing over a board screenshot.
+Accept either an editor-created asset or a sprite built in HolyC.
+
+The sprite must have a 32x32 canvas, a yellow face, two black square
+eyes, a black horizontal mouth, and transparency outside the face.
+It must replace player 1&#x27;s X both in placed marks and the live pointer
+preview. Compare screenshots at two pointer positions before play
+to verify preview motion. During play, moving the pointer must leave
+placed marks fixed at their board cells. Player 2 must still use O.
+
+Actual clicks must place a robot in the upper-left square, reject a
+second click there without advancing the turn, place O in the center,
+and place another robot in the upper-right square. Check that the
+occupied click does not overwrite or add a mark and the next accepted
+move is still player 2&#x27;s. Game logic must preserve normal turn order,
+occupied-square rejection, and win detection; inspect the source edit
+for changes to those rules.
+
+Require a visible exit to the shell and relaunch of the saved file,
+an empty fresh board, and the repeated three valid moves. The final
+board must show the two robots and center O. The original bundled
+file must remain intact. Editing global board values, replacing the
+game with a mockup, or showing art only in an editor does not satisfy
+the task. Asset creation, source integration, live preview, placement,
+rejection, and persistence are separately reviewable progress.
+
+A final screenshot alone cannot prove source integration or persistence.
+This task requires trajectory review and has no automatic pass score.
+</p><p class="error">CuaProtocolError: Computer scroll amount must be an integer within -2400..2400 pixels</p><p class="muted">input tokens: 48551, output tokens: 2713, total tokens: 51264</p><ul><li>Manual review required; no automatic success claim was made.</li></ul><p><a href="tictactoe_sprite/trajectory.jsonl">Trajectory (JSONL)</a></p><a class="screenshot" href="tictactoe_sprite/final.png"><img src="tictactoe_sprite/final.png" alt="Final screenshot for tictactoe_sprite" loading="lazy"></a></article></body></html>

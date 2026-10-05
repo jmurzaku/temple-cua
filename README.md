@@ -46,7 +46,6 @@ create a robot sprite, integrate it into the [bundled game](https://github.com/c
 play it with real clicks, and relaunch the saved version. Select it with
 `--task tictactoe_sprite`. TempleOS supports both [sprite editing](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/Sprite.DD)
 and [sprites built in HolyC](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Graphics/SpriteRaw.HC).
-It has no recorded model attempt yet.
 
 ```sh
 uv run temple-cua list-tasks
@@ -70,14 +69,17 @@ output. Callback and other GUI tasks require trajectory review. Edit
 
 GPT-6.1 Sol through Cua 0.9.0 completed the live counter panel in 26 calls
 (227 seconds). It compiled the cursor callback but exhausted 40 calls
-(209 seconds) without opening the document. Both interactive results have
-separate assistant trajectory reviews; their raw manual grades remain unscored.
-The earlier starter run passed six basic visual checks in 17 calls. Each task
-has one recorded attempt.
+(209 seconds) without opening the document. The sprite attempt stalled while
+copying and editing the game, then stopped after 24 calls (159 seconds) when
+the adapter rejected a scroll request. It did not create a sprite or launch
+the game. These GUI results have separate assistant trajectory reviews;
+their raw manual grades remain unscored. The earlier starter run passed six
+basic visual checks in 17 calls. Each featured task has one recorded attempt.
 
 ```sh
 uv run pytest
-uv run python scripts/build_site.py --run examples/cua-cursor --run examples/cua-counter
+uv run python scripts/build_site.py --run examples/cua-cursor \
+  --run examples/cua-counter --run examples/cua-sprite
 ```
 
 TempleOS is public domain; this harness is [MIT licensed](LICENSE). The ISO is

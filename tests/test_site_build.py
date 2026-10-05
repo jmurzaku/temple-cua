@@ -165,6 +165,71 @@ def test_four_task_catalog_preserves_three_recordings_and_leaves_sprite_unrun(tm
     assert not any("tictactoe_sprite" in Path(name).parts for name in archive_files(tmp_path))
 
 
+def test_four_real_sources_preserve_provenance_downloads_and_sprite_error_review(tmp_path):
+    sources = [RUN, ROOT / "examples/cua-cursor", ROOT / "examples/cua-counter",
+               ROOT / "examples/cua-sprite"]
+    summary = builder.build(sources[0], tmp_path, additional_runs=sources[1:])
+    catalog = read_json(tmp_path / "assets/starter-data.json")
+    assert summary["tasks"] == 4
+    assert [task["id"] for task in catalog["tasks"]] == CURATED
+    assert len(catalog["runs"]) == 4
+    assert len({metadata["id"] for metadata in catalog["runs"]}) == 4
+    download = read_json(tmp_path / "assets/starter-results.json")
+    assert download["format"] == "templeosbench-recorded-runs"
+    assert len(download["runs"]) == 4
+    archive = archive_files(tmp_path)
+    assert json.loads(archive["starter-run/results.json"]) == download
+    for task, source, exported in zip(catalog["tasks"], sources, download["runs"]):
+        envelope = read_json(source / "results.json")
+        original = next(record for record in envelope["results"] if record["task_id"] == task["id"])
+        assert task["result"] == original
+        metadata = task["run"]
+        for key in ("provider", "model", "created_at", "config", "provenance"):
+            assert metadata[key] == envelope[key]
+        assert metadata["cua_version"] == envelope["config"]["model_options"]["cua_version"]
+        assert metadata in catalog["runs"]
+        filtered = {**envelope, "results": [original]}
+        assert {key: value for key, value in exported.items() if key != "id"} == filtered
+        assert exported["id"] == metadata["id"]
+        prefix = f"starter-run/{metadata['id']}/"
+        assert json.loads(archive[prefix + "results.json"]) == filtered
+        folder = source / task["id"]
+        snapshot = read_json(folder / "task.json")
+        snapshot.pop("source", None)
+        assert task["prompt"] == snapshot["prompt"]
+        assert task["grader"] == snapshot["grader"]
+        assert yaml.safe_load((tmp_path / f"assets/tasks/{task['id']}.yaml").read_text()) == {
+            "version": 1, **snapshot,
+        }
+        assert json.loads(archive[prefix + task["id"] + "/task.json"]) == snapshot
+        assert json.loads(archive[prefix + task["id"] + "/result.json"]) == original
+        assert archive[prefix + task["id"] + "/final.png"] == (folder / "final.png").read_bytes()
+        trajectory = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines()]
+        archived_trajectory = [json.loads(line) for line in
+                               archive[prefix + task["id"] + "/trajectory.jsonl"].decode().splitlines()]
+        assert archived_trajectory == trajectory
+        for frame in task["frames"]:
+            assert (tmp_path / frame["src"]).read_bytes() == (folder / Path(frame["src"]).name).read_bytes()
+        if (folder / "review.json").exists():
+            review = read_json(folder / "review.json")
+            assert task["review"] == review
+            assert json.loads(archive[prefix + task["id"] + "/review.json"]) == review
+            assert "review" not in task["result"]
+        report = archive[prefix + "report.html"].decode()
+        assert "Task " + task["id"] in report
+        assert envelope["model"] in report and envelope["created_at"] in report
+        assert report.count("<article>") == 1
+    sprite = catalog["tasks"][3]
+    assert sprite["result"]["status"] == "error"
+    assert sprite["result"]["steps"] == 24
+    assert sprite["result"]["error"].startswith("CuaProtocolError:")
+    assert sprite["result"]["grade"]["status"] == "needs_review"
+    assert sprite["result"]["grade"]["score"] is None
+    assert sprite["review"]["status"] == "incomplete"
+    assert len(sprite["frames"]) == 25
+    assert summary["frames"] == sum(len(task["frames"]) for task in catalog["tasks"])
+
+
 def test_downloads_contain_only_curated_recorded_result_and_its_artifacts(tmp_path, source_results):
     builder.build(RUN, tmp_path)
     download = read_json(tmp_path / "assets/starter-results.json")
