@@ -337,6 +337,179 @@
           "budget_reason": "Cua model call budget exhausted"
         }
       ]
+    },
+    {
+      "id": "05-cua-uart",
+      "created_at": "2026-10-05T12:45:22.157496+00:00",
+      "provider": "cua",
+      "model": "openai/gpt-6.1-sol",
+      "config": {
+        "iso": "assets/TempleOS.ISO",
+        "baseline": null,
+        "memory_mb": 512,
+        "max_steps_override": null,
+        "timeout_override": null,
+        "boot_wait": 20.0,
+        "model_options": {
+          "cua_version": "0.9.0",
+          "max_output_tokens": 4096,
+          "api_timeout": 90,
+          "image_history": 2
+        }
+      },
+      "provenance": {
+        "agent_package": "cua-agent",
+        "agent_version": "0.9.0",
+        "inference": "upstream ComputerAgent with TempleOS input recovery; LiteLLM",
+        "agent_loop": "TempleOpenAIComputerUseConfig",
+        "openai_loop": "registered TempleOpenAIComputerUseConfig compatibility subclass of upstream OpenAIComputerUseConfig",
+        "backend": "TempleVM/QMP legacy PC devices",
+        "framebuffer": [
+          640,
+          480
+        ],
+        "environment_tag": "linux (Cua transport tag; guest is TempleOS)",
+        "execution_mode": "live_model",
+        "telemetry_enabled": false,
+        "max_actions_per_response": 4,
+        "computer_protocol_version": 2,
+        "instructions_sha256": "93eb09050a39e0ba82288bf0ebe8c2277fd94264486024d8a6fb11824c6ff205",
+        "scroll_pixels_per_notch": 8,
+        "input_error_handling": "recoverable tool output with screenshot",
+        "step_definition": "actual model API attempts; Cua automatic retries disabled",
+        "cost_source": "LiteLLM estimate only when positive; unknown model prices omitted",
+        "uart_hardware_profile": {
+          "name": "com1-16550a-irq4",
+          "device": "isa-serial (16550A)",
+          "port": "COM1",
+          "io_base": "0x3f8",
+          "irq": 4,
+          "transport": "host Unix socket",
+          "fresh_vm": true
+        },
+        "uart_evaluation": "Host UART/IRQ/restoration oracle after policy; separate actions and wall time"
+      },
+      "results": [
+        {
+          "task_id": "uart_irq_service",
+          "title": "Live kernel interrupt handler",
+          "status": "budget_exhausted",
+          "steps": 80,
+          "elapsed_seconds": 796.971,
+          "usage": {
+            "input_tokens": 237774,
+            "output_tokens": 8012,
+            "total_tokens": 245786,
+            "estimated_cost_usd": 0.5526679
+          },
+          "artifact_dir": "uart_irq_service",
+          "final_screenshot": "uart_irq_service/final.png",
+          "grade": {
+            "type": "uart",
+            "status": "failed",
+            "score": 0.0,
+            "passed_cases": 0,
+            "total_cases": 10,
+            "reason": "0/10 host UART checks passed",
+            "cases": [
+              {
+                "name": "valid_short",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Replies differ from the expected ordered byte stream"
+              },
+              {
+                "name": "random_payload_64",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Replies differ from the expected ordered byte stream"
+              },
+              {
+                "name": "fragmented_request",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Replies differ from the expected ordered byte stream"
+              },
+              {
+                "name": "back_to_back_burst_8",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Replies differ from the expected ordered byte stream"
+              },
+              {
+                "name": "bad_checksum_then_valid",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Replies differ from the expected ordered byte stream"
+              },
+              {
+                "name": "valid_after_bad_checksum",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Replies differ from the expected ordered byte stream"
+              },
+              {
+                "name": "invalid_length_then_valid",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Replies differ from the expected ordered byte stream"
+              },
+              {
+                "name": "embedded_header_payload",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Replies differ from the expected ordered byte stream"
+              },
+              {
+                "name": "irq4_mask_dependency",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Requires at least one valid serial case and hardware inspection"
+              },
+              {
+                "name": "safe_stop_restore_liveness",
+                "status": "failed",
+                "score": 0.0,
+                "reason": "Credit requires at least one valid serial case"
+              }
+            ],
+            "evidence": [
+              "evaluation.json",
+              "evaluation-liveness.png",
+              "evaluation-stop-1.png",
+              "evaluation-stop-2.png"
+            ],
+            "limitations": [
+              "IRQ4 masking tests causal dependence for one challenge; it does not prove every RX path uses interrupts.",
+              "Behavioral checks do not prove bounded buffering, race freedom, or absence of privileged modifications.",
+              "Write-only UART FIFO details and pending device contents cannot all be restored or inspected.",
+              "Fresh shell output rejects ordinary echoes and constants; it is not a security boundary against malicious ring-0 code."
+            ]
+          },
+          "budget": {
+            "max_steps": 80,
+            "timeout_seconds": 900,
+            "max_input_actions": 640
+          },
+          "task_fingerprint": "570ee0c2774d7224a66395213a9f91506d9f54f728b9fcd5956a7153ae435dac",
+          "hardware_profile": {
+            "name": "com1-16550a-irq4",
+            "device": "isa-serial (16550A)",
+            "port": "COM1",
+            "io_base": "0x3f8",
+            "irq": 4,
+            "transport": "host Unix socket",
+            "fresh_vm": true
+          },
+          "setup_seconds": 30.892448531005357,
+          "policy_status": "budget_exhausted",
+          "budget_reason": "Cua model call budget exhausted",
+          "input_actions": 87,
+          "observations": 81,
+          "policy_seconds": 720.145,
+          "evaluation_seconds": 45.926
+        }
+      ]
     }
   ]
 }

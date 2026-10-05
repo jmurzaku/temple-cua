@@ -119,8 +119,8 @@ function showCriteria(grader = {}, targetId = "completion-criteria") {
     pre.textContent = values.join("\n");
     target.append(pre);
   };
-  if (grader.type === "manual") {
-    paragraph(grader.rubric?.trim() || "Review the screenshot and trajectory against the task prompt.");
+  if (grader.type === "manual" || grader.type === "uart") {
+    paragraph(grader.rubric?.trim() || (grader.type === "uart" ? "Host serial, interrupt-mask, and cleanup checks determine the numeric reward." : "Review the screenshot and trajectory against the task prompt."));
   } else if (grader.type === "ocr") {
     expected("Required visible text:", grader.all);
     expected("At least one of:", grader.any);
@@ -138,6 +138,97 @@ function runMetadata(task) {
 
 function isManualTask(task) {
   return task.grader?.type === "manual" || task.result?.grade?.type === "manual";
+}
+
+function isUARTTask(task) {
+  return task.grader?.type === "uart" || task.result?.grade?.type === "uart";
+}
+
+function hostScoreText(grade) {
+  return typeof grade?.score === "number" && Number.isFinite(grade.score) ? `${grade.score} / 1` : "Unverified";
+}
+
+function automaticGradeSummary(tasks) {
+  const automatic = tasks.filter(task => task.result && !isManualTask(task));
+  if (!automatic.length) return tasks.some(task => task.result) ? "None" : "Pending";
+  const verified = automatic.filter(task => task.result.grade.status !== "error" && (!isUARTTask(task) || typeof task.result.grade.score === "number" && Number.isFinite(task.result.grade.score)));
+  const passed = verified.filter(task => task.result.grade.status === "passed").length;
+  const unverified = automatic.length - verified.length;
+  return verified.length ? `${passed} / ${verified.length} passed${unverified ? ` · ${unverified} unverified` : ""}` : "Unverified";
+}
+
+function trajectoryReviewSummary(tasks) {
+  const reviewed = tasks.filter(task => task.result && (isManualTask(task) || task.review));
+  const counts = { passed: 0, failed: 0, incomplete: 0, pending: 0 };
+  reviewed.forEach(task => { counts[task.review?.status || "pending"]++; });
+  return { count: reviewed.length, text: Object.entries(counts).filter(([, number]) => number).map(([status, number]) => `${number} ${status}`).join(", ") || "—" };
+}
+
+function taskStatusText(task) {
+  const result = task.result;
+  if (!result) return "Not run";
+  if (isUARTTask(task)) return `Host: ${result.grade.status} · ${hostScoreText(result.grade)}`;
+  if (result.status === "error") return "Run error";
+  if (isManualTask(task)) return task.review ? `Review: ${task.review.status}` : "Review pending";
+  return `Automatic: ${result.grade.status.replaceAll("_", " ")}`;
+}
+
+function taskOutcomeText(task) {
+  const result = task.result;
+  if (!result) return "No model run recorded.";
+  const grading = isUARTTask(task) ? `Host grade: ${result.grade.status}. Score: ${hostScoreText(result.grade)}.` : isManualTask(task) ? `Manual grade: ${result.grade.status.replaceAll("_", " ")}.` : `Automatic check: ${result.grade.status.replaceAll("_", " ")}.`;
+  const prefix = `Run status: ${result.status.replaceAll("_", " ")}. ${grading}`;
+  if (!isUARTTask(task)) return `${prefix} ${result.steps} model turns, ${Number(result.elapsed_seconds).toFixed(1)} seconds including reset.`;
+  const duration = value => typeof value === "number" && Number.isFinite(value) ? `${value.toFixed(1)} seconds` : "not recorded";
+  return `${prefix} ${result.steps} model turns. Model episode: ${duration(result.policy_seconds)}; host evaluation: ${duration(result.evaluation_seconds)}; total: ${duration(result.elapsed_seconds)} including reset.`;
+}
+
+function showHostEvaluation(task) {
+  const card = byId("host-evaluation");
+  if (!card) return;
+  card.hidden = !task.result || !isUARTTask(task);
+  if (card.hidden) return;
+  const grade = task.result.grade;
+  setText("host-evaluation-score", `Host score: ${hostScoreText(grade)} · ${grade.status}`);
+  setText("host-evaluation-reason", grade.reason || "");
+  const cases = Array.isArray(grade.cases) ? grade.cases : [];
+  setText("host-evaluation-checks-title", `Checks (${grade.passed_cases ?? 0} / ${grade.total_cases ?? cases.length} passed)`);
+  const checks = byId("host-evaluation-checks");
+  checks.replaceChildren();
+  cases.forEach(check => {
+    const item = document.createElement("li");
+    const outcome = document.createElement("strong");
+    const reward = typeof check.score === "number" && Number.isFinite(check.score) ? check.score : "unverified";
+    outcome.textContent = `${check.name.replaceAll("_", " ")}: ${check.status} · reward ${reward}`;
+    const reason = document.createElement("p");
+    reason.className = "small muted";
+    reason.textContent = check.reason || "";
+    item.append(outcome, reason);
+    checks.append(item);
+  });
+  const artifacts = Object.entries(task.evaluation_artifacts || {});
+  setHidden("host-evaluation-evidence", !artifacts.length);
+  const evidence = byId("host-evaluation-artifacts");
+  evidence.replaceChildren();
+  artifacts.forEach(([name, src]) => {
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = src;
+    link.textContent = name === "evaluation.json" ? "Evaluation JSON" : name;
+    if (name.endsWith(".png")) { link.target = "_blank"; link.rel = "noopener"; }
+    else link.download = "";
+    item.append(link);
+    evidence.append(item);
+  });
+  const limitations = Array.isArray(grade.limitations) ? grade.limitations : [];
+  setHidden("host-evaluation-limitations", !limitations.length);
+  const limits = byId("host-evaluation-limits");
+  limits.replaceChildren();
+  limitations.forEach(text => {
+    const item = document.createElement("li");
+    item.textContent = text;
+    limits.append(item);
+  });
 }
 
 function showReview(task) {
@@ -182,18 +273,18 @@ function selectTask(id, moveFocus = false) {
   byId("task-limitation").hidden = !result;
   setHidden("task-provenance", !result);
   setHidden("task-run-details", !result);
-  setHidden("task-criteria-details", !result || !isManualTask(task));
+  setHidden("task-criteria-details", !result || (!isManualTask(task) && !isUARTTask(task)));
   setHidden("task-review", true);
+  showHostEvaluation(task);
   if (result) {
-    const grading = isManualTask(task) ? `Manual grade: ${result.grade.status.replaceAll("_", " ")}.` : `Automatic check: ${result.grade.status.replaceAll("_", " ")}.`;
-    byId("task-outcome").textContent = `Run status: ${result.status.replaceAll("_", " ")}. ${grading} ${result.steps} model turns, ${Number(result.elapsed_seconds).toFixed(1)} seconds including reset.`;
+    byId("task-outcome").textContent = taskOutcomeText(task);
     byId("task-budget").textContent = `Limit: ${result.budget.max_steps} turns · ${result.budget.timeout_seconds} seconds.`;
     const metadata = runMetadata(task);
     const started = metadata.created_at ? new Date(metadata.created_at).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }) : "Start time not recorded";
     setText("task-provenance", `${metadata.model || "Model not recorded"} · cua-agent ${metadata.cua_version || "—"} · ${started}`);
     setText("task-run-config", JSON.stringify({ ...metadata, budget: result.budget }, null, 2));
-    byId("task-limitation").textContent = isManualTask(task) ? "A trajectory review does not change the raw grader result or assign an automatic score." : "The grader checks visible text. It does not verify the program’s implementation or hidden guest state.";
-    if (isManualTask(task)) showCriteria(task.grader, "recorded-criteria");
+    byId("task-limitation").textContent = isUARTTask(task) ? "Host tests measure serial replies, interrupt-mask dependence, and cleanup. Proving an interrupt-only implementation requires source review." : isManualTask(task) ? "A trajectory review does not change the raw grader result or assign an automatic score." : "The grader checks visible text. It does not verify the program’s implementation or hidden guest state.";
+    if (isManualTask(task) || isUARTTask(task)) showCriteria(task.grader, "recorded-criteria");
     showReview(task);
     byId("timeline").max = String(task.frames.length - 1);
     byId("timeline").disabled = false;
@@ -239,7 +330,7 @@ async function loadTasks() {
   dataset = await response.json();
   if (!Array.isArray(dataset.tasks) || !dataset.tasks.length) throw new Error("No tasks are available.");
   byId("task-count").textContent = `${dataset.tasks.length} tasks`;
-  const count = ({ 3: "Three", 4: "Four" })[dataset.tasks.length] || String(dataset.tasks.length);
+  const count = ({ 1: "One", 2: "Two", 3: "Three", 4: "Four", 5: "Five" })[dataset.tasks.length] || String(dataset.tasks.length);
   byId("catalog-description").textContent = `${count} ${dataset.tasks.length === 1 ? "task" : "tasks"} in TempleOS. An agent sees screenshots, writes HolyC, and controls the mouse in a QEMU virtual machine.`;
   const rows = byId("task-rows");
   rows.replaceChildren();
@@ -257,9 +348,7 @@ async function loadTasks() {
     button.append(number, document.createTextNode(task.title));
     button.addEventListener("click", () => selectTask(task.id, true));
     first.append(button);
-    const result = task.result;
-    const status = !result ? "Not run" : result.status === "error" ? "Run error" : isManualTask(task) ? (task.review ? `Review: ${task.review.status}` : "Review pending") : `Automatic: ${result.grade.status.replaceAll("_", " ")}`;
-    row.append(first, cell(difficultyLabel(task), "task-difficulty"), cell(status, "result-status"));
+    row.append(first, cell(difficultyLabel(task), "task-difficulty"), cell(taskStatusText(task), "result-status"));
     rows.append(row);
   });
   const recordedTasks = dataset.tasks.filter(task => task.result);
@@ -268,18 +357,14 @@ async function loadTasks() {
   byId("run-model").textContent = models.length === 1 ? models[0] : models.length ? "Multiple models" : "—";
   byId("run-agent").textContent = versions.length === 1 ? `cua-agent ${versions[0]}` : versions.length ? "Multiple versions" : "—";
   byId("run-task").textContent = `${recordedTasks.length} / ${dataset.tasks.length}`;
-  const automatic = recordedTasks.filter(task => !isManualTask(task));
-  const passed = automatic.filter(task => task.result.grade.status === "passed").length;
-  byId("run-score").textContent = automatic.length ? `${passed} / ${automatic.length} passed` : recordedTasks.length ? "None" : "Pending";
-  const manual = recordedTasks.filter(isManualTask);
-  const reviewCounts = { passed: 0, failed: 0, incomplete: 0, pending: 0 };
-  manual.forEach(task => { reviewCounts[task.review?.status || "pending"]++; });
-  setHidden("review-summary-field", !manual.length);
-  byId("run-facts")?.classList.toggle("has-reviews", Boolean(manual.length));
-  setText("run-reviews", Object.entries(reviewCounts).filter(([, number]) => number).map(([status, number]) => `${number} ${status}`).join(", ") || "—");
+  byId("run-score").textContent = automaticGradeSummary(dataset.tasks);
+  const reviews = trajectoryReviewSummary(dataset.tasks);
+  setHidden("review-summary-field", !reviews.count);
+  byId("run-facts")?.classList.toggle("has-reviews", Boolean(reviews.count));
+  setText("run-reviews", reviews.text);
   const unrecordedCount = dataset.tasks.length - recordedTasks.length;
   const sourceCount = new Set(recordedTasks.map(task => runMetadata(task).id || runMetadata(task).created_at)).size;
-  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : `One featured attempt per task across ${sourceCount} ${sourceCount === 1 ? "run" : "runs"}.${unrecordedCount ? ` ${unrecordedCount} tasks have no recorded model run.` : ""}${manual.length ? " Trajectory reviews are separate from automatic grading." : ""}`;
+  byId("run-note").textContent = !recordedTasks.length ? "These tasks have no recorded model run." : `One featured attempt per task across ${sourceCount} ${sourceCount === 1 ? "run" : "runs"}.${unrecordedCount ? ` ${unrecordedCount} tasks have no recorded model run.` : ""}${reviews.count ? " Trajectory reviews are separate from automatic grading." : ""}`;
   const budgets = recordedTasks.map(task => task.result.budget);
   const sharedBudget = budgets.length && budgets.every(budget => budget.max_steps === budgets[0].max_steps && budget.timeout_seconds === budgets[0].timeout_seconds);
   const limits = !budgets.length ? "" : sharedBudget ? `The recorded limit is ${budgets[0].max_steps} model turns and ${budgets[0].timeout_seconds} seconds per task. ` : "The harness enforces the time and turn limits recorded for each task. ";
