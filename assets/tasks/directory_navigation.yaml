@@ -1,0 +1,34 @@
+version: 1
+id: directory_navigation
+title: Navigate to the graphics examples
+prompt: 'Change the current directory to /Demo/Graphics on the TempleOS boot drive.
+
+  Show a directory listing that includes the HolyC graphics example files.
+
+  Leave the listing visible, including Blot.HC (possibly with the .Z suffix),
+
+  and finish while that directory remains the current directory.
+
+  Use the boot-drive path notation; its letter may vary across installations.
+
+  '
+grader:
+  type: ocr
+  crop:
+  - 8
+  - 16
+  - 624
+  - 456
+  case_sensitive: true
+  line_patterns:
+  - Directory of [A-Za-z]:/Demo/Graphics
+  - "\\d{2}/\\d{2} \\d{2}:\\d{2} [0-9A-Fa-f]+ Blot[.\uFFFD]HC(?:[.\uFFFD]Z)?"
+  last_line_pattern: "[A-Za-z]:/Demo/Graphics>(?:_|\uFFFD)?"
+  all:
+  - /Demo/Graphics
+  - Blot
+category: filesystem
+difficulty: easy
+max_steps: 30
+timeout_seconds: 150
+setup: []

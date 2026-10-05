@@ -1,0 +1,30 @@
+version: 1
+id: triangular_function
+title: Define and call a HolyC function
+prompt: 'Define a HolyC function named BenchTri that accepts an I64 n and returns
+
+  the sum of the integers from 1 through n. Call your function with n=25.
+
+  Print its return value as BENCH_TRI= followed immediately by the decimal
+
+  integer and a newline. Leave the output visible and finish.
+
+  The result must come from calling the function you defined in TempleOS.
+
+  '
+grader:
+  type: ocr
+  crop:
+  - 8
+  - 16
+  - 624
+  - 456
+  case_sensitive: true
+  match_mode: line
+  all:
+  - BENCH_TRI=325
+category: holyc
+difficulty: medium
+max_steps: 40
+timeout_seconds: 180
+setup: []
