@@ -1,0 +1,415 @@
+diff --git a/libs/python/agent/cua_agent/loops/openai.py b/libs/python/agent/cua_agent/loops/openai.py
+index 8e7a3fb..d9cae08 100644
+--- a/libs/python/agent/cua_agent/loops/openai.py
++++ b/libs/python/agent/cua_agent/loops/openai.py
+@@ -5,13 +5,16 @@ OpenAI computer-use-preview agent loop implementation using liteLLM
+ import asyncio
+ import base64
+ import json
++from copy import deepcopy
+ from io import BytesIO
+ from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union
+ 
+ import litellm
+ from PIL import Image
+ 
++from ..computers import make_computer_handler
+ from ..decorators import register_agent
++from ..responses import make_output_text_item
+ from ..types import AgentCapability, AgentResponse, Messages, Tools
+ 
+ 
+@@ -157,9 +160,8 @@ async def _prepare_tools_for_openai(tool_schemas: List[Dict[str, Any]], model: s
+     for schema in tool_schemas:
+         if schema["type"] == "computer":
+             # Map computer tool to OpenAI format (native or function based on model)
+-            computer_tool = await _map_computer_tool_to_openai(
+-                schema["computer"], use_native_tool=use_native
+-            )
++            handler = await make_computer_handler(schema["computer"])
++            computer_tool = await _map_computer_tool_to_openai(handler, use_native_tool=use_native)
+             openai_tools.append(computer_tool)
+         elif schema["type"] == "function":
+             # Function tools for Responses API need: {type, name, description, parameters}
+@@ -177,6 +179,125 @@ async def _prepare_tools_for_openai(tool_schemas: List[Dict[str, Any]], model: s
+     return openai_tools
+ 
+ 
++_FUNCTION_ACTION_FIELDS = {
++    "click": {"x", "y", "button"},
++    "double_click": {"x", "y"},
++    "right_click": {"x", "y"},
++    "type": {"text"},
++    "keypress": {"keys"},
++    "scroll": {"x", "y", "scroll_x", "scroll_y"},
++    "move": {"x", "y"},
++    "drag": {"start_x", "start_y", "end_x", "end_y"},
++    "screenshot": set(),
++    "wait": set(),
++    "terminate": {"status"},
++}
++
++
++def _function_computer_output(item: Dict[str, Any]) -> Dict[str, Any]:
++    """Normalize a computer function's flat arguments before Cua dispatch."""
++    try:
++        arguments = json.loads(item["arguments"])
++    except (KeyError, TypeError, ValueError) as exc:
++        raise ValueError("Malformed OpenAI computer arguments") from exc
++    if not isinstance(arguments, dict):
++        raise ValueError("Computer arguments must be a JSON object")
++    name = arguments.get("action")
++    if not isinstance(name, str) or name not in _FUNCTION_ACTION_FIELDS:
++        raise ValueError("Unknown OpenAI computer action")
++    if set(arguments) - {"action"}.union(*_FUNCTION_ACTION_FIELDS.values()):
++        raise ValueError("Unknown OpenAI computer fields")
++    # The flat tool schema may populate inactive fields with non-null defaults.
++    action = {
++        key: value for key, value in arguments.items() if key in _FUNCTION_ACTION_FIELDS[name]
++    }
++    action["type"] = name
++    coordinates = ("start_x", "start_y", "end_x", "end_y") if name == "drag" else ("x", "y")
++    if name in {"click", "double_click", "right_click", "scroll", "move", "drag"}:
++        if any(type(action.get(key)) is not int for key in coordinates):
++            raise ValueError("Computer coordinates must be integers")
++    if name == "type" and not isinstance(action.get("text"), str):
++        raise ValueError("Computer text must be a string")
++    if name == "keypress":
++        keys = action.get("keys")
++        if not isinstance(keys, list) or not keys or any(not isinstance(key, str) for key in keys):
++            raise ValueError("Computer keys must be a nonempty array of strings")
++    if name == "scroll":
++        action.setdefault("scroll_x", 0)
++        action.setdefault("scroll_y", 0)
++        if any(type(action[key]) is not int for key in ("scroll_x", "scroll_y")):
++            raise ValueError("Computer scroll amounts must be integers")
++    elif name == "click":
++        button = action.setdefault("button", "left")
++        if not isinstance(button, str) or button not in {"left", "right", "middle"}:
++            raise ValueError("Unknown computer mouse button")
++    elif name == "right_click":
++        action.update(type="click", button="right")
++    elif name == "drag":
++        action = {
++            "type": "drag",
++            "path": [
++                {"x": action["start_x"], "y": action["start_y"]},
++                {"x": action["end_x"], "y": action["end_y"]},
++            ],
++        }
++    elif name == "terminate":
++        status = action.get("status", "success")
++        if not isinstance(status, str) or status not in {"success", "failure"}:
++            raise ValueError("Unknown computer termination status")
++        return make_output_text_item(f"Task complete ({status}).")
++    return {
++        "type": "computer_call",
++        "call_id": item["call_id"],
++        "action": action,
++        "status": "completed",
++        "pending_safety_checks": [],
++    }
++
++
++def _function_computer_history(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
++    """Serialize Cua's computer items for a standard Responses function tool."""
++    prepared = []
++    for original in messages:
++        item = deepcopy(original)
++        if item.get("type") == "computer_call":
++            arguments = dict(item["action"])
++            arguments["action"] = arguments.pop("type")
++            if arguments["action"] == "drag":
++                path = arguments.pop("path")
++                arguments.update(
++                    start_x=path[0]["x"],
++                    start_y=path[0]["y"],
++                    end_x=path[-1]["x"],
++                    end_y=path[-1]["y"],
++                )
++            prepared.append(
++                {
++                    "type": "function_call",
++                    "name": "computer",
++                    "call_id": item["call_id"],
++                    "arguments": json.dumps(arguments),
++                }
++            )
++        elif item.get("type") == "computer_call_output":
++            output = item.get("output", {})
++            image = output.get("image_url") if isinstance(output, dict) else None
++            prepared.append(
++                {
++                    "type": "function_call_output",
++                    "call_id": item["call_id"],
++                    "output": "Screenshot attached." if image else json.dumps(output),
++                }
++            )
++            if image:
++                prepared.append(
++                    {"role": "user", "content": [{"type": "input_image", "image_url": image}]}
++                )
++        else:
++            prepared.append(item)
++    return prepared
++
++
+ @register_agent(models=r".*(computer-use-preview|gpt-?5\.?4)")
+ class OpenAIComputerUseConfig:
+     """
+@@ -223,11 +344,14 @@ class OpenAIComputerUseConfig:
+ 
+         # Prepare tools for OpenAI API
+         openai_tools = await _prepare_tools_for_openai(tools, model=model)
++        function_computer = not _is_native_computer_use_model(model) and any(
++            tool.get("type") == "computer" for tool in tools
++        )
+ 
+         # Prepare API call kwargs
+         api_kwargs = {
+             "model": model,
+-            "input": messages,
++            "input": _function_computer_history(messages) if function_computer else messages,
+             "tools": openai_tools if openai_tools else None,
+             "stream": stream,
+             "reasoning": {"summary": "concise"},
+@@ -273,6 +397,16 @@ class OpenAIComputerUseConfig:
+         if _on_usage:
+             await _on_usage(usage)
+ 
++        if function_computer:
++            output_dict["output"] = [
++                (
++                    _function_computer_output(item)
++                    if item.get("type") == "function_call" and item.get("name") == "computer"
++                    else item
++                )
++                for item in output_dict.get("output", [])
++            ]
++
+         # Return in the expected format
+         output_dict["usage"] = usage
+         return output_dict
+diff --git a/libs/python/agent/tests/test_openai_function_computer.py b/libs/python/agent/tests/test_openai_function_computer.py
+new file mode 100644
+index 0000000..d266bfc
+--- /dev/null
++++ b/libs/python/agent/tests/test_openai_function_computer.py
+@@ -0,0 +1,217 @@
++"""Hermetic OpenAI Responses computer-tool interoperability regressions."""
++
++import asyncio
++import base64
++import io
++import json
++
++import pytest
++from cua_agent import ComputerAgent
++from cua_agent.computers import CustomComputerHandler
++from cua_agent.loops.openai import OpenAIComputerUseConfig, _prepare_tools_for_openai
++from PIL import Image
++
++
++def screenshot():
++    buffer = io.BytesIO()
++    Image.new("RGB", (640, 480), "black").save(buffer, format="PNG")
++    return buffer.getvalue()
++
++
++def flat_arguments(action, **active):
++    return {
++        "action": action,
++        "x": 0,
++        "y": 0,
++        "text": "",
++        "keys": [],
++        "scroll_x": 0,
++        "scroll_y": 0,
++        "button": "left",
++        "start_x": 0,
++        "start_y": 0,
++        "end_x": 0,
++        "end_y": 0,
++        "status": "success",
++        **active,
++    }
++
++
++def test_custom_dict_dimensions_are_used_in_openai_tool():
++    async def run():
++        computer = {"screenshot": screenshot, "dimensions": (640, 480), "environment": "mac"}
++        tools = await _prepare_tools_for_openai(
++            [{"type": "computer", "computer": computer}], model="openai/gpt-5.4"
++        )
++        assert "640x480" in tools[0]["description"]
++        assert "Environment: mac" in tools[0]["description"]
++
++    asyncio.run(run())
++
++
++def test_gpt54_dispatches_function_computer_and_sends_images_on_next_turn(monkeypatch):
++    calls, typed, keys, usage = [], [], [], []
++    png = screenshot()
++
++    async def responses(**kwargs):
++        calls.append(kwargs)
++        assert kwargs["model"] == "openai/gpt-5.4"
++        if len(calls) > 1:
++            history = kwargs["input"]
++            assert not any(
++                item.get("type") in {"computer_call", "computer_call_output"} for item in history
++            )
++            previous_id = f"call-{len(calls)-1}"
++            call = next(
++                item
++                for item in history
++                if item.get("type") == "function_call" and item.get("call_id") == previous_id
++            )
++            output_index = next(
++                i
++                for i, item in enumerate(history)
++                if item.get("type") == "function_call_output" and item.get("call_id") == previous_id
++            )
++            assert call["name"] == "computer"
++            assert history[output_index + 1]["content"][0]["type"] == "input_image"
++            assert history[output_index + 1]["content"][0]["image_url"].startswith(
++                "data:image/png;base64,"
++            )
++        if len(calls) == 1:
++            arguments = flat_arguments("type", text="hello Ω")
++        elif len(calls) == 2:
++            assert typed == ["hello Ω"]
++            arguments = flat_arguments("keypress", keys=["enter"])
++        else:
++            assert keys == [["enter"]]
++            return {
++                "output": [
++                    {
++                        "type": "message",
++                        "role": "assistant",
++                        "content": [{"type": "output_text", "text": "Done"}],
++                    }
++                ],
++                "usage": {"input_tokens": 11, "output_tokens": 3, "total_tokens": 14},
++            }
++        return {
++            "output": [
++                {
++                    "type": "function_call",
++                    "call_id": f"call-{len(calls)}",
++                    "name": "computer",
++                    "arguments": json.dumps(arguments),
++                }
++            ],
++            "usage": {"input_tokens": 11, "output_tokens": 3, "total_tokens": 14},
++        }
++
++    class Usage:
++        async def on_usage(self, value):
++            usage.append(value)
++
++    monkeypatch.setattr("litellm.aresponses", responses)
++
++    async def run():
++        handler = CustomComputerHandler(
++            {
++                "screenshot": lambda: png,
++                "dimensions": (640, 480),
++                "environment": "linux",
++                "type": typed.append,
++                "keypress": keys.append,
++            }
++        )
++        agent = ComputerAgent(
++            model="openai/gpt-5.4",
++            tools=[handler],
++            callbacks=[Usage()],
++            telemetry_enabled=False,
++            max_retries=0,
++            screenshot_delay=0,
++        )
++        return [
++            item
++            async for item in agent.run(
++                [
++                    {
++                        "role": "user",
++                        "content": [
++                            {
++                                "type": "input_image",
++                                "image_url": "data:image/png;base64,"
++                                + base64.b64encode(png).decode(),
++                            }
++                        ],
++                    }
++                ]
++            )
++        ]
++
++    result = asyncio.run(run())
++    assert len(calls) == 3
++    assert len(usage) == 3
++    assert all(item["input_tokens"] == 11 and item["output_tokens"] == 3 for item in usage)
++    assert result[-1]["output"][0]["content"][0]["text"] == "Done"
++
++
++def test_native_preview_and_other_function_calls_are_unchanged(monkeypatch):
++    outputs = [
++        {"type": "computer_call", "call_id": "native", "action": {"type": "screenshot"}},
++        {"type": "function_call", "name": "other", "call_id": "other", "arguments": "{}"},
++    ]
++
++    async def responses(**kwargs):
++        assert kwargs["input"] == [{"role": "user", "content": "Task"}]
++        return {"output": outputs, "usage": {}}
++
++    monkeypatch.setattr("litellm.aresponses", responses)
++
++    async def run():
++        config = OpenAIComputerUseConfig()
++        response = await config.predict_step(
++            messages=[{"role": "user", "content": "Task"}], model="openai/computer-use-preview"
++        )
++        assert response["output"] == outputs
++
++    asyncio.run(run())
++
++
++@pytest.mark.parametrize(
++    "arguments, error",
++    [
++        ("not-json", "Malformed OpenAI computer arguments"),
++        ("[]", "Computer arguments must be a JSON object"),
++        ('{"action":"unknown"}', "Unknown OpenAI computer action"),
++        ('{"action":"type","text":123}', "Computer text must be a string"),
++        ('{"action":"click","x":true,"y":1}', "Computer coordinates must be integers"),
++    ],
++)
++def test_malformed_computer_function_never_dispatches(monkeypatch, arguments, error):
++    async def responses(**kwargs):
++        return {
++            "output": [
++                {
++                    "type": "function_call",
++                    "call_id": "bad",
++                    "name": "computer",
++                    "arguments": arguments,
++                }
++            ],
++            "usage": {},
++        }
++
++    monkeypatch.setattr("litellm.aresponses", responses)
++
++    async def run():
++        handler = CustomComputerHandler({"screenshot": screenshot, "dimensions": (640, 480)})
++        config = OpenAIComputerUseConfig()
++        with pytest.raises(ValueError, match=f"^{error}$"):
++            await config.predict_step(
++                messages=[],
++                model="openai/gpt-5.4",
++                tools=[{"type": "computer", "computer": handler}],
++                computer_handler=handler,
++            )
++
++    asyncio.run(run())
