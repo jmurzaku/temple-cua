@@ -1,10 +1,9 @@
 version: 1
 id: cursor_callback
-title: TEST ONLY - live shell cursor callback across documentation
-category: gui
+title: Live cursor callback
+category: graphics
 difficulty: medium
 prompt: |
-  This is an opt-in diagnostic test, not part of the starter task suite.
   At the TempleOS shell, JIT-compile this exact callback:
 
   U0 Cross(CTask *, CDC *dc) {
@@ -15,18 +14,12 @@ prompt: |
 
   Install it with Fs->draw_it=&Cross;. Move the pointer to at least two
   distinct positions and observe the live yellow cross following it.
-  Right-click in the top menu bar and observe its pulldown menu. TempleOS
-  exposes that menu on hover; this is not a desktop context-menu test.
-  Move away from the menu, open the built-in help index, and click its
-  Command Line documentation link (use Enter to activate the selected link
-  if needed). Keep the same callback installed throughout these operations.
+  Right-click in the top menu bar, open the built-in help index, and click
+  its Command Line documentation link. Keep the same callback installed
+  throughout; do not clear, replace, or reinstall it.
   Move the pointer to two distinct positions over the opened document.
-  Finish with Command Line Overview open and the yellow cross still live.
-
-  Preserve the exact callback rather than correcting its coordinates.
-  GrLine uses task-relative coordinates: on the standard maximized bordered
-  fixture, this code follows the pointer with an offset of +8 pixels in x
-  and +16 pixels in y. It need not be centered on the pointer.
+  Finish with Command Line Overview open and the cross still following
+  the pointer over the document.
 max_steps: 40
 timeout_seconds: 240
 grader:
@@ -40,8 +33,10 @@ grader:
     The trajectory must include a right-click over the top menu bar with
     a visible pulldown, then the help index and an actual clicked link to
     Command Line Overview. That document must remain open at completion.
+    TempleOS exposes the top menu on hover; a desktop context menu is not
+    required.
     The callback must not be cleared, replaced, reinstalled after navigation,
     or reproduced as a static image. Menus may cover the cross where they
     overlap because they render later; this does not imply callback removal.
-    A screenshot alone cannot prove the callback remains live. This fixture
-    requires human review and must never receive an automatic pass score.
+    A screenshot alone cannot prove the callback remains live. Review its
+    movement across the full trajectory; this task has no automatic pass score.

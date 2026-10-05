@@ -1,70 +1,72 @@
 # TempleOSBench
 
-Screenshot-based computer-use tasks for TempleOS 5.03. The harness runs QEMU,
-restores the same VM snapshot before each task, and records model actions,
-screenshots, usage, and grades. The Python package and CLI remain `temple-cua`.
+Computer-use tasks for [TempleOS](https://templeos.org/), created by Terry A. Davis.
+An agent sees screenshots, types HolyC, and controls the mouse in a QEMU VM.
+HolyC runs at ring 0 in a shared address space.[¹](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/Features.DD)
 
-[Tasks](docs/TASKS.md) · [Recorded results](docs/CUA_RERUN.md) ·
-[Harness reference](docs/CUA_AGENT.md) · [Website source](site/)
+[Website](https://jmurzaku.github.io/temple-cua/) · [Tasks](tasks/) · [Recorded run](examples/cua-starter/results.json)
 
-[TempleOSBench website](https://jmurzaku.github.io/temple-cua/)
+## Run
 
-## Install
-
-Use Linux, Python 3.11–3.13, and QEMU. Tesseract is optional for nonstock fonts.
+Requires Linux, [uv](https://docs.astral.sh/uv/getting-started/installation/), and
+QEMU (`sudo apt install qemu-system-x86 qemu-utils`).
 
 ```sh
-sudo apt-get install qemu-system-x86 qemu-utils tesseract-ocr
-python -m venv .venv
-.venv/bin/pip install -e '.[cua,dev]'
-.venv/bin/temple-cua fetch-iso
-.venv/bin/temple-cua doctor
+git clone https://github.com/jmurzaku/temple-cua.git
+cd temple-cua
+uv sync
+uv run temple-cua fetch-iso
+uv run temple-cua prepare --output assets/baseline.qcow2
 ```
 
-The ISO download is checksum-pinned. VM images and API credentials are not
-included in the repository. Set `OPENAI_API_KEY` in your environment to run
-an OpenAI model.
-
-## Prepare and run
+Inspect `runs/prepare/ready.png`. Set `OPENAI_API_KEY`, then run a task:
 
 ```sh
-.venv/bin/temple-cua prepare --output assets/baseline.qcow2
-```
-
-Inspect `runs/prepare/ready.png` before proceeding. Keep the snapshot's
-`.qcow2.json` sidecar; restores require matching QEMU, ISO, memory, and devices.
-
-Run the six automatically graded tasks with `cua-agent==0.9.0`:
-
-```sh
-.venv/bin/temple-cua run \
-  --provider cua --model openai/gpt-6.1-sol \
+uv run temple-cua run --provider cua --model openai/gpt-6.1-sol \
   --baseline assets/baseline.qcow2 --boot-wait 1 \
-  --task arithmetic --task sum_of_squares --task triangular_function \
-  --task string_statistics --task directory_navigation --task file_roundtrip \
-  --max-steps 24 --timeout 300 --api-timeout 90 \
-  --max-output-tokens 4096 --cua-image-history 2 --output runs/cua-starter
+  --task cursor_callback --output runs/cursor
 ```
 
-Use an exact model ID available to your account. Open `runs/cua-starter/report.html`
-to inspect the result. The four additional desktop tasks require manual review.
-Automatic scores check visible output, not hidden guest state or computation method.
+Use an exact model ID available to your account. Anthropic uses
+`anthropic/<model-id>` and `ANTHROPIC_API_KEY`. Each task restores the same
+snapshot; results, screenshots, and actions go into `runs/`.
 
-## Recorded run and checks
+## Tasks
 
-The [recorded GPT-6.1 Sol run](examples/cua-starter/results.json) completed all
-six tasks and passed their visual checks in 17 model calls. Screenshots and
-sanitized trajectories are in [examples/cua-starter](examples/cua-starter/).
-
-Run an offline backend check or the test suite:
+Six basics cover arithmetic, loops, functions, strings, directories, and files.
+[Cursor callback](tasks/07_cursor_callback.yaml) asks the agent to compile a draw
+function, install `Fs->draw_it=&Cross`, and follow a document link while its cross
+keeps tracking the pointer. The hook runs on the guest's refresh path.[²](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Graphics/WinZBuf.HC)
 
 ```sh
-.venv/bin/temple-cua run --provider scripted \
-  --script scripts/reference/arithmetic.json --task arithmetic \
-  --baseline assets/baseline.qcow2 --output runs/arithmetic-smoke
-.venv/bin/python -m pytest
+uv run temple-cua list-tasks
+uv run temple-cua new-task my-task
 ```
 
-The [cursor callback demo](docs/CURSOR_CALLBACK.md) is an opt-in test, outside
-the measured suite. [Cua compatibility research](research/cua/README.md) and
-[UART experiments](moonshots/uart/README.md) are separate from the starter tasks.
+Edit the generated prompt and rubric, then run it with `--task my-task`.
+For a visible-text check, create a task with an expected output:
+
+```sh
+uv run temple-cua new-task multiply \
+  --prompt 'Evaluate 6 * 7 in HolyC and print ANSWER=<result>.' --expect ANSWER=42
+```
+
+Tasks are YAML files; no registry or Python edits. Text checks score visible
+output. Callback and other GUI tasks require trajectory review. Extra GUI tasks
+are in `tasks/extra/` and can be selected with `--tasks tasks/extra`.
+
+## Results
+
+One GPT-6.1 Sol/Cua 0.9.0 run passed all six basic visual checks in 17 model calls.
+The callback's scripted QEMU reference works; no model result is recorded for it.
+Each result is one attempt scored from visible output.
+
+```sh
+uv run pytest
+uv run python scripts/build_site.py
+```
+
+TempleOS is public domain; this harness is [MIT licensed](LICENSE). The ISO is
+downloaded from TempleOS.org and checksum-verified. VM images and API keys stay
+local. See the [HolyC documentation](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/HolyC.DD) and
+[graphics source](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Adam/Gr/GrScrn.HC).

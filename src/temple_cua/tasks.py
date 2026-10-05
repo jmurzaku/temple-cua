@@ -8,6 +8,49 @@ import yaml
 
 from .protocol import Action
 
+_TASK_ID_PATTERN = re.compile(r"[a-z0-9][a-z0-9_-]{0,79}")
+
+
+def create_task(task_id: str, *, tasks_dir: Path = Path("tasks"), title: str | None = None,
+                prompt: str | None = None, expect: list[str] | None = None) -> Path:
+    """Create an editable task without replacing a file or duplicating an ID."""
+    if not isinstance(task_id, str) or not _TASK_ID_PATTERN.fullmatch(task_id):
+        raise ValueError("Task ID must use 1..80 lowercase letters, digits, underscores or hyphens, starting with a letter or digit")
+    title = title if title is not None else task_id.replace("_", " ").replace("-", " ").title()
+    prompt = prompt if prompt is not None else (
+        "Use the TempleOS command line to print TASK_READY on its own line. "
+        "Leave the output visible and finish."
+    )
+    for name, value in (("title", title), ("prompt", prompt)):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"Task {name} must be nonempty text")
+    if expect is not None and (not isinstance(expect, list) or any(
+        not isinstance(text, str) or not text.strip() for text in expect
+    )):
+        raise ValueError("--expect requires nonempty text")
+    grader = {
+        "type": "ocr", "crop": [8, 16, 624, 456], "case_sensitive": True,
+        "match_mode": "line", "all": list(expect),
+    } if expect else {
+        "type": "manual",
+        "rubric": "Review the final screenshot and trajectory. Confirm the actions in the prompt were performed and the requested result remains visible.",
+    }
+    data = {"version": 1, "id": task_id, "title": title, "prompt": prompt,
+            "max_steps": 40, "timeout_seconds": 180, "grader": grader}
+    serialized = yaml.safe_dump(data, sort_keys=False, allow_unicode=True)
+    tasks_dir = Path(tasks_dir)
+    destination = tasks_dir / f"{task_id}.yaml"
+    if destination.exists() or destination.is_symlink():
+        raise FileExistsError(f"Task file already exists: {destination}")
+    if tasks_dir.is_dir():
+        for existing in tasks_dir.glob("*.yaml"):
+            if load_task(existing).id == task_id:
+                raise ValueError(f"Task ID {task_id!r} already exists in {existing}")
+    tasks_dir.mkdir(parents=True, exist_ok=True)
+    with destination.open("x", encoding="utf-8") as output:
+        output.write(serialized)
+    return destination
+
 
 @dataclass
 class Task:
@@ -33,7 +76,7 @@ def load_task(path: Path) -> Task:
     for key in ("id", "title", "prompt"):
         if not isinstance(data.get(key), str) or not data[key].strip():
             raise ValueError(f"{path}: missing {key}")
-    if not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,79}", data["id"]):
+    if not _TASK_ID_PATTERN.fullmatch(data["id"]):
         raise ValueError(f"{path}: invalid task id")
     if not isinstance(data.get("grader"), dict) or data["grader"].get("type") not in {"ocr", "manual"}:
         raise ValueError(f"{path}: grader must have type ocr or manual")

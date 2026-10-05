@@ -14,7 +14,7 @@
       {"kind": "type", "text": "Fs->draw_it=&Cross;"},
       {"kind": "key", "keys": ["enter"]}
     ],
-    "note": "Install the callback once. It stays installed for the rest of this diagnostic."
+    "note": "Install the callback once and keep it installed throughout the task."
   },
   {
     "actions": [
@@ -71,6 +71,6 @@
     "actions": [
       {"kind": "done", "text": "Scripted diagnostic finished with the document open and callback untouched. Review the moving cross and menu/link trajectory manually."}
     ],
-    "note": "Operator reference replay only; no model API call or automatic pass claim."
+    "note": "Leave the documentation and live callback visible for trajectory review."
   }
 ]

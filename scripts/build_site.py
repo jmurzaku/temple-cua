@@ -1,4 +1,4 @@
-"""Build the TempleOSBench static site from a recorded six-task Cua run."""
+"""Build the task catalog and recorded runs for TempleOSBench."""
 
 import argparse
 import json
@@ -8,6 +8,8 @@ import shutil
 import zipfile
 
 import yaml
+
+from temple_cua.tasks import load_tasks
 
 ROOT = Path(__file__).resolve().parents[1]
 TASKS = {
@@ -50,8 +52,10 @@ def copy(source, destination):
 def build(run, output):
     envelope = json.loads((run / "results.json").read_text())
     results = {result["task_id"]: result for result in envelope["results"]}
-    if envelope["provider"] != "cua" or set(results) != set(TASKS):
-        raise ValueError("Expected a Cua run containing exactly the six starter tasks")
+    if envelope["provider"] != "cua" or not results:
+        raise ValueError("Expected a recorded Cua run")
+    if any(not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,79}", task_id) for task_id in results):
+        raise ValueError("Invalid recorded task ID")
     if envelope.get("provenance", {}).get("execution_mode") != "live_model":
         raise ValueError("The recorded-results site requires a live model run")
     version = (envelope.get("config", {}).get("model_options", {}).get("cua_version")
@@ -65,7 +69,7 @@ def build(run, output):
         copy(ROOT / "site" / name, output / name)
     (output / ".nojekyll").touch()
     tasks = []
-    for task_id, (title, description, category) in TASKS.items():
+    for task_id, result in results.items():
         folder = run / task_id
         records = [json.loads(line) for line in (folder / "trajectory.jsonl").read_text().splitlines() if line.strip()]
         frames = [{"step": 0, "src": f"assets/starter-frames/{task_id}/0000.png",
@@ -84,11 +88,19 @@ def build(run, output):
         task = json.loads(portable_content(folder / "task.json"))
         if task["id"] != task_id:
             raise ValueError(f"Task snapshot does not match {task_id}")
+        title, description, category = TASKS.get(
+            task_id, (task["title"], "", task.get("category", "general").title()))
         definition = assets / "tasks" / f"{task_id}.yaml"
         definition.parent.mkdir(parents=True, exist_ok=True)
         definition.write_text(yaml.safe_dump({"version": 1, **task}, sort_keys=False))
         tasks.append({"id": task_id, "title": title, "description": description, "category": category,
-                      "prompt": task["prompt"], "result": results[task_id], "frames": frames})
+                      "prompt": task["prompt"], "result": result, "frames": frames})
+    for task in load_tasks(ROOT / "tasks"):
+        if task.id in results:
+            continue
+        copy(task.source, assets / "tasks" / f"{task.id}.yaml")
+        tasks.append({"id": task.id, "title": task.title, "category": task.category.title(),
+                      "prompt": task.prompt, "grader": task.grader, "result": None, "frames": []})
     data = {"run": {"model": envelope["model"], "cua_version": version,
                     "created_at": envelope["created_at"],
                     "description": "One attempt per task, each from the same VM snapshot."}, "tasks": tasks}

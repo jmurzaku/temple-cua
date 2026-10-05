@@ -115,6 +115,10 @@ def test_suite_restores_fresh_vm_for_each_task(fake_vm, tmp_path):
 
 def test_sample_tasks_load_and_unknown_selection_fails():
     tasks_dir = Path(__file__).resolve().parents[1] / "tasks"
-    assert len(load_tasks(tasks_dir)) == 10
+    expected = {
+        "arithmetic", "sum_of_squares", "triangular_function", "string_statistics",
+        "directory_navigation", "file_roundtrip", "cursor_callback",
+    }
+    assert expected <= {task.id for task in load_tasks(tasks_dir)}
     with pytest.raises(ValueError, match="Unknown task"):
         load_tasks(tasks_dir, ["missing"])

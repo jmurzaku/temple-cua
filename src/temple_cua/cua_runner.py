@@ -75,7 +75,7 @@ def load_cua():
     try:
         installed = version("cua-agent")
     except PackageNotFoundError as exc:
-        raise RuntimeError("Install the optional integration with: pip install -e '.[cua]'") from exc
+        raise RuntimeError("Run uv sync to install cua-agent.") from exc
     if installed != CUA_VERSION:
         raise RuntimeError(f"This adapter requires cua-agent=={CUA_VERSION}; found {installed}")
     previous = os.environ.get("CUA_TELEMETRY")

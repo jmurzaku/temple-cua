@@ -13,7 +13,7 @@ import urllib.request
 from .providers import OpenAIProvider, AnthropicProvider, ScriptedProvider
 from .report import build_report, compare_results
 from .runner import initialize_shell, run_suite
-from .tasks import load_tasks
+from .tasks import create_task, load_tasks
 from .vm import TempleVM, VMConfig
 
 ISO_URL = "https://templeos.org/Downloads/TempleOS.ISO"
@@ -46,6 +46,12 @@ def _parser():
     prepare.add_argument("--script", type=Path, help="Override trusted initialization with scripted actions")
     listing = commands.add_parser("list-tasks", help="List task IDs and scoring methods")
     listing.add_argument("--tasks", type=Path, default=Path("tasks"))
+    new_task = commands.add_parser("new-task", help="Create an editable task YAML")
+    new_task.add_argument("id", help="Lowercase task ID used for the YAML filename")
+    new_task.add_argument("--tasks", type=Path, default=Path("tasks"))
+    new_task.add_argument("--title", help="Task title; defaults to the ID in title case")
+    new_task.add_argument("--prompt", help="Instructions the model will receive")
+    new_task.add_argument("--expect", action="append", help="Required standalone output line; repeat for multiple lines")
     run = commands.add_parser("run", help="Evaluate one provider against selected tasks")
     _vm_options(run)
     run.add_argument("--provider", choices=["openai", "anthropic", "scripted", "cua"], required=True)
@@ -99,6 +105,11 @@ def main(argv=None):
         elif args.command == "list-tasks":
             for task in load_tasks(args.tasks):
                 print(f"{task.id:24} {task.grader['type']:7} {task.max_steps:3} turns  {task.title}")
+        elif args.command == "new-task":
+            path = create_task(args.id, tasks_dir=args.tasks, title=args.title,
+                               prompt=args.prompt, expect=args.expect)
+            print(path)
+            print(f"Edit the prompt and grader, then run with --task {args.id}.")
         elif args.command == "doctor":
             qemu = shutil.which(args.qemu)
             sibling = Path(qemu).with_name("qemu-img") if qemu else None

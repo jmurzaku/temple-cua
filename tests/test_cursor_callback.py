@@ -1,4 +1,4 @@
-"""The callback example stays opt-in and its replay cannot silently reset it."""
+"""The callback task is selectable and its replay cannot silently reset it."""
 
 import json
 from collections import Counter
@@ -17,16 +17,17 @@ from temple_cua.vm import VMConfig
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURE = ROOT / "tests/fixtures/tasks/cursor_callback.yaml"
+TASK = ROOT / "tasks/07_cursor_callback.yaml"
 REFERENCE = ROOT / "scripts/reference/cursor_callback.json"
 
 
-def test_cursor_callback_is_opt_in_replayable_and_requires_manual_review(tmp_path):
-    task = load_task(FIXTURE)
+def test_cursor_callback_is_selectable_replayable_and_requires_manual_review(tmp_path):
+    task = load_task(TASK)
     assert task.id == "cursor_callback"
-    assert task.id not in {item.id for item in load_tasks(ROOT / "tasks")}
+    assert task.id in {item.id for item in load_tasks(ROOT / "tasks")}
+    assert load_tasks(ROOT / "tasks", [task.id]) == [task]
     assert task.grader["type"] == "manual"
-    # A replay claiming completion must not turn a human-review fixture into
+    # A replay claiming completion must not turn a human-review task into
     # a reward, even if there is no screenshot to review yet.
     result = grade(task.grader, tmp_path / "missing.png", tmp_path)
     assert result["status"] == "needs_review"
@@ -96,7 +97,7 @@ def test_cursor_callback_remains_live_after_menu_and_document_link(tmp_path):
         boot_wait=0.5,
     )
     artifacts = tmp_path / "cursor_callback"
-    result = run_task(load_task(FIXTURE), ScriptedProvider(REFERENCE), config, artifacts)
+    result = run_task(load_task(TASK), ScriptedProvider(REFERENCE), config, artifacts)
     assert result["status"] == "completed", result
     assert result["grade"]["status"] == "needs_review"
     assert result["grade"]["score"] is None
