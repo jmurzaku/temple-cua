@@ -1,0 +1,13 @@
+tasks:
+  - arithmetic
+  - cursor_callback
+  - interactive_counter_panel
+  - tictactoe_sprite
+  - uart_irq_service
+
+recordings:
+  - recordings/cua-starter
+  - recordings/cua-cursor
+  - recordings/cua-counter
+  - recordings/cua-sprite-rerun
+  - recordings/cua-uart-300

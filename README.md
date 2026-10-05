@@ -1,10 +1,11 @@
 # TempleOSBench
 
 Computer-use tasks for [TempleOS](https://templeos.org/), created by Terry A. Davis.
-An agent sees screenshots, types HolyC, and controls the mouse in a QEMU VM.
-HolyC runs at ring 0 in a shared address space.[¹](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/Features.DD)
+An agent sees screenshots, types HolyC, and controls a QEMU desktop through
+[Cua](https://github.com/trycua/cua). HolyC runs at ring 0 in a shared address
+space.[¹](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/Features.DD)
 
-[Website](https://jmurzaku.github.io/temple-cua/) · [Tasks](tasks/) · [Recordings](examples/)
+[Website](https://jmurzaku.github.io/temple-cua/) · [Tasks](tasks/) · [Recordings](recordings/)
 
 ## Run
 
@@ -16,119 +17,99 @@ git clone https://github.com/jmurzaku/temple-cua.git
 cd temple-cua
 uv sync
 uv run temple-cua fetch-iso
-uv run temple-cua prepare --output assets/baseline.qcow2
 ```
 
-Inspect `runs/prepare/ready.png`. Set `OPENAI_API_KEY`, then run a task:
+Set `OPENAI_API_KEY`, then run:
 
 ```sh
 uv run temple-cua run --provider cua --model openai/gpt-6.1-sol \
-  --baseline assets/baseline.qcow2 --boot-wait 1 \
-  --task cursor_callback --output runs/cursor
+  --task arithmetic --output runs/arithmetic
 ```
 
-Use an exact model ID available to your account. Anthropic uses
-`anthropic/<model-id>` and `ANTHROPIC_API_KEY`. `--baseline` restores a prepared
-snapshot; results, screenshots, and actions go into `runs/`.
-
-The UART task requires a fresh boot and configures COM1. Its default budget
-is 300 model calls and one hour; override these with `--max-steps` and `--timeout`:
+Use a model ID available to your account. Anthropic uses `anthropic/<model-id>`
+and `ANTHROPIC_API_KEY`. Results, actions, and screenshots go into `runs/`.
+The UART task uses a fresh boot with COM1 and allows 300 model calls / one hour:
 
 ```sh
 uv run temple-cua run --provider cua --model openai/gpt-6.1-sol \
   --task uart_irq_service --output runs/uart
 ```
 
-Budgets count model API attempts, with up to four input actions per response;
-boot and host grading run outside the policy time limit. For context,
-[original OSWorld](https://arxiv.org/html/2404.07972v1#A3.SS1) used 15 interaction
-steps, [Anthropic's OSWorld-Verified evaluation](https://www.anthropic.com/news/claude-sonnet-4-5)
-uses 100, and [OSWorld 2.0](https://arxiv.org/html/2606.29537v1#S3.SS1) uses 500.
-Their steps can batch actions; these are not equivalent budgets or scores.
+Override limits with `--max-steps` and `--timeout`. Calls can contain up to four
+input actions; boot and host grading are outside the policy time limit.
+For other tasks, `uv run temple-cua prepare --output assets/baseline.qcow2`
+creates a reusable snapshot. Inspect `runs/prepare/ready.png`, then pass
+`--baseline assets/baseline.qcow2 --boot-wait 1` when running. UART requires a
+fresh boot, so omit `--baseline` for that task.
 
 ## Tasks
 
-The site features five tasks: arithmetic, a live cursor callback, a
-[live counter panel](tasks/08_interactive_counter_panel.yaml), a game sprite,
-and a UART interrupt service.
-The panel requires clickable controls that increment, decrement, and reset
-shared state while its draw callback runs.
-[Cursor callback](tasks/07_cursor_callback.yaml) asks the agent to compile a draw
-function, install `Fs->draw_it=&Cross`, and follow a document link while its cross
-keeps tracking the pointer. The hook runs on the guest's refresh path.[²](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Graphics/WinZBuf.HC)
+| Task | Goal | Scoring |
+| --- | --- | --- |
+| [Arithmetic](tasks/01_arithmetic.yaml) | Evaluate an integer expression | Visible output |
+| [Cursor callback](tasks/07_cursor_callback.yaml) | Install `Fs->draw_it`, then navigate to a document | Trajectory review |
+| [Counter panel](tasks/08_interactive_counter_panel.yaml) | Build working +1, −1, and RESET buttons | Trajectory review |
+| [Game sprite](tasks/09_tictactoe_sprite.yaml) | Add a robot to Tic-Tac-Toe, play, and relaunch it | Trajectory review |
+| [UART service](tasks/10_uart_irq_service.yaml) | Build an interrupt-driven COM1 driver with safe cleanup | Ten host checks |
 
-[Add a sprite to Tic-Tac-Toe](tasks/09_tictactoe_sprite.yaml) asks the agent to
-create a robot sprite, integrate it into the [bundled game](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Games/TicTacToe.HC),
-play it with real clicks, and relaunch the saved version. Select it with
-`--task tictactoe_sprite`. TempleOS supports both [sprite editing](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/Sprite.DD)
-and [sprites built in HolyC](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Graphics/SpriteRaw.HC).
+UART grading checks actual serial replies, IRQ4 mask dependence, and state
+restoration after repeated stops. It awards partial credit; printed success
+claims earn none. Source review is still needed to establish an interrupt-only
+implementation. [TempleOS exposes interrupt installation directly to HolyC.](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Kernel/KInts.HC#L109)
 
-[Live kernel interrupt handler](tasks/10_uart_irq_service.yaml) asks the agent
-to build a COM1 request/reply service using HolyC and a real interrupt handler.
-Ten checks run after the model episode and yield a 0–1 reward: eight binary
-serial protocol cases, an IRQ4 mask/unmask intervention, and cleanup with
-state restoration. Host inputs are separate from the model replay. These
-behavioral checks give partial credit; proving interrupt-only code still
-requires source review. TempleOS exposes [interrupt entry installation](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Kernel/KInts.HC#L109)
-and [PIC control](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Kernel/KInts.HC#L129)
-directly to HolyC. Select this task with `--task uart_irq_service`.
-
-```sh
-uv run temple-cua list-tasks
-uv run temple-cua new-task my-task
-```
-
-Edit the generated prompt and rubric, then run it with `--task my-task`.
-For a visible-text check, create a task with an expected output:
+Create a task without editing Python or a registry:
 
 ```sh
 uv run temple-cua new-task multiply \
   --prompt 'Evaluate 6 * 7 in HolyC and print ANSWER=<result>.' --expect ANSWER=42
+uv run temple-cua list-tasks
 ```
 
-Tasks are YAML files; no registry or Python edits. Text checks score visible
-output. Callback and other GUI tasks require trajectory review. Edit
-`site/tasks.yaml` to choose the featured tasks. Additional basics remain in
-`tasks/`; extra GUI tasks can be selected with `--tasks tasks/extra`.
+Edit the generated YAML, then select it with `--task multiply`. Omit `--expect`
+for a task that needs trajectory review. Extra GUI tasks live in `tasks/extra/`.
 
-## Results
+## Layout
 
-GPT-6.1 Sol through Cua 0.9.0 completed the live counter panel in 26 calls
-(227 seconds). It compiled the cursor callback but exhausted 40 calls
-(209 seconds) without opening the document. The [featured sprite rerun](examples/cua-sprite-rerun/)
-exhausted 100 calls (769 seconds) without creating a sprite or launching the
-modified game. These GUI results have separate assistant trajectory reviews;
-their raw manual grades remain unscored.
+```text
+src/temple_cua/  Harness, adapters, and graders
+tasks/          Runnable task definitions
+references/     Scripted solutions and reference validation
+recordings/     Published model attempts, including earlier failures
+website/        Site source, build script, and featured-run configuration
+tests/          Harness and website tests
+```
 
-The [UART rerun](examples/cua-uart-300/) used a 300-call, one-hour budget and
-retained all action history. It compiled and started a driver, then stopped
-voluntarily after 32 calls (641 seconds). Host evaluation returned **0/10**:
-no serial replies. The source omitted checksum reduction despite HolyC's
-64-bit register warning; this is a likely cause, not a verified diagnosis.
-Cleanup restored hardware and printed fresh shell responses, which the
-recorded text matcher missed across adjacent windows. That matcher is fixed
-for future runs; the original grade is preserved.
+Local VM assets live in `assets/`; new runs go into `runs/`. Both are ignored.
+Historical recordings retain their original metadata and scores.
 
-The [earlier UART attempt](examples/cua-uart/) exhausted 80 calls while
-browsing, also scoring 0/10. The rerun fixed action-history retention and the
-tool's OS description as well as raising the budget. It stayed below both
-old limits, so this does not demonstrate a benefit from extra turns.
+## Website and checks
 
-The [original sprite attempt](examples/cua-sprite/) stopped after 24 calls
-(159 seconds) when the adapter rejected a scroll request. The rerun used
-protocol v2 with recoverable input errors and scroll distances mapped to
-TempleOS's eight-pixel text rows; it recorded no adapter rejections. The
-earlier starter run passed six basic visual checks in 17 calls. The site shows
-one featured attempt per task; earlier recordings remain in `examples/`.
+[website/config.yaml](website/config.yaml) selects the featured tasks and recordings.
+The default build includes all five; generated files go into `build/website/`.
 
 ```sh
+uv run python website/build.py
+python -m http.server 8000 --directory build/website
 uv run pytest
-uv run python scripts/build_site.py --run examples/cua-cursor \
-  --run examples/cua-counter --run examples/cua-sprite-rerun \
-  --run examples/cua-uart-300
 ```
 
-TempleOS is public domain; this harness is [MIT licensed](LICENSE). The ISO is
-downloaded from TempleOS.org and checksum-verified. VM images and API keys stay
-local. See the [HolyC documentation](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/HolyC.DD) and
-[graphics source](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Adam/Gr/GrScrn.HC).
+## Recorded results
+
+GPT-6.1 Sol completed the counter panel; the cursor and sprite attempts remained
+incomplete. These GUI outcomes are assistant reviews, separate from raw grades.
+The [UART rerun](recordings/cua-uart-300/) compiled and started a driver, then
+stopped after 32 calls / 641 seconds with **0/10 host checks**. The source suggests
+a checksum-width defect; the detailed review records that uncertainty and a
+cleanup text-matching limitation. The [80-call attempt](recordings/cua-uart/)
+is preserved. Budget and adapter changes were combined; the rerun stayed below
+the old limits, so it does not establish a benefit from extra turns.
+
+For budget context: [original OSWorld](https://arxiv.org/html/2404.07972v1#A3.SS1)
+used 15 steps, [Anthropic's OSWorld-Verified evaluation](https://www.anthropic.com/news/claude-sonnet-4-5)
+uses 100, and [OSWorld 2.0](https://arxiv.org/html/2606.29537v1#S3.SS1) uses 500.
+Their steps can batch actions; these are not equivalent budgets or scores.
+
+TempleOS is public domain; this harness is [MIT licensed](LICENSE). The official
+ISO is checksum-verified. See the [HolyC manual](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Doc/HolyC.DD),
+[graphics source](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Adam/Gr/GrScrn.HC),
+and [Tic-Tac-Toe source](https://github.com/cia-foundation/TempleOS/blob/c26482bb6ad3f80106d28504ec5db3c6a360732c/Demo/Games/TicTacToe.HC).

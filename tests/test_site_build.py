@@ -16,9 +16,10 @@ from temple_cua.tasks import load_tasks
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RUN = ROOT / "examples/cua-starter"
+RUN = ROOT / "recordings/cua-starter"
 CURATED = ["arithmetic", "cursor_callback", "interactive_counter_panel", "tictactoe_sprite", "uart_irq_service"]
-spec = importlib.util.spec_from_file_location("build_site", ROOT / "scripts/build_site.py")
+FEATURED_RECORDINGS = ["cua-starter", "cua-cursor", "cua-counter", "cua-sprite-rerun", "cua-uart-300"]
+spec = importlib.util.spec_from_file_location("build_site", ROOT / "website/build.py")
 builder = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(builder)
 
@@ -132,8 +133,8 @@ def supplemental_run(tmp_path):
     return run
 
 
-def test_default_catalog_uses_curated_tasks_and_preserves_real_task_snapshot(tmp_path, source_results):
-    assert yaml.safe_load((ROOT / "site/tasks.yaml").read_text()) == CURATED
+def test_explicit_primary_recording_uses_curated_tasks_and_preserves_real_task_snapshot(tmp_path, source_results):
+    assert yaml.safe_load((ROOT / "website/config.yaml").read_text())["tasks"] == CURATED
     summary = builder.build(RUN, tmp_path)
     catalog = read_json(tmp_path / "assets/starter-data.json")
     tasks = catalog["tasks"]
@@ -163,8 +164,120 @@ def test_default_catalog_uses_curated_tasks_and_preserves_real_task_snapshot(tmp
         assert image.read_bytes() == (RUN / "arithmetic" / image.name).read_bytes()
 
 
+def test_default_build_features_all_five_configured_recordings_without_changing_results(tmp_path):
+    config = yaml.safe_load((ROOT / "website/config.yaml").read_text())
+    assert config == {"tasks": CURATED,
+                      "recordings": [f"recordings/{name}" for name in FEATURED_RECORDINGS]}
+    summary = builder.build(output=tmp_path)
+    catalog = read_json(tmp_path / "assets/starter-data.json")
+    assert [task["id"] for task in catalog["tasks"]] == CURATED
+    assert len(catalog["runs"]) == 5
+    assert summary["tasks"] == 5 and summary["frames"] == 206
+    downloads = read_json(tmp_path / "assets/starter-results.json")
+    assert downloads["format"] == "templeosbench-recorded-runs"
+    assert len(downloads["runs"]) == 5
+    for task, name, exported in zip(catalog["tasks"], FEATURED_RECORDINGS, downloads["runs"]):
+        source = ROOT / "recordings" / name
+        envelope = read_json(source / "results.json")
+        result = next(record for record in envelope["results"] if record["task_id"] == task["id"])
+        assert task["result"] == result
+        assert task["run"]["id"].endswith("-" + name)
+        for key in ("provider", "model", "created_at", "config", "provenance"):
+            assert task["run"][key] == envelope[key]
+        assert {key: value for key, value in exported.items() if key != "id"} == {
+            **envelope, "results": [result],
+        }
+        assert len(task["frames"]) == result["steps"] + 1
+        if (source / task["id"] / "review.json").is_file():
+            assert task["review"] == read_json(source / task["id"] / "review.json")
+    uart = catalog["tasks"][-1]
+    assert uart["result"]["steps"] == 32
+    assert uart["result"]["budget"]["max_steps"] == 300
+    assert uart["result"]["budget"]["timeout_seconds"] == 3600
+    assert uart["result"]["grade"]["score"] == 0.0
+    for name, relative in uart["evaluation_artifacts"].items():
+        assert (tmp_path / relative).read_bytes() == (ROOT / "recordings/cua-uart-300/uart_irq_service" / name).read_bytes()
+    built_asset_urls(tmp_path)
+
+
+def test_cli_defaults_use_configuration_from_any_working_directory(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    output = tmp_path / "published"
+    monkeypatch.setattr(sys, "argv", ["website/build.py", "--output", str(output)])
+    builder.main()
+    assert json.loads(capsys.readouterr().out)["tasks"] == 5
+    tasks = read_json(output / "assets/starter-data.json")["tasks"]
+    assert [task["id"] for task in tasks] == CURATED
+    assert [task["run"]["id"].split("-", 1)[1] for task in tasks] == FEATURED_RECORDINGS
+
+
+def test_cli_run_flags_replace_configured_recordings_without_implicit_duplicates(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(sys, "argv", ["website/build.py", "--run", str(RUN),
+                                     "--task", "arithmetic", "--output", str(tmp_path)])
+    builder.main()
+    assert json.loads(capsys.readouterr().out)["tasks"] == 1
+    catalog = read_json(tmp_path / "assets/starter-data.json")
+    assert [task["id"] for task in catalog["tasks"]] == ["arithmetic"]
+    assert len(catalog["runs"]) == 1
+    assert catalog["runs"][0]["id"] == "01-cua-starter"
+    assert "runs" not in read_json(tmp_path / "assets/starter-results.json")
+
+
+@pytest.mark.parametrize("config, message", [
+    ([], "must contain only tasks and recordings"),
+    ({"tasks": ["arithmetic"]}, "must contain only tasks and recordings"),
+    ({"tasks": ["arithmetic"], "recordings": ["recordings/cua-starter"], "typo": True},
+     "must contain only tasks and recordings"),
+    ({"tasks": [], "recordings": ["recordings/cua-starter"]}, "nonempty list of task IDs"),
+    ({"tasks": ["arithmetic", "arithmetic"], "recordings": ["recordings/cua-starter"]},
+     "Duplicate selected task IDs"),
+    ({"tasks": ["arithmetic"], "recordings": []}, "nonempty list of repository-relative paths"),
+    ({"tasks": ["arithmetic"], "recordings": "recordings/cua-starter"},
+     "nonempty list of repository-relative paths"),
+    ({"tasks": ["arithmetic"], "recordings": [None]}, "nonempty list of repository-relative paths"),
+    ({"tasks": ["arithmetic"], "recordings": [" "]}, "nonempty list of repository-relative paths"),
+    ({"tasks": ["arithmetic"], "recordings": ["/tmp/run"]}, "relative to the repository root"),
+    ({"tasks": ["arithmetic"], "recordings": ["../run"]}, "relative to the repository root"),
+    ({"tasks": ["arithmetic"], "recordings": ["recordings/cua-starter", "recordings/./cua-starter"]},
+     "Duplicate website recording paths"),
+])
+def test_invalid_configuration_preserves_existing_output(tmp_path, config, message):
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(yaml.safe_dump(config))
+    output = tmp_path / "published"
+    output.mkdir()
+    sentinel = output / "existing-build.txt"
+    sentinel.write_bytes(b"preserve before configuration validation")
+    with pytest.raises(ValueError, match=message):
+        builder.build(RUN, output, config=config_path)
+    assert list(output.iterdir()) == [sentinel]
+    assert sentinel.read_bytes() == b"preserve before configuration validation"
+
+
+@pytest.mark.parametrize("case", ["missing", "malformed", "missing_recording", "unknown_task"])
+def test_configuration_loading_failures_preserve_existing_output(tmp_path, case):
+    config_path = tmp_path / "config.yaml"
+    message = "Could not read website configuration"
+    if case == "malformed":
+        config_path.write_text("tasks: [unterminated")
+    elif case in {"missing_recording", "unknown_task"}:
+        config = {"tasks": ["unknown_task" if case == "unknown_task" else "arithmetic"],
+                  "recordings": ["recordings/missing-recording" if case == "missing_recording"
+                                 else "recordings/cua-starter"]}
+        config_path.write_text(yaml.safe_dump(config))
+        message = "missing results.json" if case == "missing_recording" else "Unknown selected task IDs"
+    output = tmp_path / "published"
+    output.mkdir()
+    sentinel = output / "existing-build.txt"
+    sentinel.write_bytes(b"preserve failed configuration build")
+    with pytest.raises(ValueError, match=message):
+        builder.build(output=output, config=config_path)
+    assert list(output.iterdir()) == [sentinel]
+    assert sentinel.read_bytes() == b"preserve failed configuration build"
+
+
 def test_five_task_catalog_preserves_three_recordings_and_leaves_new_tasks_unrun(tmp_path):
-    sources = [RUN, ROOT / "examples/cua-cursor", ROOT / "examples/cua-counter"]
+    sources = [RUN, ROOT / "recordings/cua-cursor", ROOT / "recordings/cua-counter"]
     summary = builder.build(sources[0], tmp_path, additional_runs=sources[1:])
     tasks = read_json(tmp_path / "assets/starter-data.json")["tasks"]
     assert [task["id"] for task in tasks] == CURATED
@@ -186,8 +299,8 @@ def test_five_task_catalog_preserves_three_recordings_and_leaves_new_tasks_unrun
 
 
 def test_four_real_sources_preserve_provenance_downloads_and_sprite_error_review(tmp_path):
-    sources = [RUN, ROOT / "examples/cua-cursor", ROOT / "examples/cua-counter",
-               ROOT / "examples/cua-sprite"]
+    sources = [RUN, ROOT / "recordings/cua-cursor", ROOT / "recordings/cua-counter",
+               ROOT / "recordings/cua-sprite"]
     summary = builder.build(sources[0], tmp_path, additional_runs=sources[1:])
     catalog = read_json(tmp_path / "assets/starter-data.json")
     assert summary["tasks"] == 5
@@ -386,12 +499,12 @@ def test_cli_invalid_selection_does_not_delete_existing_output(tmp_path, monkeyp
     assert list(output.iterdir()) == [sentinel]
 
 
-@pytest.mark.parametrize("source_name", ["site", "recorded", "tasks"])
+@pytest.mark.parametrize("source_name", ["website", "recorded", "tasks"])
 @pytest.mark.parametrize("relation", ["equal", "ancestor", "descendant"])
 def test_cli_output_cannot_overlap_source_directories(tmp_path, monkeypatch, source_name, relation):
     root = tmp_path / "project"
     run = root / "recorded"
-    for name in ("site", "recorded", "tasks"):
+    for name in ("website", "recorded", "tasks"):
         (root / name).mkdir(parents=True)
     source = root / source_name
     descendant = source / "preserved"
@@ -400,7 +513,8 @@ def test_cli_output_cannot_overlap_source_directories(tmp_path, monkeypatch, sou
     sentinel = descendant / "source-evidence.txt"
     sentinel.write_bytes(b"do not destroy source files")
     monkeypatch.setattr(builder, "ROOT", root)
-    monkeypatch.setattr(sys, "argv", ["build_site", str(run), "--output", str(output)])
+    monkeypatch.setattr(sys, "argv", ["website/build.py", str(run), "--task", "arithmetic",
+                                     "--output", str(output)])
     with pytest.raises(SystemExit) as caught:
         builder.main()
     assert caught.value.code != 0
@@ -565,12 +679,12 @@ def test_versioned_asset_urls_match_built_contents_and_repeat_stably(tmp_path, s
 @pytest.mark.parametrize("filename", ["app.js", "styles.css"])
 def test_editing_source_asset_refreshes_only_its_content_version(tmp_path, monkeypatch, filename):
     source = tmp_path / "source"
-    shutil.copytree(ROOT / "site", source / "site")
+    shutil.copytree(ROOT / "website", source / "website")
     shutil.copytree(ROOT / "tasks", source / "tasks")
     monkeypatch.setattr(builder, "ROOT", source)
     first, second = tmp_path / "first", tmp_path / "second"
     builder.build(RUN, first, selected=["arithmetic"])
-    asset = source / "site" / filename
+    asset = source / "website" / filename
     asset.write_bytes(asset.read_bytes() + b"\n/* Changed content for cache regression. */\n")
     builder.build(RUN, second, selected=["arithmetic"])
     before, after = built_asset_urls(first), built_asset_urls(second)

@@ -53,6 +53,8 @@ def asset_url(output, name):
 
 
 def read_run(path, number):
+    if not (path / "results.json").is_file():
+        raise ValueError(f"Recorded run is missing results.json: {path}")
     envelope = json.loads(portable_content(path / "results.json"))
     records = envelope.get("results")
     if envelope.get("provider") != "cua" or not isinstance(records, list) or not records:
@@ -129,12 +131,52 @@ def export_run(source, destination, selected):
     return filtered
 
 
-def build(run, output, selected=None, additional_runs=None):
-    run_paths = [Path(path).resolve() for path in (run, *(additional_runs or []))]
-    output = Path(output).resolve()
-    protected = (ROOT / "site", ROOT / "tasks", *run_paths)
+def validate_selection(selected):
+    if (not isinstance(selected, list) or not selected
+            or any(not isinstance(task_id, str) or not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,79}", task_id)
+                   for task_id in selected)):
+        raise ValueError("Select a nonempty list of task IDs")
+    if len(selected) != len(set(selected)):
+        raise ValueError("Duplicate selected task IDs")
+    return selected
+
+
+def read_config(path):
+    try:
+        config = yaml.safe_load(path.read_text())
+    except (OSError, yaml.YAMLError) as error:
+        raise ValueError(f"Could not read website configuration {path}: {error}") from error
+    if not isinstance(config, dict) or set(config) != {"tasks", "recordings"}:
+        raise ValueError("Website configuration must contain only tasks and recordings")
+    validate_selection(config["tasks"])
+    recordings = config["recordings"]
+    if (not isinstance(recordings, list) or not recordings
+            or any(not isinstance(path, str) or not path.strip() for path in recordings)):
+        raise ValueError("Website recordings must be a nonempty list of repository-relative paths")
+    if any(Path(path).is_absolute() or ".." in Path(path).parts for path in recordings):
+        raise ValueError("Website recording paths must be relative to the repository root")
+    paths = [(ROOT / path).resolve() for path in recordings]
+    if any(not path.is_relative_to(ROOT.resolve()) for path in paths):
+        raise ValueError("Website recording paths must stay within the repository")
+    if len(paths) != len(set(paths)):
+        raise ValueError("Duplicate website recording paths")
+    return config["tasks"], paths
+
+
+def build(run=None, output=None, selected=None, additional_runs=None, config=None):
+    configuration = Path(config) if config is not None else ROOT / "website/config.yaml"
+    configured_tasks, configured_runs = (read_config(configuration)
+                                         if selected is None or (run is None and not additional_runs)
+                                         else (None, None))
+    # Explicit recording inputs replace the configured list, rather than mixing attempts.
+    inputs = ([run, *(additional_runs or [])] if run is not None
+              else additional_runs or configured_runs)
+    run_paths = [Path(path).resolve() for path in inputs]
+    selected = validate_selection(selected if selected is not None else configured_tasks)
+    output = Path(output if output is not None else ROOT / "build/website").resolve()
+    protected = (ROOT / "website", ROOT / "tasks", *run_paths)
     if any(output == source or output in source.parents or source in output.parents for source in protected):
-        raise ValueError("Output must be separate from the source site, tasks, and run")
+        raise ValueError("Output must be separate from the website source, tasks, and recordings")
     sources = [read_run(path, number) for number, path in enumerate(run_paths, start=1)]
     results = {}
     for source in sources:
@@ -143,13 +185,6 @@ def build(run, output, selected=None, additional_runs=None):
             if task_id in results:
                 raise ValueError(f"Duplicate recorded task ID across runs: {task_id}")
             results[task_id] = (result, source)
-    selected = selected if selected is not None else yaml.safe_load((ROOT / "site/tasks.yaml").read_text())
-    if (not isinstance(selected, list) or not selected
-            or any(not isinstance(task_id, str) or not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,79}", task_id)
-                   for task_id in selected)):
-        raise ValueError("Select a nonempty list of task IDs")
-    if len(selected) != len(set(selected)):
-        raise ValueError("Duplicate selected task IDs")
     definitions = {task.id: task for task in load_tasks(ROOT / "tasks")}
     missing = set(selected) - (definitions.keys() | results.keys())
     if missing:
@@ -159,7 +194,7 @@ def build(run, output, selected=None, additional_runs=None):
     assets = output / "assets"
     output.mkdir(parents=True, exist_ok=True)
     for name in ("index.html", "styles.css", "app.js"):
-        copy(ROOT / "site" / name, output / name)
+        copy(ROOT / "website" / name, output / name)
     (output / ".nojekyll").touch()
     tasks = []
     for task_id in selected:
@@ -249,16 +284,18 @@ def build(run, output, selected=None, additional_runs=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("run", type=Path, nargs="?", default=ROOT / "examples/cua-starter")
-    parser.add_argument("--output", type=Path, default=ROOT / "build/site")
+    parser.add_argument("run", type=Path, nargs="?", help="Replace configured recordings with this run")
+    parser.add_argument("--output", type=Path, default=ROOT / "build/website")
+    parser.add_argument("--config", type=Path, default=ROOT / "website/config.yaml",
+                        help="Website task IDs and repository-relative recording paths")
     parser.add_argument("--run", dest="additional_runs", action="append", type=Path, default=[],
-                        help="Add a recorded run; repeat for each supplementary source")
+                        help="Select a recorded run; repeat to replace configured recording sources")
     parser.add_argument("--task", action="append", help="Feature this task; repeat for each task in display order")
     args = parser.parse_args()
-    run, output = args.run.resolve(), args.output.resolve()
     try:
-        result = build(run, output, args.task, additional_runs=args.additional_runs)
-    except ValueError as error:
+        result = build(args.run, args.output, args.task, additional_runs=args.additional_runs,
+                       config=args.config)
+    except (ValueError, OSError) as error:
         parser.error(str(error))
     print(json.dumps(result))
 

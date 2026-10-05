@@ -6,7 +6,7 @@ import subprocess
 import pytest
 
 
-APP = Path(__file__).resolve().parents[1] / "site/app.js"
+APP = Path(__file__).resolve().parents[1] / "website/app.js"
 
 
 def probe_viewer(value, probe, extra_ids=()):

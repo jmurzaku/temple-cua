@@ -18,7 +18,7 @@ from temple_cua.vm import VMConfig
 
 ROOT = Path(__file__).resolve().parents[1]
 TASK = ROOT / "tasks/07_cursor_callback.yaml"
-REFERENCE = ROOT / "scripts/reference/cursor_callback.json"
+REFERENCE = ROOT / "references/cursor_callback.json"
 
 
 def test_cursor_callback_is_selectable_replayable_and_requires_manual_review(tmp_path):
